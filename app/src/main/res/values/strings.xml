@@ -1,0 +1,66 @@
+<resources>
+    <string name="app_name" translatable="false">XPERI+</string>
+    <string name="accessibility_service_desc">Run features and dispatch button action when needed.</string>
+
+    <string name="assistant_launch_selection_title">Assistant button action</string>
+    <string name="assistant_action_select_default_value">Default</string>
+    <string name="assistant_action_not_supported">Not supported</string>
+    <string name="assistant_action_reset">Reset action to default</string>
+    <string name="assistant_action_reset_toast">Action reset to default.</string>
+    <string name="assistant_action_save_failed_toast">Failed to save selection.</string>
+
+    <string name="pocket_no_touchy_title">Prevent accidental touch</string>
+    <string name="pocket_no_touchy_desc">Prevent unintentional operations caused by accidental key presses or screen touch while the device is in a pocket or bag</string>
+
+    <string name="flip_to_shush_title">Flip to Shush</string>
+    <string name="flip_to_shush_desc">Turn on Do Not Disturb by placing your phone face down on a flat surface</string>
+    <string name="flip_to_shush_desc_extra_screen_on">Note: Only works when the screen is on.</string>
+    <string name="allow_dnd_access_toast">Please allow XPERI+ to access Do Not Disturb</string>
+
+    <string name="tab_title_apps">APPS</string>
+    <string name="tab_title_shortcuts">SHORTCUTS</string>
+    <string name="tab_title_media_key">MEDIA KEYS</string>
+
+    <string name="no_touchy_dialog_title">Preventing accidental operations</string>
+    <string name="no_touchy_dialog_text">Keep the sensor placed on top of the front panel clean and not covered to make it work properly.</string>
+    <string name="no_touchy_dialog_ignore_button">IGNORE</string>
+    <string name="accessibility_service_prompt_title">Accessibility service disabled</string>
+    <string name="accessibility_service_prompt_desc">Enable accessibility service to get the features ready.</string>
+    <string name="button_open_settings">OPEN SETTINGS</string>
+    <string name="logs_permission_prompt_title">Missing READ_LOGS permission</string>
+    <string name="logs_permission_prompt_desc">READ_LOGS permission is needed to detect Assistant button triggers.</string>
+    <string name="button_grant_permission">GRANT PERMISSION</string>
+
+    <string name="read_logs_permission_setup_title">READ_LOGS Permission Needed</string>
+    <string name="read_logs_permission_setup_desc_root">To detect Assistant Button event, READ_LOGS permission is needed. You can use root to grant this permission.</string>
+    <string name="read_logs_permission_setup_desc_noroot">READ_LOGS permission is needed to detect Assistant Button event. To grant this permission, do the following:\n\n1. Setup ADB on your computer and phone\n2. Connect your phone to your computer\n3. Run this command on your computer Terminal or Command Prompt in one line:</string>
+    <string name="read_logs_permission_setup_desc_noroot_adb_link_label">Setup ADB on your computer and phone</string>  <!-- Label for annotated link inside read_logs_permission_setup_desc_noroot. -->
+    <string name="setup_adb_link" translatable="false">https://kutt.it/SetupADB</string>
+    <string name="read_logs_permission_setup_command_card_caption">Tap the card to share command</string>
+    <string name="read_logs_permission_setup_desc_noroot_extra">The app will restart after the READ_LOGS permission is granted.</string>
+
+    <string name="tadano_tile_service_notif_channel_desc">Used for showing mandatory foreground service notification. Can be hidden safely.</string>
+    <string name="tadano_tile_service_notif_title">XPERI+ tile service</string>
+    <string name="tadano_tile_service_notif_text">Useless notification. Tap to open notification settings</string>
+    <string name="coffee_tile_label">Coffee</string>
+    <string name="tea_tile_label">Tea</string>
+
+    <string name="intent_action_label">Launch %s</string>
+    <string name="media_key_action_label">Media key %s</string>
+    <string name="media_key_play">Play</string>
+    <string name="media_key_pause">Pause</string>
+    <string name="media_key_play_pause">Play/Pause</string>
+    <string name="media_key_stop">Stop</string>
+    <string name="media_key_previous">Previous</string>
+    <string name="media_key_next">Next</string>
+
+    <string name="hide_assistant_cue_title">Hide Assistant sound cue</string>
+    <string name="hide_assistant_cue_desc">Mutes media stream for a brief period of time after pressing the Assistant button</string>
+
+    <string name="coffee_boarding_title">Keep your phone awake with Coffee</string>
+    <string name="tea_boarding_title">Turn your phone\'s screen off while keeping it awake with Tea</string>
+    <string name="coffee_boarding_desc">Look at the photo of your loved one without keeping your finger on the screen. Coffee will be disabled automatically when the screen is turned off.</string>
+    <string name="tea_boarding_desc">Listen to music on The Tube with your phone screen locked for free. Just block the proximity sensor and see the magic happens.</string>
+    <string name="button_boarding_acknowledgement">GOT IT</string>
+    <string name="button_continue">CONTINUE</string>
+</resources>
