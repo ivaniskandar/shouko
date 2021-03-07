@@ -103,6 +103,8 @@ class GAKeyOverrider(
     }
 
     fun onAccessibilityEvent(event: AccessibilityEvent?) {
+        var timeDelta = System.currentTimeMillis() - assistButtonLastPressedTime
+        Timber.d("timeDelta : $timeDelta")
         if (event?.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED &&
             ((event.className == OPA_ACTIVITY_CLASS_NAME && System.currentTimeMillis() - assistButtonLastPressedTime <= 1000) || 
              event.className == OPA_ACTIVITY_CLASS_NAME_DISABLED_ASSISTANT)
