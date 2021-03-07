@@ -104,8 +104,8 @@ class GAKeyOverrider(
 
     fun onAccessibilityEvent(event: AccessibilityEvent?) {
         if (event?.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED &&
-            event.className == OPA_ACTIVITY_CLASS_NAME &&
-            System.currentTimeMillis() - assistButtonLastPressedTime <= 1000
+            ((event.className == OPA_ACTIVITY_CLASS_NAME && System.currentTimeMillis() - assistButtonLastPressedTime <= 1000) || 
+             event.className == OPA_ACTIVITY_CLASS_NAME_DISABLED_ASSISTANT)
         ) {
             Timber.d("Opa on foreground after Assist Button event")
             if (keyguardManager.isKeyguardLocked) {
@@ -212,7 +212,8 @@ class GAKeyOverrider(
     companion object {
         private const val ASSISTANT_LAUNCHED_CUE = "WindowManager: startAssist launchMode=1"
         private const val OPA_ACTIVITY_CLASS_NAME = "com.google.android.apps.gsa.staticplugins.opa.OpaActivity"
-
+        private const val OPA_ACTIVITY_CLASS_NAME_DISABLED_ASSISTANT = "com.google.android.apps.gsa.velour.dynamichosts.TransparentVelvetDynamicHostActivity"
+        
         private const val MEDIA_MUTE_PERIOD = 1000L // ms
 
         // Only supports Xperia 5 II
