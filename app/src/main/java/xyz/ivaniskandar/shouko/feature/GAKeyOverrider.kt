@@ -145,6 +145,7 @@ class GAKeyOverrider(
                     is MediaKeyAction -> {
                         it.runAction(service)
                     }
+                    is NothingAction -> {}
                 }
             } else {
                 Timber.e("Failed to dispatch back action, retreat!")
@@ -173,6 +174,7 @@ class GAKeyOverrider(
                             it.runAction(service)
                             service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
                         }
+                        is NothingAction -> {}
                     }
                 } else {
                     Timber.e("Failed to dispatch back action, retreat!")
@@ -308,6 +310,28 @@ class MediaKeyAction(private val key: Key) : Action() {
     }
 }
 
+class NothingAction() : Action() {
+    override fun runAction(context: Context) {
+        // We do completely nothing.
+    }
+
+    override fun getLabel(context: Context): String {
+        return context.getString(R.string.nothing_action_label)
+    }
+
+    override fun toPlainString(): String {
+        return PLAIN_STRING_PREFIX
+    }
+
+    companion object {
+        const val PLAIN_STRING_PREFIX = "#Nothing;"
+
+        fun fromPlainString(): NothingAction {
+            return NothingAction()
+        }
+    }
+}
+
 /**
  * Base class for custom action
  */
@@ -319,6 +343,9 @@ sealed class Action {
     companion object {
         fun fromPlainString(string: String): Action? {
             return when {
+                string.startsWith(NothingAction.PLAIN_STRING_PREFIX) -> {
+                    NothingAction.fromPlainString()
+                }
                 string.startsWith(IntentAction.PLAIN_STRING_PREFIX) -> {
                     IntentAction.fromPlainString(string)
                 }

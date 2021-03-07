@@ -3,15 +3,15 @@
   <component name="deploymentTargetDropDown">
     <targetSelectedWithDropDown>
       <Target>
-        <type value="RUNNING_DEVICE_TARGET" />
+        <type value="QUICK_BOOT_TARGET" />
         <deviceKey>
           <Key>
-            <type value="SERIAL_NUMBER" />
-            <value value="QV71006B52" />
+            <type value="VIRTUAL_DEVICE_PATH" />
+            <value value="C:\Users\djdar\.android\avd\Galaxy_S8_API_30.avd" />
           </Key>
         </deviceKey>
       </Target>
     </targetSelectedWithDropDown>
-    <timeTargetWasSelectedWithDropDown value="2021-02-28T14:13:44.964564200Z" />
+    <timeTargetWasSelectedWithDropDown value="2021-03-07T08:53:05.513459700Z" />
   </component>
 </project>

@@ -47,6 +47,7 @@
 
     <string name="intent_action_label">Launch %s</string>
     <string name="media_key_action_label">Media key %s</string>
+    <string name="nothing_action_label">Do nothing</string>
     <string name="media_key_play">Play</string>
     <string name="media_key_pause">Pause</string>
     <string name="media_key_play_pause">Play/Pause</string>

@@ -44,7 +44,7 @@ class FlipToShush(
 
     private val shushOnVibrationEffect = VibrationEffect
         .createWaveform(longArrayOf(12L, 150L, 10L, 250L, 8L), intArrayOf(250, 0, 200, 0, 150), -1)
-    private val shushOffVibrationEffect = VibrationEffect.createOneShot(20, 255)
+    private val shushOffVibrationEffect = VibrationEffect.createOneShot(20,  255)
 
     private var x = .1F
     private var y = .1f

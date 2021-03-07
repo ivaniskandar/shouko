@@ -42,10 +42,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.*
 import dev.chrisbanes.accompanist.insets.*
 import xyz.ivaniskandar.shouko.R
-import xyz.ivaniskandar.shouko.feature.FlipToShush
-import xyz.ivaniskandar.shouko.feature.GAKeyOverrider
-import xyz.ivaniskandar.shouko.feature.IntentAction
-import xyz.ivaniskandar.shouko.feature.MediaKeyAction
+import xyz.ivaniskandar.shouko.feature.*
 import xyz.ivaniskandar.shouko.service.TadanoAccessibilityService
 import xyz.ivaniskandar.shouko.ui.*
 import xyz.ivaniskandar.shouko.ui.theme.ShoukoTheme
@@ -82,7 +79,10 @@ class MainActivity : AppCompatActivity() {
                                 navigationIcon = if (currentRoute != ROUTE_HOME) {
                                     {
                                         IconButton(onClick = { navController.popBackStack() }) {
-                                            Icon(imageVector = Icons.Rounded.ArrowBack, contentDescription = null)
+                                            Icon(
+                                                imageVector = Icons.Rounded.ArrowBack,
+                                                contentDescription = null
+                                            )
                                         }
                                     }
                                 } else null,
@@ -90,12 +90,20 @@ class MainActivity : AppCompatActivity() {
                                     when (currentRoute) {
                                         ROUTE_HOME -> {
                                             IconButton(onClick = { startActivity(GITHUB_REPO_INTENT) }) {
-                                                Icon(imageVector = Icons.Rounded.Info, contentDescription = null)
+                                                Icon(
+                                                    imageVector = Icons.Rounded.Info,
+                                                    contentDescription = null
+                                                )
                                             }
                                         }
                                         ROUTE_ASSISTANT_LAUNCH_SELECTION -> {
-                                            IconButton(onClick = { showAssistantActionSettings = true }) {
-                                                Icon(imageVector = Icons.Rounded.Settings, contentDescription = null)
+                                            IconButton(onClick = {
+                                                showAssistantActionSettings = true
+                                            }) {
+                                                Icon(
+                                                    imageVector = Icons.Rounded.Settings,
+                                                    contentDescription = null
+                                                )
                                             }
                                         }
                                     }
@@ -115,7 +123,10 @@ class MainActivity : AppCompatActivity() {
                                 }
                             }
                             composable(ROUTE_ASSISTANT_LAUNCH_SELECTION) {
-                                AssistantActionSelection(navController, showAssistantActionSettings) {
+                                AssistantActionSelection(
+                                    navController,
+                                    showAssistantActionSettings
+                                ) {
                                     showAssistantActionSettings = false
                                 }
                             }
@@ -178,8 +189,9 @@ class MainActivity : AppCompatActivity() {
                     enabled = TadanoAccessibilityService.isActive
                 ) {
                     if (it) {
-                        val isGrantedDndAccess = context.getSystemService(NotificationManager::class.java)!!
-                            .isNotificationPolicyAccessGranted
+                        val isGrantedDndAccess =
+                            context.getSystemService(NotificationManager::class.java)!!
+                                .isNotificationPolicyAccessGranted
                         if (!isGrantedDndAccess) {
                             Toast.makeText(
                                 context,
@@ -191,13 +203,15 @@ class MainActivity : AppCompatActivity() {
                         }
 
                         if (fullTimeFlipToShush) {
-                            val isIgnoringOptimizations = context.getSystemService(PowerManager::class.java)!!
-                                .isIgnoringBatteryOptimizations(context.packageName)
+                            val isIgnoringOptimizations =
+                                context.getSystemService(PowerManager::class.java)!!
+                                    .isIgnoringBatteryOptimizations(context.packageName)
                             if (!isIgnoringOptimizations) {
                                 @SuppressLint("BatteryLife")
-                                val i = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
-                                    data = Uri.parse("package:${context.packageName}")
-                                }
+                                val i =
+                                    Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
+                                        data = Uri.parse("package:${context.packageName}")
+                                    }
                                 context.startActivity(i)
                                 return@SwitchPreference
                             }
@@ -238,7 +252,11 @@ class MainActivity : AppCompatActivity() {
         onSettingsDialogDismissRequest: () -> Unit
     ) {
         var selectedTabIndex by remember { mutableStateOf(0) }
-        val titles = listOf(R.string.tab_title_apps, R.string.tab_title_shortcuts, R.string.tab_title_media_key)
+        val titles = listOf(
+            R.string.tab_title_apps,
+            R.string.tab_title_shortcuts,
+            R.string.tab_title_media_key
+        )
         Column {
             TabRow(
                 selectedTabIndex = selectedTabIndex,
@@ -261,29 +279,41 @@ class MainActivity : AppCompatActivity() {
                 0 -> {
                     val appItems by viewModel.appsList.observeAsState()
                     if (appItems == null) {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
                             CircularProgressIndicator()
                         }
                     } else {
-                        LazyColumn(contentPadding = LocalWindowInsets.current.navigationBars.toPaddingValues()) {
-                            items(appItems!!) { item ->
-                                ApplicationRow(item = item) {
-                                    val intent = Intent().apply {
-                                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                        component = it
+                        Column {
+                            NothingRow(onClick = {
+                                prefs.assistButtonAction = NothingAction()
+                                navController.popBackStack()
+                            })
+                            LazyColumn(contentPadding = LocalWindowInsets.current.navigationBars.toPaddingValues()) {
+                                items(appItems!!) { item ->
+                                    ApplicationRow(item = item) {
+                                        val intent = Intent().apply {
+                                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                            component = it
+                                        }
+                                        prefs.assistButtonAction = IntentAction(intent)
+                                        navController.popBackStack()
                                     }
-                                    prefs.assistButtonAction = IntentAction(intent)
-                                    navController.popBackStack()
                                 }
                             }
+                            Spacer(modifier = Modifier.navigationBarsPadding())
                         }
-                        Spacer(modifier = Modifier.navigationBarsPadding())
                     }
                 }
                 1 -> {
                     val appItems by viewModel.shortcutList.observeAsState()
                     if (appItems == null) {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
                             CircularProgressIndicator()
                         }
                     } else {
@@ -306,13 +336,19 @@ class MainActivity : AppCompatActivity() {
                                 }
                             }
                         )
-                        LazyColumn(contentPadding = LocalWindowInsets.current.navigationBars.toPaddingValues()) {
-                            items(appItems!!) { item ->
-                                ShortcutCreatorRow(item = item) {
-                                    val i = Intent(Intent.ACTION_CREATE_SHORTCUT).apply {
-                                        component = it
+                        Column {
+                            NothingRow(onClick = {
+                                prefs.assistButtonAction = NothingAction()
+                                navController.popBackStack()
+                            })
+                            LazyColumn(contentPadding = LocalWindowInsets.current.navigationBars.toPaddingValues()) {
+                                items(appItems!!) { item ->
+                                    ShortcutCreatorRow(item = item) {
+                                        val i = Intent(Intent.ACTION_CREATE_SHORTCUT).apply {
+                                            component = it
+                                        }
+                                        createShortcut.launch(i)
                                     }
-                                    createShortcut.launch(i)
                                 }
                             }
                         }
