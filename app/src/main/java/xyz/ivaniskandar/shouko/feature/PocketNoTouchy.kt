@@ -100,7 +100,6 @@ class PocketNoTouchy(
         if (isProximityNear) {
             Timber.d("Proximity still near after timeout, locking screen...")
             // Turn off screen when timeout and proximity is still in near position
-            ignoreCheck()
             service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN)
         }
     }
