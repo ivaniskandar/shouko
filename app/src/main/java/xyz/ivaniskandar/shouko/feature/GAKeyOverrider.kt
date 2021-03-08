@@ -7,19 +7,21 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.media.AudioAttributes
 import android.media.AudioManager
+import android.media.AudioPlaybackConfiguration
 import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
 import androidx.lifecycle.*
 import com.topjohnwu.superuser.CallbackList
 import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.activity.GAKeyOverriderKeyguardActivity
+import xyz.ivaniskandar.shouko.feature.GAKeyOverrider.Companion.ASSISTANT_LAUNCHED_CUE
 import xyz.ivaniskandar.shouko.feature.GAKeyOverrider.Companion.GOOGLE_PACKAGE_NAME
 import xyz.ivaniskandar.shouko.feature.MediaKeyAction.Key
 import xyz.ivaniskandar.shouko.util.DeviceModel
@@ -81,14 +83,25 @@ class GAKeyOverrider(
             if (e?.contains(ASSISTANT_LAUNCHED_CUE) == true) {
                 Timber.d("Assistant Button event detected")
                 assistButtonPressHandled = false
-                if (muteMusicStreamJob == null && hideAssistantCue) {
-                    muteMusicStreamJob = muteMusicStream()
+                if (hideAssistantCue) {
+                    muteMusicStream(true)
                 }
             }
         }
     }
 
-    private var muteMusicStreamJob: Job? = null
+    private var audioPlaybackCallbackRegistered = false
+    private var volumeBeforeMuted: Int? = null
+    private val audioPlaybackCallback = object : AudioManager.AudioPlaybackCallback() {
+        override fun onPlaybackConfigChanged(configs: MutableList<AudioPlaybackConfiguration>) {
+            super.onPlaybackConfigChanged(configs)
+            val assistantCuePlaying = configs.map { it.audioAttributes.usage }
+                .contains(AudioAttributes.USAGE_ASSISTANCE_NAVIGATION_GUIDANCE)
+            if (!assistantCuePlaying) {
+                muteMusicStream(false)
+            }
+        }
+    }
 
     @Synchronized
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
@@ -122,10 +135,25 @@ class GAKeyOverrider(
                 Shell.sh("logcat").to(logcatCallback).submit()
                 isActive = true
             }
-        } else if (isActive) {
-            Timber.d("Disabling logcat observer")
-            Shell.getCachedShell()?.close()
-            isActive = false
+        } else {
+            if (isActive) {
+                Timber.d("Disabling logcat observer")
+                Shell.getCachedShell()?.close()
+                isActive = false
+            }
+        }
+
+        // Audio listener for hiding assistant cue
+        if (state && hideAssistantCue) {
+            if (!audioPlaybackCallbackRegistered) {
+                Timber.d("Registering audio playback listener")
+                audioManager.registerAudioPlaybackCallback(audioPlaybackCallback, null)
+                audioPlaybackCallbackRegistered = true
+            }
+        } else if (!hideAssistantCue && audioPlaybackCallbackRegistered) {
+            Timber.d("Unregistering audio playback listener")
+            audioManager.unregisterAudioPlaybackCallback(audioPlaybackCallback)
+            audioPlaybackCallbackRegistered = false
         }
     }
 
@@ -179,25 +207,31 @@ class GAKeyOverrider(
         }
     }
 
-    private fun muteMusicStream() = lifecycleOwner.lifecycleScope.launch {
-        val volumeBeforeMuted = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
-        val minVolume = audioManager.getStreamMinVolume(AudioManager.STREAM_MUSIC)
-        Timber.d("Muting music stream volume with previous value $volumeBeforeMuted")
-        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, minVolume, 0)
-        delay(MEDIA_MUTE_PERIOD)
-        Timber.d("Restoring music stream volume to $volumeBeforeMuted")
-        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volumeBeforeMuted, 0)
-        muteMusicStreamJob = null
+    // Muting will need to followed by unmuting and vice versa, else it won't do anything
+    private fun muteMusicStream(mute: Boolean) {
+        if (mute) {
+            if (volumeBeforeMuted == null) {
+                volumeBeforeMuted = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+                Timber.d("Muting music stream volume with previous value $volumeBeforeMuted")
+                audioManager.setStreamVolume(
+                    AudioManager.STREAM_MUSIC,
+                    audioManager.getStreamMinVolume(AudioManager.STREAM_MUSIC),
+                    0
+                )
+            }
+        } else if (volumeBeforeMuted != null) {
+            Timber.d("Restoring music stream volume to $volumeBeforeMuted")
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volumeBeforeMuted!!, 0)
+            volumeBeforeMuted = null
+        }
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when (key) {
-            Prefs.ASSIST_BUTTON_ACTION -> {
+            Prefs.ASSIST_BUTTON_ACTION, Prefs.HIDE_ASSISTANT_CUE -> {
                 customAction = prefs.assistButtonAction
-                start()
-            }
-            Prefs.HIDE_ASSISTANT_CUE -> {
                 hideAssistantCue = prefs.hideAssistantCue
+                start()
             }
         }
     }
@@ -210,8 +244,6 @@ class GAKeyOverrider(
     companion object {
         private const val ASSISTANT_LAUNCHED_CUE = "WindowManager: startAssist launchMode=1"
         private const val GOOGLE_PACKAGE_NAME = "com.google.android.googlequicksearchbox"
-
-        private const val MEDIA_MUTE_PERIOD = 1000L // ms
 
         // Only supports Xperia 5 II
         val isSupported = DeviceModel.isPDX206
