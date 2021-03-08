@@ -20,8 +20,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.activity.GAKeyOverriderKeyguardActivity
-import xyz.ivaniskandar.shouko.feature.GAKeyOverrider.Companion.ASSISTANT_LAUNCHED_CUE
-import xyz.ivaniskandar.shouko.feature.GAKeyOverrider.Companion.OPA_ACTIVITY_CLASS_NAME
+import xyz.ivaniskandar.shouko.feature.GAKeyOverrider.Companion.GOOGLE_PACKAGE_NAME
 import xyz.ivaniskandar.shouko.feature.MediaKeyAction.Key
 import xyz.ivaniskandar.shouko.util.DeviceModel
 import xyz.ivaniskandar.shouko.util.Prefs
@@ -44,7 +43,7 @@ import java.net.URISyntaxException
  *
  * 2. When implementing service called [onAccessibilityEvent] on
  * window state is changed, it will check if the foreground
- * activity is Google Assistant ([OPA_ACTIVITY_CLASS_NAME])
+ * activity is Google Assistant ([GOOGLE_PACKAGE_NAME])
  *
  * 3. From here depends from whether the device is in lock state
  * or not and the custom [Action] selected. But basically the
@@ -75,13 +74,13 @@ class GAKeyOverrider(
         get() = customAction != null &&
                 service.checkSelfPermission(Manifest.permission.READ_LOGS) == PackageManager.PERMISSION_GRANTED
 
-    private var assistButtonLastPressedTime = 0L
+    private var assistButtonPressHandled = true
 
     private val logcatCallback = object : CallbackList<String>() {
         override fun onAddElement(e: String?) {
             if (e?.contains(ASSISTANT_LAUNCHED_CUE) == true) {
                 Timber.d("Assistant Button event detected")
-                assistButtonLastPressedTime = System.currentTimeMillis()
+                assistButtonPressHandled = false
                 if (muteMusicStreamJob == null && hideAssistantCue) {
                     muteMusicStreamJob = muteMusicStream()
                 }
@@ -103,11 +102,10 @@ class GAKeyOverrider(
     }
 
     fun onAccessibilityEvent(event: AccessibilityEvent?) {
-        if (event?.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED &&
-            event.className == OPA_ACTIVITY_CLASS_NAME &&
-            System.currentTimeMillis() - assistButtonLastPressedTime <= 1000
-        ) {
+        if (!assistButtonPressHandled && event?.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED &&
+            event.packageName == GOOGLE_PACKAGE_NAME) {
             Timber.d("Opa on foreground after Assist Button event")
+            assistButtonPressHandled = true
             if (keyguardManager.isKeyguardLocked) {
                 onOpaLaunchedAboveKeyguard()
             } else {
@@ -211,7 +209,7 @@ class GAKeyOverrider(
 
     companion object {
         private const val ASSISTANT_LAUNCHED_CUE = "WindowManager: startAssist launchMode=1"
-        private const val OPA_ACTIVITY_CLASS_NAME = "com.google.android.apps.gsa.staticplugins.opa.OpaActivity"
+        private const val GOOGLE_PACKAGE_NAME = "com.google.android.googlequicksearchbox"
 
         private const val MEDIA_MUTE_PERIOD = 1000L // ms
 
