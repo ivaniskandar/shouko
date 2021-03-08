@@ -21,7 +21,6 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.activity.GAKeyOverriderKeyguardActivity
-import xyz.ivaniskandar.shouko.feature.GAKeyOverrider.Companion.ASSISTANT_LAUNCHED_CUE
 import xyz.ivaniskandar.shouko.feature.GAKeyOverrider.Companion.GOOGLE_PACKAGE_NAME
 import xyz.ivaniskandar.shouko.feature.MediaKeyAction.Key
 import xyz.ivaniskandar.shouko.util.DeviceModel
@@ -41,7 +40,7 @@ import java.net.URISyntaxException
  * This class reads logcat to listen for Assistant button event. The
  * rest of what this class does is as follows:
  * 1. User pressed the Assistant button as it shows on logcat
- * ([ASSISTANT_LAUNCHED_CUE]).
+ * ([ASSISTANT_LAUNCHED_CUE] or [ASSISTANT_GUIDE_LAUNCHED_CUE]).
  *
  * 2. When implementing service called [onAccessibilityEvent] on
  * window state is changed, it will check if the foreground
@@ -79,8 +78,8 @@ class GAKeyOverrider(
     private var assistButtonPressHandled = true
 
     private val logcatCallback = object : CallbackList<String>() {
-        override fun onAddElement(e: String?) {
-            if (e?.contains(ASSISTANT_LAUNCHED_CUE) == true) {
+        override fun onAddElement(e: String) {
+            if (e.contains(ASSISTANT_LAUNCHED_CUE) || e.contains(ASSISTANT_GUIDE_LAUNCHED_CUE)) {
                 Timber.d("Assistant Button event detected")
                 assistButtonPressHandled = false
                 if (hideAssistantCue) {
@@ -243,6 +242,7 @@ class GAKeyOverrider(
 
     companion object {
         private const val ASSISTANT_LAUNCHED_CUE = "WindowManager: startAssist launchMode=1"
+        private const val ASSISTANT_GUIDE_LAUNCHED_CUE = "GAKeyEventHandler: launchAssistGuideActivity"
         private const val GOOGLE_PACKAGE_NAME = "com.google.android.googlequicksearchbox"
 
         // Only supports Xperia 5 II
