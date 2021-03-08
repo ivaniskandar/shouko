@@ -97,7 +97,10 @@ class GAKeyOverrider(
             val assistantCuePlaying = configs.map { it.audioAttributes.usage }
                 .contains(AudioAttributes.USAGE_ASSISTANCE_NAVIGATION_GUIDANCE)
             if (!assistantCuePlaying) {
-                muteMusicStream(false)
+                lifecycleOwner.lifecycleScope.launch {
+                    delay(500)
+                    muteMusicStream(false)
+                }
             }
         }
     }
