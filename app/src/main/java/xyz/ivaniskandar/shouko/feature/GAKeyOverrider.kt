@@ -76,12 +76,15 @@ class GAKeyOverrider(
                 service.checkSelfPermission(Manifest.permission.READ_LOGS) == PackageManager.PERMISSION_GRANTED
 
     private var assistButtonLastPressedTime = 0L
+    private var assistButtonHandled = true
 
     private val logcatCallback = object : CallbackList<String>() {
         override fun onAddElement(e: String?) {
-            if (e?.contains(ASSISTANT_LAUNCHED_CUE) == true) {
+            if (e?.contains(ASSISTANT_LAUNCHED_CUE) == true ||
+                e?.contains(ASSISTANT_LAUNCHED_CUE_DISABLED_ASSISTANT) == true) {
                 Timber.d("Assistant Button event detected")
                 assistButtonLastPressedTime = System.currentTimeMillis()
+                assistButtonHandled = false
                 if (muteMusicStreamJob == null && hideAssistantCue) {
                     muteMusicStreamJob = muteMusicStream()
                 }
@@ -106,14 +109,19 @@ class GAKeyOverrider(
         var timeDelta = System.currentTimeMillis() - assistButtonLastPressedTime
         Timber.d("timeDelta : $timeDelta")
         if (event?.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED &&
-            ((event.className == OPA_ACTIVITY_CLASS_NAME && System.currentTimeMillis() - assistButtonLastPressedTime <= 1000) || 
-             event.className == OPA_ACTIVITY_CLASS_NAME_DISABLED_ASSISTANT)
+            (event.className == OPA_ACTIVITY_CLASS_NAME  || event.className == OPA_ACTIVITY_CLASS_NAME_DISABLED_ASSISTANT) &&
+            System.currentTimeMillis() - assistButtonLastPressedTime <= 1000
         ) {
             Timber.d("Opa on foreground after Assist Button event")
-            if (keyguardManager.isKeyguardLocked) {
-                onOpaLaunchedAboveKeyguard()
-            } else {
-                onOpaLaunched()
+            if (!assistButtonHandled) {
+                assistButtonHandled = true
+                if (keyguardManager.isKeyguardLocked) {
+                    onOpaLaunchedAboveKeyguard()
+                } else {
+                    onOpaLaunched()
+                }
+            } else if (customAction is MediaKeyAction){
+                service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
             }
         }
     }
@@ -213,6 +221,7 @@ class GAKeyOverrider(
 
     companion object {
         private const val ASSISTANT_LAUNCHED_CUE = "WindowManager: startAssist launchMode=1"
+        private const val ASSISTANT_LAUNCHED_CUE_DISABLED_ASSISTANT = "GAKeyEventHandler: launchAssistGuideActivity"
         private const val OPA_ACTIVITY_CLASS_NAME = "com.google.android.apps.gsa.staticplugins.opa.OpaActivity"
         private const val OPA_ACTIVITY_CLASS_NAME_DISABLED_ASSISTANT = "com.google.android.apps.gsa.velour.dynamichosts.TransparentVelvetDynamicHostActivity"
         
