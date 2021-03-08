@@ -161,21 +161,18 @@ class GAKeyOverrider(
 
     private fun onOpaLaunched() {
         customAction?.let {
-            if (service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)) {
-                Timber.d("Back action dispatched, launching action $it")
-                when (it) {
-                    is IntentAction -> {
-                        lifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
-                            delay(100)
-                            it.runAction(service)
-                        }
-                    }
-                    is MediaKeyAction -> {
+            Timber.d("Launching action $it")
+            service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
+            when (it) {
+                is IntentAction -> {
+                    lifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
+                        delay(100)
                         it.runAction(service)
                     }
                 }
-            } else {
-                Timber.e("Failed to dispatch back action, retreat!")
+                is MediaKeyAction -> {
+                    it.runAction(service)
+                }
             }
         }
     }
@@ -185,25 +182,22 @@ class GAKeyOverrider(
         customAction?.let {
             Timber.d("With Keyguard running action $it")
             lifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
-                if (service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)) {
-                    when (it) {
-                        is IntentAction -> {
-                            delay(500)
-                            Timber.d("Starting keyguard launch activity")
-                            val i = Intent(service, GAKeyOverriderKeyguardActivity::class.java).apply {
-                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            }
-                            service.startActivity(i)
+                service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
+                when (it) {
+                    is IntentAction -> {
+                        delay(500)
+                        Timber.d("Starting keyguard launch activity")
+                        val i = Intent(service, GAKeyOverriderKeyguardActivity::class.java).apply {
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         }
-                        is MediaKeyAction -> {
-                            Timber.d("Starting media action")
-                            delay(200)
-                            it.runAction(service)
-                            service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
-                        }
+                        service.startActivity(i)
                     }
-                } else {
-                    Timber.e("Failed to dispatch back action, retreat!")
+                    is MediaKeyAction -> {
+                        Timber.d("Starting media action")
+                        delay(200)
+                        it.runAction(service)
+                        service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
+                    }
                 }
             }
         }
