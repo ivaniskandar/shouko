@@ -17,9 +17,11 @@
     <string name="flip_to_shush_desc_extra_screen_on">Note: Only works when the screen is on.</string>
     <string name="allow_dnd_access_toast">Please allow XPERI+ to access Do Not Disturb</string>
 
-    <string name="tab_title_apps">APPS</string>
-    <string name="tab_title_shortcuts">SHORTCUTS</string>
-    <string name="tab_title_media_key">MEDIA KEYS</string>
+    <string name="tab_title_apps">Apps</string>
+    <string name="tab_title_shortcuts">Shortcuts</string>
+    <string name="tab_title_other">Other</string>
+
+    <string name="category_title_media_key">Media Keys</string>
 
     <string name="no_touchy_dialog_title">Preventing accidental operations</string>
     <string name="no_touchy_dialog_text">Keep the sensor placed on top of the front panel clean and not covered to make it work properly.</string>
@@ -53,6 +55,7 @@
     <string name="media_key_stop">Stop</string>
     <string name="media_key_previous">Previous</string>
     <string name="media_key_next">Next</string>
+    <string name="flashlight_action_label">Flashlight</string>
 
     <string name="hide_assistant_cue_title">Hide Assistant sound cue</string>
     <string name="hide_assistant_cue_desc">Mutes media stream for a brief period of time after pressing the Assistant button</string>

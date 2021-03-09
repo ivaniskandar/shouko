@@ -7,6 +7,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.hardware.camera2.CameraAccessException
+import android.hardware.camera2.CameraCharacteristics
+import android.hardware.camera2.CameraManager
 import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.AudioPlaybackConfiguration
@@ -170,7 +173,7 @@ class GAKeyOverrider(
                         it.runAction(service)
                     }
                 }
-                is MediaKeyAction -> {
+                is MediaKeyAction, is FlashlightAction -> {
                     it.runAction(service)
                 }
             }
@@ -192,8 +195,7 @@ class GAKeyOverrider(
                         }
                         service.startActivity(i)
                     }
-                    is MediaKeyAction -> {
-                        Timber.d("Starting media action")
+                    is MediaKeyAction, is FlashlightAction -> {
                         delay(200)
                         it.runAction(service)
                         service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
@@ -336,6 +338,68 @@ class MediaKeyAction(private val key: Key) : Action() {
 }
 
 /**
+ * Custom action to toggle camera torch
+ */
+class FlashlightAction : Action() {
+    private var flashCameraId: String? = null
+    private var flashlightEnabled = false
+
+    private val torchCallback = object : CameraManager.TorchCallback() {
+        override fun onTorchModeChanged(cameraId: String, enabled: Boolean) {
+            if (cameraId == flashCameraId) {
+                flashlightEnabled = enabled
+            }
+        }
+    }
+
+    @Synchronized
+    override fun runAction(context: Context) {
+        val cameraManager = context.getSystemService(CameraManager::class.java)
+        try {
+            // Get cameraId and register torch callback
+            if (flashCameraId == null) {
+                flashCameraId = getCameraId(cameraManager)
+                cameraManager.registerTorchCallback(torchCallback, null)
+            }
+            cameraManager.setTorchMode(flashCameraId, !flashlightEnabled)
+        } catch (ignored: CameraAccessException) {
+        }
+    }
+
+    override fun getLabel(context: Context): String {
+        return context.getString(R.string.flashlight_action_label)
+    }
+
+    override fun toPlainString(): String {
+        return PLAIN_STRING
+    }
+
+    override fun toString(): String {
+        return toPlainString()
+    }
+
+    private fun getCameraId(cameraManager: CameraManager): String? {
+        for (id in cameraManager.cameraIdList) {
+            val c = cameraManager.getCameraCharacteristics(id)
+            val flashAvailable = c.get(CameraCharacteristics.FLASH_INFO_AVAILABLE) == true
+            val lensFacingBack = c.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_BACK
+            if (flashAvailable && lensFacingBack) {
+                return id
+            }
+        }
+        return null
+    }
+
+    companion object {
+        const val PLAIN_STRING = "FlashlightAction"
+
+        fun isSupported(context: Context): Boolean {
+            return context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)
+        }
+    }
+}
+
+/**
  * Base class for custom action
  */
 sealed class Action {
@@ -351,6 +415,9 @@ sealed class Action {
                 }
                 string.startsWith(MediaKeyAction.PLAIN_STRING_PREFIX) -> {
                     MediaKeyAction.fromPlainString(string)
+                }
+                string == FlashlightAction.PLAIN_STRING -> {
+                    FlashlightAction()
                 }
                 else -> null
             }

@@ -42,16 +42,14 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.*
 import dev.chrisbanes.accompanist.insets.*
 import xyz.ivaniskandar.shouko.R
-import xyz.ivaniskandar.shouko.feature.FlipToShush
-import xyz.ivaniskandar.shouko.feature.GAKeyOverrider
-import xyz.ivaniskandar.shouko.feature.IntentAction
-import xyz.ivaniskandar.shouko.feature.MediaKeyAction
+import xyz.ivaniskandar.shouko.feature.*
 import xyz.ivaniskandar.shouko.service.TadanoAccessibilityService
 import xyz.ivaniskandar.shouko.ui.*
 import xyz.ivaniskandar.shouko.ui.theme.ShoukoTheme
 import xyz.ivaniskandar.shouko.util.GITHUB_REPO_INTENT
 import xyz.ivaniskandar.shouko.util.Prefs
 import xyz.ivaniskandar.shouko.util.setAsAssistantAction
+import java.util.*
 import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
@@ -238,7 +236,11 @@ class MainActivity : AppCompatActivity() {
         onSettingsDialogDismissRequest: () -> Unit
     ) {
         var selectedTabIndex by remember { mutableStateOf(0) }
-        val titles = listOf(R.string.tab_title_apps, R.string.tab_title_shortcuts, R.string.tab_title_media_key)
+        val titles = listOf(
+            R.string.tab_title_apps,
+            R.string.tab_title_shortcuts,
+            R.string.tab_title_other
+        )
         Column {
             TabRow(
                 selectedTabIndex = selectedTabIndex,
@@ -251,7 +253,7 @@ class MainActivity : AppCompatActivity() {
                         selected = selectedTabIndex == index,
                         onClick = { selectedTabIndex = index },
                         text = {
-                            Text(text = stringResource(id = title))
+                            Text(text = stringResource(id = title).toUpperCase(Locale.getDefault()))
                         },
                         unselectedContentColor = MaterialTheme.colors.onBackground.copy(alpha = ContentAlpha.medium)
                     )
@@ -319,11 +321,23 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 2 -> {
+                    val context = LocalContext.current
                     LazyColumn(contentPadding = LocalWindowInsets.current.navigationBars.toPaddingValues()) {
+                        item { CategoryHeader(title = stringResource(id = R.string.category_title_media_key)) }
                         items(MediaKeyAction.Key.values()) { item ->
                             MediaKeyRow(key = item) {
                                 prefs.assistButtonAction = it
                                 navController.popBackStack()
+                            }
+                        }
+
+                        item { CategoryHeader(title = stringResource(id = R.string.tab_title_other), divider = true) }
+                        if (FlashlightAction.isSupported(context)) {
+                            item {
+                                FlashlightRow {
+                                    prefs.assistButtonAction = FlashlightAction()
+                                    navController.popBackStack()
+                                }
                             }
                         }
                     }
