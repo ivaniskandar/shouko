@@ -137,7 +137,13 @@ class GAKeyOverrider(
             if (!isActive) {
                 Timber.d("Enabling logcat observer")
                 Shell.sh("logcat -c").exec()
-                Shell.sh("logcat").to(logcatCallback).submit()
+                Shell.sh("logcat").to(logcatCallback).submit {
+                    Timber.d("Logcat observer stopped")
+                    isActive = false
+                    if (lifecycleOwner.lifecycle.currentState == Lifecycle.State.STARTED) {
+                        start() // Restart when needed
+                    }
+                }
                 isActive = true
             }
         } else {
