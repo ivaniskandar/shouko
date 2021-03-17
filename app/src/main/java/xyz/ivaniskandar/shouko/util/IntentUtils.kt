@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_VIEW
 import android.net.Uri
+import timber.log.Timber
 import xyz.ivaniskandar.shouko.feature.IntentAction
 
 val RELEASES_PAGE_INTENT = Intent(ACTION_VIEW, Uri.parse("https://github.com/ivaniskandar/shouko/releases/latest"))
@@ -17,11 +18,14 @@ val RELEASES_PAGE_INTENT = Intent(ACTION_VIEW, Uri.parse("https://github.com/iva
 @Suppress("DEPRECATION")
 fun Intent.setAsAssistantAction(prefs: Prefs) {
     if (!isValidExtraType(Intent.EXTRA_SHORTCUT_INTENT, Intent::class.java)) {
+        Timber.e("Returned intent doesn't have shortcut intent extra!")
         return
     }
+    val name = getStringExtra(Intent.EXTRA_SHORTCUT_NAME)
+    Timber.d("Preparing to save intent action with label $name")
     val intent = Intent(getParcelableExtra(Intent.EXTRA_SHORTCUT_INTENT)).apply {
         // For UI
-        putExtra(Intent.EXTRA_SHORTCUT_NAME, getStringExtra(Intent.EXTRA_SHORTCUT_NAME))
+        putExtra(Intent.EXTRA_SHORTCUT_NAME, name)
     }
     prefs.assistButtonAction = IntentAction(intent)
 }
