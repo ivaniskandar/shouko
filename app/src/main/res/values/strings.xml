@@ -2,10 +2,10 @@
     <string name="app_name" translatable="false">XPERI+</string>
     <string name="accessibility_service_desc">Run features and dispatch button action when needed.</string>
 
-    <string name="assistant_launch_selection_title">Assistant button action</string>
+    <string name="assistant_button_title">Assistant Button</string>
+    <string name="assistant_launch_selection_title">Custom action</string>
     <string name="assistant_action_select_default_value">Default</string>
-    <string name="assistant_action_not_supported">Not supported</string>
-    <string name="assistant_action_reset">Reset action to default</string>
+    <string name="assistant_action_reset">Reset to default</string>
     <string name="assistant_action_reset_toast">Action reset to default.</string>
     <string name="assistant_action_save_failed_toast">Failed to save selection.</string>
 
@@ -31,15 +31,18 @@
     <string name="button_open_settings">OPEN SETTINGS</string>
     <string name="logs_permission_prompt_title">Missing READ_LOGS permission</string>
     <string name="logs_permission_prompt_desc">READ_LOGS permission is needed to detect Assistant button triggers.</string>
+    <string name="write_secure_settings_permission_prompt_title">Missing WRITE_SECURE_SETTINGS permission</string>
+    <string name="write_secure_settings_permission_prompt_desc">WRITE_SECURE_SETTINGS permission is used to disable Assistant Button when needed.</string>
     <string name="button_grant_permission">GRANT PERMISSION</string>
 
     <string name="read_logs_permission_setup_title">READ_LOGS Permission Needed</string>
-    <string name="read_logs_permission_setup_desc_root">To detect Assistant Button event, READ_LOGS permission is needed. You can use root to grant this permission.</string>
-    <string name="read_logs_permission_setup_desc_noroot">READ_LOGS permission is needed to detect Assistant Button event. To grant this permission, do the following:\n\n1. Setup ADB on your computer and phone\n2. Connect your phone to your computer\n3. Run this command on your computer Terminal or Command Prompt in one line:</string>
-    <string name="read_logs_permission_setup_desc_noroot_adb_link_label">Setup ADB on your computer and phone</string>  <!-- Label for annotated link inside read_logs_permission_setup_desc_noroot. -->
+    <string name="write_secure_settings_permission_setup_title">WRITE_SECURE_SETTINGS Permission Needed</string>
+    <string name="shell_permission_setup_desc_root">Root will be used to grant this permission.</string>
+    <string name="shell_permission_setup_desc_noroot">To grant this permission, do the following:\n\n1. Setup ADB on your computer and phone\n2. Connect your phone to your computer\n3. Run this command on your computer Terminal or Command Prompt in one line:</string>
+    <string name="shell_permission_setup_desc_noroot_adb_link_label">Setup ADB on your computer and phone</string>  <!-- Label for annotated link inside read_logs_permission_setup_desc_noroot. -->
     <string name="setup_adb_link" translatable="false">https://kutt.it/SetupADB</string>
-    <string name="read_logs_permission_setup_command_card_caption">Tap the card to share command</string>
-    <string name="read_logs_permission_setup_desc_noroot_extra">The app will restart after the READ_LOGS permission is granted.</string>
+    <string name="shell_permission_setup_command_card_caption">Tap the card to share command</string>
+    <string name="shell_permission_setup_desc_extra">The app will restart after the permission is granted.</string>
 
     <string name="tadano_tile_service_notif_channel_desc">Used for showing mandatory foreground service notification. Can be hidden safely.</string>
     <string name="tadano_tile_service_notif_title">XPERI+ tile service</string>
@@ -66,4 +69,7 @@
     <string name="tea_boarding_desc">Listen to music on The Tube with your phone screen locked for free. Just block the proximity sensor and see the magic happens.</string>
     <string name="button_boarding_acknowledgement">GOT IT</string>
     <string name="button_continue">CONTINUE</string>
+
+    <string name="check_for_update">Check for updates</string>
+    <string name="off">Off</string>
 </resources>

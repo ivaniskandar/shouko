@@ -2,10 +2,11 @@ package xyz.ivaniskandar.shouko.util
 
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.ACTION_VIEW
 import android.net.Uri
 import xyz.ivaniskandar.shouko.feature.IntentAction
 
-val GITHUB_REPO_INTENT = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/ivaniskandar/shouko"))
+val RELEASES_PAGE_INTENT = Intent(ACTION_VIEW, Uri.parse("https://github.com/ivaniskandar/shouko/releases/latest"))
 
 /**
  * Sets an intent as the custom Assistant button action.

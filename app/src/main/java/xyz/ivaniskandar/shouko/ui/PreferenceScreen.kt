@@ -81,6 +81,8 @@ fun PreferenceItemPreview() {
     ShoukoTheme {
         Surface(color = MaterialTheme.colors.background) {
             Column {
+                ReadLogsCard(onButtonClicked = {})
+                WriteSettingsCard(onButtonClicked = {})
                 Preference(title = "Preference", subtitle = "With subtitle") {}
                 Preference(title = "Preference") {}
                 SwitchPreference(title = "Switch preference", subtitle = "With subtitle") {}
@@ -130,7 +132,13 @@ fun AccessibilityServiceCard(visible: Boolean = true, onButtonClicked: () -> Uni
 }
 
 @Composable
-fun ReadLogsCard(visible: Boolean = true, onButtonClicked: () -> Unit) {
+fun BaseSettingsCard(
+    title: String,
+    description: String,
+    buttonLabel: String,
+    visible: Boolean = true,
+    onButtonClicked: () -> Unit
+) {
     if (visible) {
         Card(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
@@ -142,28 +150,41 @@ fun ReadLogsCard(visible: Boolean = true, onButtonClicked: () -> Unit) {
                     .fillMaxWidth()
             ) {
                 CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high) {
-                    Text(
-                        text = stringResource(R.string.logs_permission_prompt_title),
-                        style = MaterialTheme.typography.subtitle1
-                    )
+                    Text(text = title, style = MaterialTheme.typography.subtitle1)
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                    Text(
-                        text = stringResource(R.string.logs_permission_prompt_desc),
-                        style = MaterialTheme.typography.body2
-                    )
+                    Text(text = description, style = MaterialTheme.typography.body2)
                 }
                 Spacer(modifier = Modifier.height(24.dp))
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
                     TextButton(onClick = onButtonClicked) {
-                        Text(
-                            text = stringResource(R.string.button_grant_permission),
-                            style = MaterialTheme.typography.button
-                        )
+                        Text(text = buttonLabel, style = MaterialTheme.typography.button)
                     }
                 }
             }
         }
     }
+}
+
+@Composable
+fun ReadLogsCard(visible: Boolean = true, onButtonClicked: () -> Unit) {
+    BaseSettingsCard(
+        title = stringResource(id = R.string.logs_permission_prompt_title),
+        description = stringResource(id = R.string.logs_permission_prompt_desc),
+        buttonLabel = stringResource(id = R.string.button_grant_permission),
+        visible = visible,
+        onButtonClicked = onButtonClicked
+    )
+}
+
+@Composable
+fun WriteSettingsCard(visible: Boolean = true, onButtonClicked: () -> Unit) {
+    BaseSettingsCard(
+        title = stringResource(id = R.string.write_secure_settings_permission_prompt_title),
+        description = stringResource(id = R.string.write_secure_settings_permission_prompt_desc),
+        buttonLabel = stringResource(id = R.string.button_grant_permission),
+        visible = visible,
+        onButtonClicked = onButtonClicked
+    )
 }

@@ -7,12 +7,17 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.database.ContentObserver
 import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
 import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.AudioPlaybackConfiguration
+import android.net.Uri
+import android.os.Handler
+import android.os.Looper
+import android.provider.Settings
 import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
 import androidx.lifecycle.*
@@ -59,6 +64,9 @@ import java.net.URISyntaxException
  * will be called first to request unlock and launches the custom
  * action when user unlock completed.
  *
+ * Also supports completely disabling the button as part of Game
+ * Enhancer.
+ *
  * @see GAKeyOverriderKeyguardActivity
  * @see Action
  */
@@ -72,11 +80,28 @@ class GAKeyOverrider(
 
     private var customAction = prefs.assistButtonAction
     private var hideAssistantCue = prefs.hideAssistantCue
+    private var buttonEnabled = prefs.assistButtonEnabled
 
     private var isActive = false
     private val isReady: Boolean
-        get() = customAction != null &&
+        get() = buttonEnabled && customAction != null &&
                 service.checkSelfPermission(Manifest.permission.READ_LOGS) == PackageManager.PERMISSION_GRANTED
+
+    // When this observer is registered, the assistant button will always be disabled.
+    private val gaKeyDisabler = object : ContentObserver(Handler(Looper.myLooper())) {
+        override fun onChange(selfChange: Boolean, uri: Uri?) {
+            super.onChange(selfChange, uri)
+            if (uri?.lastPathSegment == GA_KEY_DISABLED_GLOBAL_SETTING_KEY) {
+                isButtonSystemDisabled = true
+            }
+        }
+    }
+    private var isGAKeyDisablerRegistered = false
+    private var isButtonSystemDisabled: Boolean
+        get() = Settings.Global.getInt(service.contentResolver, GA_KEY_DISABLED_GLOBAL_SETTING_KEY) == 1
+        set(value) {
+            Settings.Global.putInt(service.contentResolver, GA_KEY_DISABLED_GLOBAL_SETTING_KEY, if (value) 1 else 0)
+        }
 
     private var assistButtonPressHandled = true
 
@@ -111,11 +136,13 @@ class GAKeyOverrider(
     @Synchronized
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun start() {
+        updateGAKeyDisabler(!buttonEnabled)
         updateOpaOverrider(isReady)
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun stop() {
+        updateGAKeyDisabler(false)
         updateOpaOverrider(false)
     }
 
@@ -129,6 +156,26 @@ class GAKeyOverrider(
             } else {
                 onOpaLaunched()
             }
+        }
+    }
+
+    private fun updateGAKeyDisabler(state: Boolean) {
+        if (state) {
+            if (!isGAKeyDisablerRegistered) {
+                Timber.d("Registering Assist button disabler")
+                isButtonSystemDisabled = true
+                service.contentResolver.registerContentObserver(
+                    Settings.Global.getUriFor(GA_KEY_DISABLED_GLOBAL_SETTING_KEY),
+                    false,
+                    gaKeyDisabler
+                )
+                isGAKeyDisablerRegistered = true
+            }
+        } else if (isGAKeyDisablerRegistered) {
+            Timber.d("Unregistering Assist Button disabler")
+            service.contentResolver.unregisterContentObserver(gaKeyDisabler)
+            isButtonSystemDisabled = false
+            isGAKeyDisablerRegistered = false
         }
     }
 
@@ -232,9 +279,10 @@ class GAKeyOverrider(
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when (key) {
-            Prefs.ASSIST_BUTTON_ACTION, Prefs.HIDE_ASSISTANT_CUE -> {
+            Prefs.ASSIST_BUTTON_ACTION, Prefs.HIDE_ASSISTANT_CUE, Prefs.ASSIST_BUTTON_ENABLED -> {
                 customAction = prefs.assistButtonAction
                 hideAssistantCue = prefs.hideAssistantCue
+                buttonEnabled = prefs.assistButtonEnabled
                 start()
             }
         }
@@ -249,6 +297,8 @@ class GAKeyOverrider(
         private const val ASSISTANT_LAUNCHED_CUE = "WindowManager: startAssist launchMode=1"
         private const val ASSISTANT_GUIDE_LAUNCHED_CUE = "GAKeyEventHandler: launchAssistGuideActivity"
         private const val GOOGLE_PACKAGE_NAME = "com.google.android.googlequicksearchbox"
+
+        private const val GA_KEY_DISABLED_GLOBAL_SETTING_KEY = "somc.game_enhancer_gab_key_disabled"
 
         // Only supports Xperia 5 II
         val isSupported = DeviceModel.isPDX206

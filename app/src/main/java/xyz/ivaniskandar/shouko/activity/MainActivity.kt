@@ -1,5 +1,6 @@
 package xyz.ivaniskandar.shouko.activity
 
+import android.Manifest
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -8,13 +9,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.Info
-import androidx.compose.material.icons.rounded.Settings
-import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -23,10 +25,11 @@ import androidx.navigation.compose.*
 import dev.chrisbanes.accompanist.insets.ProvideWindowInsets
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
 import dev.chrisbanes.accompanist.insets.statusBarsPadding
+import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.ui.*
 import xyz.ivaniskandar.shouko.ui.theme.ShoukoTheme
-import xyz.ivaniskandar.shouko.util.GITHUB_REPO_INTENT
 import xyz.ivaniskandar.shouko.util.Prefs
+import xyz.ivaniskandar.shouko.util.isRootAvailable
 import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
@@ -38,7 +41,6 @@ class MainActivity : AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             val navController = rememberNavController()
-            var showAssistantActionSettings by rememberSaveable { mutableStateOf(false) }
             ShoukoTheme {
                 ProvideWindowInsets {
                     Scaffold(
@@ -61,38 +63,42 @@ class MainActivity : AppCompatActivity() {
                                         }
                                     }
                                 } else null,
-                                actions = {
-                                    when (currentRoute) {
-                                        ROUTE_HOME -> {
-                                            IconButton(onClick = { startActivity(GITHUB_REPO_INTENT) }) {
-                                                Icon(imageVector = Icons.Rounded.Info, contentDescription = null)
-                                            }
-                                        }
-                                        ROUTE_ASSISTANT_LAUNCH_SELECTION -> {
-                                            IconButton(onClick = { showAssistantActionSettings = true }) {
-                                                Icon(imageVector = Icons.Rounded.Settings, contentDescription = null)
-                                            }
-                                        }
-                                    }
-                                },
+                                actions = { MainActivityActions(prefs = prefs, navController = navController) },
                                 backgroundColor = MaterialTheme.colors.background,
                                 elevation = 0.dp
                             )
                         },
                     ) {
-                        NavHost(navController, startDestination = ROUTE_HOME) {
+                        val rootAvailable = remember { isRootAvailable }
+                        NavHost(navController = navController, startDestination = ROUTE_HOME) {
                             composable(ROUTE_HOME) { Home(prefs, navController) }
                             composable(ROUTE_READ_LOGS_PERMISSION_SETUP) {
-                                ReadLogsPermissionSetup {
+                                PermissionSetup(
+                                    title = stringResource(id = R.string.read_logs_permission_setup_title),
+                                    permissionName = Manifest.permission.READ_LOGS,
+                                    isRootAvailable = rootAvailable
+                                ) {
                                     finishAffinity()
                                     startActivity(intent)
                                     exitProcess(0)
                                 }
                             }
-                            composable(ROUTE_ASSISTANT_LAUNCH_SELECTION) {
-                                AssistantActionSelection(viewModel, prefs, navController, showAssistantActionSettings) {
-                                    showAssistantActionSettings = false
+                            composable(ROUTE_WRITE_SECURE_SETTINGS_PERMISSION_SETUP) {
+                                PermissionSetup(
+                                    title = stringResource(id = R.string.write_secure_settings_permission_setup_title),
+                                    permissionName = Manifest.permission.WRITE_SECURE_SETTINGS,
+                                    isRootAvailable = rootAvailable
+                                ) {
+                                    finishAffinity()
+                                    startActivity(intent)
+                                    exitProcess(0)
                                 }
+                            }
+                            composable(ROUTE_ASSISTANT_BUTTON_SETTINGS) {
+                                AssistantButtonSettings(prefs, navController)
+                            }
+                            composable(ROUTE_ASSISTANT_LAUNCH_SELECTION) {
+                                AssistantActionSelection(viewModel, prefs, navController)
                             }
                         }
                     }

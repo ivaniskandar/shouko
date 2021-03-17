@@ -13,6 +13,16 @@ class Prefs(context: Context) {
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
     /**
+     * App reference for Assistant button main switch. If false the listener will make
+     * sure global settings somc.game_enhancer_gab_key_disabled is 1.
+     *
+     * @see xyz.ivaniskandar.shouko.feature.GAKeyOverrider
+     */
+    var assistButtonEnabled: Boolean
+        get() = sharedPreferences.getBoolean(ASSIST_BUTTON_ENABLED, true)
+        set(value) = sharedPreferences.edit(commit = true) { putBoolean(ASSIST_BUTTON_ENABLED, value) }
+
+    /**
      * Action to run when assistant button is pressed
      *
      * @see xyz.ivaniskandar.shouko.feature.GAKeyOverrider
@@ -72,6 +82,7 @@ class Prefs(context: Context) {
     }
 
     companion object {
+        const val ASSIST_BUTTON_ENABLED = "assist_button_enabled"
         const val ASSIST_BUTTON_ACTION = "assist_button_action"
         const val HIDE_ASSISTANT_CUE = "hide_assistant_cue"
         const val PREVENT_POCKET_TOUCH = "prevent_pocket_touch"

@@ -1,6 +1,6 @@
 package xyz.ivaniskandar.shouko.ui
 
-import android.Manifest.permission.READ_LOGS
+import android.Manifest.permission.*
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.NotificationManager
@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -24,10 +26,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.KEY_ROUTE
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigate
 import dev.chrisbanes.accompanist.insets.LocalWindowInsets
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
@@ -36,37 +40,98 @@ import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.activity.MainActivityViewModel
 import xyz.ivaniskandar.shouko.feature.*
 import xyz.ivaniskandar.shouko.service.TadanoAccessibilityService
+import xyz.ivaniskandar.shouko.util.RELEASES_PAGE_INTENT
 import xyz.ivaniskandar.shouko.util.Prefs
 import xyz.ivaniskandar.shouko.util.setAsAssistantAction
 import java.util.*
 
 const val ROUTE_HOME = "home"
 const val ROUTE_READ_LOGS_PERMISSION_SETUP = "read_logs_permission_setup"
+const val ROUTE_WRITE_SECURE_SETTINGS_PERMISSION_SETUP = "write_secure_settings_permission_setup"
+const val ROUTE_ASSISTANT_BUTTON_SETTINGS = "assistant_button_settings"
 const val ROUTE_ASSISTANT_LAUNCH_SELECTION = "assistant_launch_selection"
 
 @Composable
 fun getAppBarTitle(currentRoute: String?): String {
     return when (currentRoute) {
+        ROUTE_ASSISTANT_BUTTON_SETTINGS -> stringResource(id = R.string.assistant_button_title)
         ROUTE_ASSISTANT_LAUNCH_SELECTION -> stringResource(id = R.string.assistant_launch_selection_title)
-        ROUTE_READ_LOGS_PERMISSION_SETUP -> ""
+        ROUTE_READ_LOGS_PERMISSION_SETUP, ROUTE_WRITE_SECURE_SETTINGS_PERMISSION_SETUP -> ""
         else -> stringResource(id = R.string.app_name)
     }
 }
 
 @Composable
+fun MainActivityActions(
+    prefs: Prefs,
+    navController: NavController
+) {
+    val context = LocalContext.current
+    var showPopup by remember { mutableStateOf(false) }
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.arguments?.getString(KEY_ROUTE)
+
+    val menuItems = mutableListOf<@Composable ColumnScope.() -> Unit>()
+    when (currentRoute) {
+        ROUTE_HOME -> {
+            menuItems += {
+                DropdownMenuItem(
+                    onClick = {
+                        context.startActivity(RELEASES_PAGE_INTENT)
+                        showPopup = false
+                    }
+                ) {
+                    Text(
+                        text = stringResource(R.string.check_for_update),
+                        style = MaterialTheme.typography.body1
+                    )
+                }
+            }
+        }
+        ROUTE_ASSISTANT_LAUNCH_SELECTION -> {
+            menuItems += {
+                DropdownMenuItem(
+                    onClick = {
+                        prefs.assistButtonAction = null
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.assistant_action_reset_toast),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        showPopup = false
+                        navController.popBackStack()
+                    }
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.assistant_action_reset),
+                        style = MaterialTheme.typography.body1
+                    )
+                }
+            }
+        }
+    }
+
+    if (menuItems.isNotEmpty()) {
+        IconButton(onClick = { showPopup = true }) {
+            Icon(imageVector = Icons.Rounded.MoreVert, contentDescription = null)
+        }
+        DropdownMenu(
+            expanded = showPopup,
+            onDismissRequest = { showPopup = false },
+            modifier = Modifier.sizeIn(minWidth = 196.dp, maxWidth = 196.dp),
+            offset = DpOffset(8.dp, 0.dp),
+            content = { menuItems.forEach { it() } }
+        )
+    }
+}
+
+@Composable
 fun Home(
-    prefs: Prefs = Prefs(LocalContext.current),
+    prefs: Prefs,
     navController: NavController
 ) {
     val context = LocalContext.current
     LazyColumn(contentPadding = LocalWindowInsets.current.navigationBars.toPaddingValues()) {
-        item {
-            ReadLogsCard(
-                visible = GAKeyOverrider.isSupported && context.checkSelfPermission(READ_LOGS) != PERMISSION_GRANTED
-            ) {
-                navController.navigate(ROUTE_READ_LOGS_PERMISSION_SETUP)
-            }
-        }
         item {
             AccessibilityServiceCard(visible = !TadanoAccessibilityService.isActive) {
                 val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
@@ -74,20 +139,20 @@ fun Home(
                 context.startActivity(intent)
             }
         }
-        item {
-            Preference(
-                title = stringResource(id = R.string.assistant_launch_selection_title),
-                subtitle = prefs.assistButtonAction?.getLabel(context) ?: stringResource(
-                    id = if (GAKeyOverrider.isSupported) {
-                        R.string.assistant_action_select_default_value
+        if (GAKeyOverrider.isSupported) {
+            item {
+                Preference(
+                    title = stringResource(id = R.string.assistant_button_title),
+                    subtitle = if (!prefs.assistButtonEnabled) {
+                        stringResource(R.string.off)
                     } else {
-                        R.string.assistant_action_not_supported
-                    }
-                ),
-                enabled = GAKeyOverrider.isSupported && TadanoAccessibilityService.isActive &&
-                        context.checkSelfPermission(READ_LOGS) == PERMISSION_GRANTED
-            ) {
-                navController.navigate(ROUTE_ASSISTANT_LAUNCH_SELECTION)
+                        prefs.assistButtonAction?.getLabel(context)
+                            ?: stringResource(id = R.string.assistant_action_select_default_value)
+                    },
+                    enabled = TadanoAccessibilityService.isActive
+                ) {
+                    navController.navigate(ROUTE_ASSISTANT_BUTTON_SETTINGS)
+                }
             }
         }
         item {
@@ -162,12 +227,64 @@ fun Home(
 }
 
 @Composable
+fun AssistantButtonSettings(
+    prefs: Prefs,
+    navController: NavController
+) {
+    val context = LocalContext.current
+    var buttonEnabled by remember { mutableStateOf(prefs.assistButtonEnabled) }
+    LazyColumn(contentPadding = LocalWindowInsets.current.navigationBars.toPaddingValues()) {
+        item {
+            ReadLogsCard(visible = context.checkSelfPermission(READ_LOGS) != PERMISSION_GRANTED) {
+                navController.navigate(ROUTE_READ_LOGS_PERMISSION_SETUP)
+            }
+        }
+        item {
+            WriteSettingsCard(visible = context.checkSelfPermission(WRITE_SECURE_SETTINGS) != PERMISSION_GRANTED) {
+                navController.navigate(ROUTE_WRITE_SECURE_SETTINGS_PERMISSION_SETUP)
+            }
+        }
+        item {
+            SwitchPreference(
+                title = stringResource(id = R.string.assistant_button_title),
+                checked = buttonEnabled,
+                enabled = context.checkSelfPermission(WRITE_SECURE_SETTINGS) == PERMISSION_GRANTED
+            ) {
+                prefs.assistButtonEnabled = it
+                buttonEnabled = it
+            }
+        }
+        item {
+            Preference(
+                title = stringResource(id = R.string.assistant_launch_selection_title),
+                subtitle = prefs.assistButtonAction?.getLabel(context)
+                    ?: stringResource(id = R.string.assistant_action_select_default_value),
+                enabled = buttonEnabled && context.checkSelfPermission(READ_LOGS) == PERMISSION_GRANTED
+            ) {
+                navController.navigate(ROUTE_ASSISTANT_LAUNCH_SELECTION)
+            }
+        }
+        item {
+            var hideAssistantCue by remember { mutableStateOf(prefs.hideAssistantCue) }
+            SwitchPreference(
+                title = stringResource(R.string.hide_assistant_cue_title),
+                subtitle = stringResource(R.string.hide_assistant_cue_desc),
+                checked = hideAssistantCue,
+                enabled = buttonEnabled && prefs.assistButtonAction != null,
+                onCheckedChanged = {
+                    prefs.hideAssistantCue = it
+                    hideAssistantCue = it
+                }
+            )
+        }
+    }
+}
+
+@Composable
 fun AssistantActionSelection(
     mainViewModel: MainActivityViewModel = viewModel(),
-    prefs: Prefs = Prefs(LocalContext.current),
-    navController: NavController,
-    showSettingsDialog: Boolean,
-    onSettingsDialogDismissRequest: () -> Unit
+    prefs: Prefs,
+    navController: NavController
 ) {
     var selectedTabIndex by remember { mutableStateOf(0) }
     val titles = listOf(
@@ -274,50 +391,6 @@ fun AssistantActionSelection(
                             }
                         }
                     }
-                }
-            }
-        }
-    }
-
-    if (showSettingsDialog) {
-        AssistantActionSettingsDialog(onDismissRequest = onSettingsDialogDismissRequest)
-    }
-}
-
-@Composable
-fun AssistantActionSettingsDialog(
-    prefs: Prefs = Prefs(LocalContext.current),
-    onDismissRequest: () -> Unit
-) {
-    Dialog(onDismissRequest = onDismissRequest) {
-        Surface(shape = MaterialTheme.shapes.medium, elevation = 24.dp) {
-            LazyColumn(contentPadding = PaddingValues(12.dp)) {
-                item {
-                    var hideAssistantCue by remember { mutableStateOf(prefs.hideAssistantCue) }
-                    SwitchPreference(
-                        title = stringResource(R.string.hide_assistant_cue_title),
-                        subtitle = stringResource(R.string.hide_assistant_cue_desc),
-                        checked = hideAssistantCue,
-                        onCheckedChanged = {
-                            prefs.hideAssistantCue = it
-                            hideAssistantCue = it
-                        }
-                    )
-                }
-                item {
-                    val context = LocalContext.current
-                    Preference(
-                        title = stringResource(R.string.assistant_action_reset),
-                        onPreferenceClick = {
-                            prefs.assistButtonAction = null
-                            Toast.makeText(
-                                context,
-                                context.getString(R.string.assistant_action_reset_toast),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            onDismissRequest()
-                        }
-                    )
                 }
             }
         }
