@@ -319,7 +319,7 @@ class IntentAction(private val intent: Intent) : Action() {
     }
 
     override fun toPlainString(): String {
-        return intent.toUri(0)
+        return PLAIN_STRING_PREFIX + intent.toUri(0)
     }
 
     override fun toString(): String {
@@ -327,11 +327,12 @@ class IntentAction(private val intent: Intent) : Action() {
     }
 
     companion object {
-        const val PLAIN_STRING_PREFIX = "#Intent;"
+        const val PLAIN_STRING_PREFIX = "IntentAction::"
 
         fun fromPlainString(string: String): IntentAction? {
             try {
-                val intent = Intent.parseUri(string, 0)
+                val intentUri = string.substringAfter(PLAIN_STRING_PREFIX, "null")
+                val intent = Intent.parseUri(intentUri, 0)
                 return IntentAction(intent)
             } catch (e: URISyntaxException) {
                 Timber.e(e, "Malformed intent uri $string")
