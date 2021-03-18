@@ -4,6 +4,7 @@ import android.Manifest.permission.*
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.NotificationManager
+import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager.*
 import android.net.Uri
@@ -38,26 +39,39 @@ import dev.chrisbanes.accompanist.insets.LocalWindowInsets
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
 import dev.chrisbanes.accompanist.insets.toPaddingValues
 import xyz.ivaniskandar.shouko.R
+import xyz.ivaniskandar.shouko.activity.EmptyShortcutActivity
 import xyz.ivaniskandar.shouko.activity.MainActivityViewModel
 import xyz.ivaniskandar.shouko.feature.*
 import xyz.ivaniskandar.shouko.service.TadanoAccessibilityService
-import xyz.ivaniskandar.shouko.util.RELEASES_PAGE_INTENT
-import xyz.ivaniskandar.shouko.util.Prefs
-import xyz.ivaniskandar.shouko.util.setAsAssistantAction
+import xyz.ivaniskandar.shouko.util.*
 import java.util.*
+
+const val LOCKSCREEN_SHORTCUT_SELECTION_KEY_ARG = "key"
 
 const val ROUTE_HOME = "home"
 const val ROUTE_READ_LOGS_PERMISSION_SETUP = "read_logs_permission_setup"
 const val ROUTE_WRITE_SECURE_SETTINGS_PERMISSION_SETUP = "write_secure_settings_permission_setup"
 const val ROUTE_ASSISTANT_BUTTON_SETTINGS = "assistant_button_settings"
 const val ROUTE_ASSISTANT_LAUNCH_SELECTION = "assistant_launch_selection"
+const val ROUTE_LOCKSCREEN_SHORTCUT_SETTINGS = "lockscreen_shortcut_settings"
+const val ROUTE_LOCKSCREEN_SHORTCUT_SELECTION = "lockscreen_shortcut_selection/{$LOCKSCREEN_SHORTCUT_SELECTION_KEY_ARG}"
 
 @Composable
-fun getAppBarTitle(currentRoute: String?): String {
-    return when (currentRoute) {
+fun getAppBarTitle(navController: NavController): String {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    return when (navBackStackEntry?.arguments?.getString(KEY_ROUTE)) {
         ROUTE_ASSISTANT_BUTTON_SETTINGS -> stringResource(id = R.string.assistant_button_title)
         ROUTE_ASSISTANT_LAUNCH_SELECTION -> stringResource(id = R.string.assistant_launch_selection_title)
-        ROUTE_READ_LOGS_PERMISSION_SETUP, ROUTE_WRITE_SECURE_SETTINGS_PERMISSION_SETUP -> ""
+        ROUTE_READ_LOGS_PERMISSION_SETUP,
+        ROUTE_WRITE_SECURE_SETTINGS_PERMISSION_SETUP -> ""
+        ROUTE_LOCKSCREEN_SHORTCUT_SETTINGS -> stringResource(id = R.string.lockscreen_shortcut_title)
+        ROUTE_LOCKSCREEN_SHORTCUT_SELECTION -> {
+            when (navBackStackEntry?.arguments?.getString(LOCKSCREEN_SHORTCUT_SELECTION_KEY_ARG)) {
+                LOCKSCREEN_RIGHT_BUTTON -> stringResource(id = R.string.lockscreen_shortcut_right)
+                LOCKSCREEN_LEFT_BUTTON -> stringResource(id = R.string.lockscreen_shortcut_left)
+                else -> stringResource(id = R.string.lockscreen_shortcut_title)
+            }
+        }
         else -> stringResource(id = R.string.app_name)
     }
 }
@@ -104,7 +118,24 @@ fun MainActivityActions(
                     }
                 ) {
                     Text(
-                        text = stringResource(id = R.string.assistant_action_reset),
+                        text = stringResource(id = R.string.reset_to_default),
+                        style = MaterialTheme.typography.body1
+                    )
+                }
+            }
+        }
+        ROUTE_LOCKSCREEN_SHORTCUT_SELECTION -> {
+            menuItems += {
+                DropdownMenuItem(
+                    onClick = {
+                        val key = navBackStackEntry?.arguments?.getString(LOCKSCREEN_SHORTCUT_SELECTION_KEY_ARG)
+                        Settings.Secure.putString(context.contentResolver, key, null)
+                        showPopup = false
+                        navController.popBackStack()
+                    }
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.reset_to_default),
                         style = MaterialTheme.typography.body1
                     )
                 }
@@ -213,6 +244,14 @@ fun Home(
             ) {
                 prefs.preventPocketTouchEnabled = it
                 preventPocketTouch = it
+            }
+        }
+        item {
+            Preference(
+                title = stringResource(R.string.lockscreen_shortcut_title),
+                subtitle = stringResource(R.string.lockscreen_shortcut_desc)
+            ) {
+                navController.navigate(ROUTE_LOCKSCREEN_SHORTCUT_SETTINGS)
             }
         }
     }
@@ -390,6 +429,113 @@ fun AssistantActionSelection(
                                 prefs.assistButtonAction = FlashlightAction()
                                 navController.popBackStack()
                             }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun LockscreenShortcutSettings(
+    navController: NavController
+) {
+    val context = LocalContext.current
+    ComponentName.unflattenFromString("")
+    LazyColumn(contentPadding = LocalWindowInsets.current.navigationBars.toPaddingValues()) {
+        item {
+            WriteSettingsCard(visible = context.checkSelfPermission(WRITE_SECURE_SETTINGS) != PERMISSION_GRANTED) {
+                navController.navigate(ROUTE_WRITE_SECURE_SETTINGS_PERMISSION_SETUP)
+            }
+        }
+        item {
+            Preference(
+                title = stringResource(R.string.lockscreen_shortcut_left),
+                subtitle = Settings.Secure.getString(context.contentResolver, LOCKSCREEN_LEFT_BUTTON)
+                    ?.toComponentName()?.loadLabel(context)
+                    ?: stringResource(id = R.string.assistant_action_select_default_value),
+                enabled = context.checkSelfPermission(READ_LOGS) == PERMISSION_GRANTED
+            ) {
+                navController.navigate(
+                    ROUTE_LOCKSCREEN_SHORTCUT_SELECTION
+                        .replace("{$LOCKSCREEN_SHORTCUT_SELECTION_KEY_ARG}", LOCKSCREEN_LEFT_BUTTON)
+                )
+            }
+        }
+        item {
+            Preference(
+                title = stringResource(R.string.lockscreen_shortcut_right),
+                subtitle = Settings.Secure.getString(context.contentResolver, LOCKSCREEN_RIGHT_BUTTON)
+                    ?.toComponentName()?.loadLabel(context)
+                    ?: stringResource(id = R.string.assistant_action_select_default_value),
+                enabled = context.checkSelfPermission(READ_LOGS) == PERMISSION_GRANTED
+            ) {
+                navController.navigate(
+                    ROUTE_LOCKSCREEN_SHORTCUT_SELECTION
+                        .replace("{$LOCKSCREEN_SHORTCUT_SELECTION_KEY_ARG}", LOCKSCREEN_RIGHT_BUTTON)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun LockscreenShortcutSelection(
+    mainViewModel: MainActivityViewModel = viewModel(),
+    navController: NavController,
+    settingsKey: String
+) {
+    var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
+    val titles = listOf(
+        R.string.tab_title_apps,
+        R.string.tab_title_other
+    )
+    Column {
+        TabRow(
+            selectedTabIndex = selectedTabIndex,
+            modifier = Modifier.navigationBarsPadding(bottom = false),
+            backgroundColor = MaterialTheme.colors.background,
+            contentColor = MaterialTheme.colors.primary
+        ) {
+            titles.forEachIndexed { index, title ->
+                Tab(
+                    selected = selectedTabIndex == index,
+                    onClick = { selectedTabIndex = index },
+                    text = {
+                        Text(text = stringResource(id = title).toUpperCase(Locale.getDefault()))
+                    },
+                    unselectedContentColor = MaterialTheme.colors.onBackground.copy(alpha = ContentAlpha.medium)
+                )
+            }
+        }
+        val context = LocalContext.current
+        when (selectedTabIndex) {
+            0 -> {
+                val appItems by mainViewModel.appsList.observeAsState()
+                if (appItems == null) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                } else {
+                    LazyColumn(contentPadding = LocalWindowInsets.current.navigationBars.toPaddingValues()) {
+                        items(appItems!!) { item ->
+                            ApplicationRow(item = item) {
+                                Settings.Secure.putString(context.contentResolver, settingsKey, it.flattenToString())
+                                navController.popBackStack()
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.navigationBarsPadding())
+                }
+            }
+            1 -> {
+                LazyColumn(contentPadding = LocalWindowInsets.current.navigationBars.toPaddingValues()) {
+                    item {
+                        DoNothingRow {
+                            val emptyCn = ComponentName(context, EmptyShortcutActivity::class.java)
+                            Settings.Secure.putString(context.contentResolver, settingsKey, emptyCn.flattenToString())
+                            navController.popBackStack()
                         }
                     }
                 }

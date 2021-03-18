@@ -5,7 +5,6 @@
     <string name="assistant_button_title">Assistant Button</string>
     <string name="assistant_launch_selection_title">Custom action</string>
     <string name="assistant_action_select_default_value">Default</string>
-    <string name="assistant_action_reset">Reset to default</string>
     <string name="assistant_action_reset_toast">Action reset to default.</string>
     <string name="assistant_action_save_failed_toast">Failed to save selection.</string>
 
@@ -32,7 +31,7 @@
     <string name="logs_permission_prompt_title">Missing READ_LOGS permission</string>
     <string name="logs_permission_prompt_desc">READ_LOGS permission is needed to detect Assistant button triggers.</string>
     <string name="write_secure_settings_permission_prompt_title">Missing WRITE_SECURE_SETTINGS permission</string>
-    <string name="write_secure_settings_permission_prompt_desc">WRITE_SECURE_SETTINGS permission is used to disable Assistant Button when needed.</string>
+    <string name="write_secure_settings_permission_prompt_desc">WRITE_SECURE_SETTINGS permission is used to disable Assistant Button when needed and set custom lockscreen shortcut.</string>
     <string name="button_grant_permission">GRANT PERMISSION</string>
 
     <string name="read_logs_permission_setup_title">READ_LOGS Permission Needed</string>
@@ -72,4 +71,11 @@
 
     <string name="check_for_update">Check for updates</string>
     <string name="off">Off</string>
+    <string name="reset_to_default">Reset to default</string>
+    <string name="do_nothing">Do nothing</string>
+
+    <string name="lockscreen_shortcut_title">Lockscreen shortcut</string>
+    <string name="lockscreen_shortcut_desc">Customize lockscreen shortcut</string>
+    <string name="lockscreen_shortcut_left">Left shortcut</string>
+    <string name="lockscreen_shortcut_right">Right shortcut</string>
 </resources>

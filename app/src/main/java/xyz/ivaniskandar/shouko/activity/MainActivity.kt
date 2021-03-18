@@ -25,6 +25,7 @@ import androidx.navigation.compose.*
 import dev.chrisbanes.accompanist.insets.ProvideWindowInsets
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
 import dev.chrisbanes.accompanist.insets.statusBarsPadding
+import timber.log.Timber
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.ui.*
 import xyz.ivaniskandar.shouko.ui.theme.ShoukoTheme
@@ -50,7 +51,7 @@ class MainActivity : AppCompatActivity() {
                             InsetAwareTopAppBar(
                                 title = {
                                     Text(
-                                        text = getAppBarTitle(currentRoute),
+                                        text = getAppBarTitle(navController = navController),
                                         color = MaterialTheme.colors.onBackground,
                                         textAlign = TextAlign.Center,
                                         maxLines = 2
@@ -99,6 +100,22 @@ class MainActivity : AppCompatActivity() {
                             }
                             composable(ROUTE_ASSISTANT_LAUNCH_SELECTION) {
                                 AssistantActionSelection(viewModel, prefs, navController)
+                            }
+                            composable(ROUTE_LOCKSCREEN_SHORTCUT_SETTINGS) {
+                                LockscreenShortcutSettings(navController)
+                            }
+                            composable(ROUTE_LOCKSCREEN_SHORTCUT_SELECTION) {
+                                val key = it.arguments?.getString(LOCKSCREEN_SHORTCUT_SELECTION_KEY_ARG)
+                                if (key != null) {
+                                    LockscreenShortcutSelection(
+                                        mainViewModel = viewModel,
+                                        navController = navController,
+                                        settingsKey = key
+                                    )
+                                } else {
+                                    Timber.e("Lockscreen shortcut settings key is not specified.")
+                                    navController.popBackStack()
+                                }
                             }
                         }
                     }

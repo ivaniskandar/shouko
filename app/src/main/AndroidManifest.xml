@@ -66,6 +66,13 @@
             android:noHistory="true"
             android:showWhenLocked="true"
             android:showOnLockScreen="true" />
+        <activity android:name=".activity.EmptyShortcutActivity"
+            android:icon="@drawable/blank_icon"
+            android:label="@string/do_nothing"
+            android:exported="true"
+            android:theme="@style/Theme.Shouko.Transparent"
+            android:excludeFromRecents="true"
+            android:noHistory="true" />
 
         <service android:name=".service.TadanoAccessibilityService"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"

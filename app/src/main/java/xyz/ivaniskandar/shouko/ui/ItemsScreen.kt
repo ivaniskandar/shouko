@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.FlashlightOn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -19,6 +20,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.feature.FlashlightAction
 import xyz.ivaniskandar.shouko.feature.MediaKeyAction
 import xyz.ivaniskandar.shouko.item.ApplicationItem
@@ -139,6 +141,35 @@ fun FlashlightRow(onClick: () -> Unit) {
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high) {
                 Text(
                     text = remember { FlashlightAction().getLabel(context) },
+                    style = MaterialTheme.typography.subtitle1
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun DoNothingRow(onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .clickable(onClick = onClick)
+            .padding(horizontal = 12.dp, vertical = 16.dp)
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = Icons.Rounded.Clear,
+            contentDescription = null,
+            modifier = RowIconModifier,
+            tint = MaterialTheme.colors.primary
+        )
+        Spacer(modifier = Modifier.width(24.dp))
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high) {
+                Text(
+                    text = stringResource(R.string.do_nothing),
                     style = MaterialTheme.typography.subtitle1
                 )
             }
