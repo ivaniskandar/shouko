@@ -78,4 +78,12 @@
     <string name="lockscreen_shortcut_desc">Customize lockscreen shortcut</string>
     <string name="lockscreen_shortcut_left">Left shortcut</string>
     <string name="lockscreen_shortcut_right">Right shortcut</string>
+
+    <string name="system_throttling_notif_channel_title">Thermal throttling notification</string>
+    <string name="system_throttling_notif_title_light">Phone is getting warm</string>
+    <string name="system_throttling_notif_title">Phone is overheating</string>
+    <string name="system_throttling_notif_text_light">Light throttling is applied to your phone to avoid it from overheating.</string>
+    <string name="system_throttling_notif_text_moderate">Your phone will automatically cool down, it may run slower until it cools down.</string>
+    <string name="system_throttling_notif_text_emergency">Your phone functionalities will be limited until your phone becomes cooler.</string>
+    <string name="system_throttling_notif_text_shutdown">Your phone will be shutdown immediately.</string>
 </resources>

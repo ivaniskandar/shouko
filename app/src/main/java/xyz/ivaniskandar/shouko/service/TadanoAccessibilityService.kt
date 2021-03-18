@@ -13,6 +13,7 @@ import xyz.ivaniskandar.shouko.feature.FlipToShush
 import xyz.ivaniskandar.shouko.feature.GAKeyOverrider
 import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper
 import xyz.ivaniskandar.shouko.feature.PocketNoTouchy
+import xyz.ivaniskandar.shouko.feature.ThermalThrottlingNotifier
 
 /**
  * General purpose service, features implemented in separate package.
@@ -29,6 +30,7 @@ class TadanoAccessibilityService : AccessibilityService(), LifecycleOwner {
     private var pocketNoTouchy: PocketNoTouchy? = null
     private var flipToShush: FlipToShush? = null
     private var lockscreenShortcutHelper: LockscreenShortcutHelper? = null
+    private var thermalThrottlingNotifier: ThermalThrottlingNotifier? = null
 
     override fun onServiceConnected() {
         dispatcher.onServicePreSuperOnBind()
@@ -52,6 +54,7 @@ class TadanoAccessibilityService : AccessibilityService(), LifecycleOwner {
         pocketNoTouchy = PocketNoTouchy(this, this)
         flipToShush = FlipToShush(this, this)
         lockscreenShortcutHelper = LockscreenShortcutHelper(this, this)
+        thermalThrottlingNotifier = ThermalThrottlingNotifier(this, this)
         dispatcher.onServicePreSuperOnCreate()
         super.onCreate()
         Timber.d("onCreate")
