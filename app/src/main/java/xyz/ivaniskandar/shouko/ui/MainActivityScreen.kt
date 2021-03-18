@@ -431,6 +431,12 @@ fun AssistantActionSelection(
                             }
                         }
                     }
+                    item {
+                        DoNothingRow {
+                            prefs.assistButtonAction = DoNothingAction()
+                            navController.popBackStack()
+                        }
+                    }
                 }
             }
         }

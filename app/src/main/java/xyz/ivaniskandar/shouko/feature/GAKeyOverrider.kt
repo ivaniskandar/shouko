@@ -226,7 +226,7 @@ class GAKeyOverrider(
                         it.runAction(service)
                     }
                 }
-                is MediaKeyAction, is FlashlightAction -> {
+                else -> {
                     it.runAction(service)
                 }
             }
@@ -248,7 +248,7 @@ class GAKeyOverrider(
                         }
                         service.startActivity(i)
                     }
-                    is MediaKeyAction, is FlashlightAction -> {
+                    else -> {
                         delay(200)
                         it.runAction(service)
                         service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
@@ -457,6 +457,27 @@ class FlashlightAction : Action() {
 }
 
 /**
+ * Launches nothing. Basically makes the Assistant button to be a wakeup button.
+ */
+class DoNothingAction : Action() {
+    override fun runAction(context: Context) {
+        // do nothing duh.
+    }
+
+    override fun getLabel(context: Context): String {
+        return context.getString(R.string.do_nothing)
+    }
+
+    override fun toPlainString(): String {
+        return PLAIN_STRING
+    }
+
+    companion object {
+        const val PLAIN_STRING = "DoNothingAction"
+    }
+}
+
+/**
  * Base class for custom action
  */
 sealed class Action {
@@ -476,7 +497,13 @@ sealed class Action {
                 string == FlashlightAction.PLAIN_STRING -> {
                     FlashlightAction()
                 }
-                else -> null
+                string == DoNothingAction.PLAIN_STRING -> {
+                    DoNothingAction()
+                }
+                else -> {
+                    Timber.e("Unrecognized string: $string")
+                    null
+                }
             }
         }
     }
