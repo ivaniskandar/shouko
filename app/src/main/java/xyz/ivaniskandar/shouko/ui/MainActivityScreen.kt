@@ -275,12 +275,12 @@ fun AssistantButtonSettings(
     var buttonEnabled by remember { mutableStateOf(prefs.assistButtonEnabled) }
     LazyColumn(contentPadding = LocalWindowInsets.current.navigationBars.toPaddingValues()) {
         item {
-            ReadLogsCard(visible = context.checkSelfPermission(READ_LOGS) != PERMISSION_GRANTED) {
+            ReadLogsCard(visible = !context.canReadSystemLogs) {
                 navController.navigate(ROUTE_READ_LOGS_PERMISSION_SETUP)
             }
         }
         item {
-            WriteSettingsCard(visible = context.checkSelfPermission(WRITE_SECURE_SETTINGS) != PERMISSION_GRANTED) {
+            WriteSettingsCard(visible = !context.canWriteSecureSettings) {
                 navController.navigate(ROUTE_WRITE_SECURE_SETTINGS_PERMISSION_SETUP)
             }
         }
@@ -288,7 +288,7 @@ fun AssistantButtonSettings(
             SwitchPreference(
                 title = stringResource(id = R.string.assistant_button_title),
                 checked = buttonEnabled,
-                enabled = context.checkSelfPermission(WRITE_SECURE_SETTINGS) == PERMISSION_GRANTED
+                enabled = context.canWriteSecureSettings
             ) {
                 prefs.assistButtonEnabled = it
                 buttonEnabled = it
@@ -299,7 +299,7 @@ fun AssistantButtonSettings(
                 title = stringResource(id = R.string.assistant_launch_selection_title),
                 subtitle = prefs.assistButtonAction?.getLabel(context)
                     ?: stringResource(id = R.string.assistant_action_select_default_value),
-                enabled = buttonEnabled && context.checkSelfPermission(READ_LOGS) == PERMISSION_GRANTED
+                enabled = buttonEnabled && context.canReadSystemLogs
             ) {
                 navController.navigate(ROUTE_ASSISTANT_LAUNCH_SELECTION)
             }
@@ -451,7 +451,7 @@ fun LockscreenShortcutSettings(
     ComponentName.unflattenFromString("")
     LazyColumn(contentPadding = LocalWindowInsets.current.navigationBars.toPaddingValues()) {
         item {
-            WriteSettingsCard(visible = context.checkSelfPermission(WRITE_SECURE_SETTINGS) != PERMISSION_GRANTED) {
+            WriteSettingsCard(visible = !context.canWriteSecureSettings) {
                 navController.navigate(ROUTE_WRITE_SECURE_SETTINGS_PERMISSION_SETUP)
             }
         }
@@ -461,7 +461,7 @@ fun LockscreenShortcutSettings(
                 subtitle = Settings.Secure.getString(context.contentResolver, LOCKSCREEN_LEFT_BUTTON)
                     ?.toComponentName()?.loadLabel(context)
                     ?: stringResource(id = R.string.assistant_action_select_default_value),
-                enabled = context.checkSelfPermission(READ_LOGS) == PERMISSION_GRANTED
+                enabled = context.canWriteSecureSettings
             ) {
                 navController.navigate(
                     ROUTE_LOCKSCREEN_SHORTCUT_SELECTION
@@ -475,7 +475,7 @@ fun LockscreenShortcutSettings(
                 subtitle = Settings.Secure.getString(context.contentResolver, LOCKSCREEN_RIGHT_BUTTON)
                     ?.toComponentName()?.loadLabel(context)
                     ?: stringResource(id = R.string.assistant_action_select_default_value),
-                enabled = context.checkSelfPermission(READ_LOGS) == PERMISSION_GRANTED
+                enabled = context.canWriteSecureSettings
             ) {
                 navController.navigate(
                     ROUTE_LOCKSCREEN_SHORTCUT_SELECTION

@@ -1,6 +1,5 @@
 package xyz.ivaniskandar.shouko.feature
 
-import android.Manifest
 import android.accessibilityservice.AccessibilityService
 import android.app.KeyguardManager
 import android.content.Context
@@ -29,10 +28,13 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.activity.GAKeyOverriderKeyguardActivity
+import xyz.ivaniskandar.shouko.feature.GAKeyOverrider.Companion.ASSISTANT_GUIDE_LAUNCHED_CUE
+import xyz.ivaniskandar.shouko.feature.GAKeyOverrider.Companion.ASSISTANT_LAUNCHED_CUE
 import xyz.ivaniskandar.shouko.feature.GAKeyOverrider.Companion.GOOGLE_PACKAGE_NAME
 import xyz.ivaniskandar.shouko.feature.MediaKeyAction.Key
 import xyz.ivaniskandar.shouko.util.DeviceModel
 import xyz.ivaniskandar.shouko.util.Prefs
+import xyz.ivaniskandar.shouko.util.canReadSystemLogs
 import xyz.ivaniskandar.shouko.util.loadLabel
 import java.net.URISyntaxException
 
@@ -84,8 +86,7 @@ class GAKeyOverrider(
 
     private var isActive = false
     private val isReady: Boolean
-        get() = buttonEnabled && customAction != null &&
-                service.checkSelfPermission(Manifest.permission.READ_LOGS) == PackageManager.PERMISSION_GRANTED
+        get() = buttonEnabled && customAction != null && service.canReadSystemLogs
 
     // When this observer is registered, the assistant button will always be disabled.
     private val gaKeyDisabler = object : ContentObserver(Handler(Looper.myLooper())) {
