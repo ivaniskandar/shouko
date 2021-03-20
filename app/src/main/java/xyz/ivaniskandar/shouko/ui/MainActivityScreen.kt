@@ -30,6 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.core.content.edit
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.KEY_ROUTE
@@ -42,6 +43,8 @@ import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.activity.EmptyShortcutActivity
 import xyz.ivaniskandar.shouko.activity.MainActivityViewModel
 import xyz.ivaniskandar.shouko.feature.*
+import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper.Companion.LOCKSCREEN_LEFT_BUTTON
+import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper.Companion.LOCKSCREEN_RIGHT_BUTTON
 import xyz.ivaniskandar.shouko.service.TadanoAccessibilityService
 import xyz.ivaniskandar.shouko.util.*
 import java.util.*
@@ -129,7 +132,9 @@ fun MainActivityActions(
                 DropdownMenuItem(
                     onClick = {
                         val key = navBackStackEntry?.arguments?.getString(LOCKSCREEN_SHORTCUT_SELECTION_KEY_ARG)
-                        Settings.Secure.putString(context.contentResolver, key, null)
+                        LockscreenShortcutHelper.getPreferences(context).edit {
+                            remove(key)
+                        }
                         showPopup = false
                         navController.popBackStack()
                     }
@@ -249,7 +254,8 @@ fun Home(
         item {
             Preference(
                 title = stringResource(R.string.lockscreen_shortcut_title),
-                subtitle = stringResource(R.string.lockscreen_shortcut_desc)
+                subtitle = stringResource(R.string.lockscreen_shortcut_desc),
+                enabled = TadanoAccessibilityService.isActive
             ) {
                 navController.navigate(ROUTE_LOCKSCREEN_SHORTCUT_SETTINGS)
             }
@@ -458,7 +464,7 @@ fun LockscreenShortcutSettings(
         item {
             Preference(
                 title = stringResource(R.string.lockscreen_shortcut_left),
-                subtitle = Settings.Secure.getString(context.contentResolver, LOCKSCREEN_LEFT_BUTTON)
+                subtitle = LockscreenShortcutHelper.getPreferences(context).getString(LOCKSCREEN_LEFT_BUTTON, null)
                     ?.toComponentName()?.loadLabel(context)
                     ?: stringResource(id = R.string.assistant_action_select_default_value),
                 enabled = context.canWriteSecureSettings
@@ -472,7 +478,7 @@ fun LockscreenShortcutSettings(
         item {
             Preference(
                 title = stringResource(R.string.lockscreen_shortcut_right),
-                subtitle = Settings.Secure.getString(context.contentResolver, LOCKSCREEN_RIGHT_BUTTON)
+                subtitle = LockscreenShortcutHelper.getPreferences(context).getString(LOCKSCREEN_RIGHT_BUTTON, null)
                     ?.toComponentName()?.loadLabel(context)
                     ?: stringResource(id = R.string.assistant_action_select_default_value),
                 enabled = context.canWriteSecureSettings
@@ -527,7 +533,9 @@ fun LockscreenShortcutSelection(
                     LazyColumn(contentPadding = LocalWindowInsets.current.navigationBars.toPaddingValues()) {
                         items(appItems!!) { item ->
                             ApplicationRow(item = item) {
-                                Settings.Secure.putString(context.contentResolver, settingsKey, it.flattenToString())
+                                LockscreenShortcutHelper.getPreferences(context).edit {
+                                    putString(settingsKey, it.flattenToString())
+                                }
                                 navController.popBackStack()
                             }
                         }
@@ -540,7 +548,9 @@ fun LockscreenShortcutSelection(
                     item {
                         DoNothingRow {
                             val emptyCn = ComponentName(context, EmptyShortcutActivity::class.java)
-                            Settings.Secure.putString(context.contentResolver, settingsKey, emptyCn.flattenToString())
+                            LockscreenShortcutHelper.getPreferences(context).edit {
+                                putString(settingsKey, emptyCn.flattenToString())
+                            }
                             navController.popBackStack()
                         }
                     }

@@ -11,6 +11,7 @@ import androidx.lifecycle.ServiceLifecycleDispatcher
 import timber.log.Timber
 import xyz.ivaniskandar.shouko.feature.FlipToShush
 import xyz.ivaniskandar.shouko.feature.GAKeyOverrider
+import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper
 import xyz.ivaniskandar.shouko.feature.PocketNoTouchy
 
 /**
@@ -27,6 +28,7 @@ class TadanoAccessibilityService : AccessibilityService(), LifecycleOwner {
     private var gaKeyOverrider: GAKeyOverrider? = null
     private var pocketNoTouchy: PocketNoTouchy? = null
     private var flipToShush: FlipToShush? = null
+    private var lockscreenShortcutHelper: LockscreenShortcutHelper? = null
 
     override fun onServiceConnected() {
         dispatcher.onServicePreSuperOnBind()
@@ -49,6 +51,7 @@ class TadanoAccessibilityService : AccessibilityService(), LifecycleOwner {
         }
         pocketNoTouchy = PocketNoTouchy(this, this)
         flipToShush = FlipToShush(this, this)
+        lockscreenShortcutHelper = LockscreenShortcutHelper(this, this)
         dispatcher.onServicePreSuperOnCreate()
         super.onCreate()
         Timber.d("onCreate")
