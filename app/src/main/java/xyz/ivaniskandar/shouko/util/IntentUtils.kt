@@ -43,7 +43,7 @@ fun Intent.loadLabel(context: Context): String {
         shortcutLabel
     } else {
         val ri = context.packageManager.resolveActivity(this, 0)
-        ri.loadLabel(context.packageManager).toString()
+        ri?.loadLabel(context.packageManager).toString()
     }
 }
 
