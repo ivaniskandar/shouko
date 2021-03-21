@@ -1,0 +1,86 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - '*.*.*'
+  pull_request:
+
+jobs:
+  check_wrapper:
+    name: Validate Gradle Wrapper
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v2
+
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v1
+
+  build:
+    name: Build project
+    needs: check_wrapper
+    if: "!startsWith(github.event.head_commit.message, '[SKIP CI]')"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Copy CI gradle.properties
+        run: |
+          mkdir -p ~/.gradle
+          cp .github/ci-gradle.properties ~/.gradle/gradle.properties
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - name: Build APK
+        run: bash ./gradlew assembleRelease --stacktrace
+
+      - name: Sign APK
+        if: github.repository == 'ivaniskandar/shouko'
+        uses: r0adkll/sign-android-release@v1
+        id: sign_app
+        with:
+          releaseDirectory: app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+
+      - name: Upload APK
+        if: "!startsWith(github.ref, 'refs/tags/') && github.repository == 'ivaniskandar/shouko'"
+        uses: actions/upload-artifact@v2
+        with:
+          name: shouko-canary
+          path: ${{ steps.sign_app.outputs.signedReleaseFile }}
+
+      # Create new release
+      - name: Get tag name
+        if: startsWith(github.ref, 'refs/tags/') && github.repository == 'ivaniskandar/shouko'
+        id: get_tag_name
+        run: |
+          set -x
+          echo "VERSION_TAG=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
+
+      - name: Rename artifact
+        if: startsWith(github.ref, 'refs/tags/') && github.repository == 'ivaniskandar/shouko'
+        run: cp ${{ env.SIGNED_RELEASE_FILE }} shouko-${{ env.VERSION_TAG }}.apk
+
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/') && github.repository == 'ivaniskandar/shouko'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.VERSION_TAG }}
+          name: ${{ env.VERSION_TAG }}
+          files: shouko-${{ env.VERSION_TAG }}.apk
+          draft: true
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

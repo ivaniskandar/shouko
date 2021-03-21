@@ -3,7 +3,15 @@ plugins {
     id 'kotlin-android'
 }
 
-def keystorePropertiesFile = rootProject.file("keystore.properties")
+final def keystorePropertiesFile = rootProject.file("keystore.properties")
+final def gitCommitHash = { ->
+    final def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--short', 'HEAD'
+        standardOutput = stdout
+    }
+    stdout.toString().trim()
+}
 
 android {
     compileSdkVersion 30
@@ -60,6 +68,12 @@ android {
         }
         buildTypes.release.signingConfig signingConfigs.debug
         buildTypes.debug.signingConfig signingConfigs.debug
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            output.versionNameOverride "$versionName-$gitCommitHash"
+        }
     }
 }
 
