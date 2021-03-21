@@ -3,6 +3,7 @@ package xyz.ivaniskandar.shouko.ui
 import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.ClickableText
@@ -33,7 +34,6 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.ui.theme.ShoukoTheme
-import xyz.ivaniskandar.shouko.util.canReadSystemLogs
 
 private fun sendTextContent(context: Context, string: String) {
     val sendIntent: Intent = Intent().apply {
@@ -82,7 +82,7 @@ fun PermissionSetup(
 
     // Permission listener
     rememberCoroutineScope().launch(Dispatchers.Default) {
-        while (!context.canReadSystemLogs) {
+        while (context.checkSelfPermission(permissionName) != PackageManager.PERMISSION_GRANTED) {
             Timber.d("Waiting for $permissionName permission")
             // Check every 1 second
             delay(1000)
