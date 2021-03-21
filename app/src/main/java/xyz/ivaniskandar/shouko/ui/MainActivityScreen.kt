@@ -168,8 +168,8 @@ fun Home(
     LazyColumn(contentPadding = LocalWindowInsets.current.navigationBars.toPaddingValues()) {
         item {
             AccessibilityServiceCard(visible = !TadanoAccessibilityService.isActive) {
-                val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                val serviceCn = ComponentName(context, TadanoAccessibilityService::class.java).flattenToString()
+                val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).highlightSettingsTo(serviceCn)
                 context.startActivity(intent)
             }
         }
@@ -222,9 +222,11 @@ fun Home(
                         Toast.makeText(
                             context,
                             context.getString(R.string.allow_dnd_access_toast),
-                            Toast.LENGTH_LONG
+                            Toast.LENGTH_SHORT
                         ).show()
-                        dndAccessCheck.launch(Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS))
+                        val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
+                            .highlightSettingsTo(context.packageName)
+                        dndAccessCheck.launch(intent)
                         return@SwitchPreference
                     }
                 }
