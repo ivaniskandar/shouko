@@ -50,7 +50,7 @@ class PocketNoTouchy(
     private var isScreenOnReceiverRegistered = false
     private var isListeningSensor = false
 
-    private val proximityEventListener = object : SensorEventListener {
+    private val proximityEventListener: SensorEventListener = object : SensorEventListener {
         override fun onSensorChanged(event: SensorEvent?) {
             if (event?.sensor?.type == Sensor.TYPE_PROXIMITY) {
                 isProximityNear = event.values[0] == 0F
@@ -58,10 +58,18 @@ class PocketNoTouchy(
                     Timber.d("First check and proximity far, stop listening...")
                     // Stop checking if not near when checking for the first time
                     ignoreCheck()
+                    return
                 }
                 firstCheck = false
                 Timber.d("Updating ${PocketNoTouchyActivity::class.simpleName} visible state $isProximityNear")
                 PocketNoTouchyActivity.updateState(service, isProximityNear)
+
+                // Only reset when proximity is far
+                if (!isProximityNear) {
+                    Timber.d("Resetting check timeout")
+                    handler.removeCallbacks(proximityDelayedRunnable)
+                    handler.postDelayed(proximityDelayedRunnable, PROXIMITY_LISTEN_DURATION)
+                }
             }
         }
 
