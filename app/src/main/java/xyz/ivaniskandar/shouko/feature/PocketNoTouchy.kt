@@ -45,7 +45,6 @@ class PocketNoTouchy(
 
     private val handler = Handler(Looper.getMainLooper())
 
-    private var firstCheck = true
     private var isProximityNear = false
     private var isScreenOnReceiverRegistered = false
     private var isListeningSensor = false
@@ -54,13 +53,6 @@ class PocketNoTouchy(
         override fun onSensorChanged(event: SensorEvent?) {
             if (event?.sensor?.type == Sensor.TYPE_PROXIMITY) {
                 isProximityNear = event.values[0] == 0F
-                if (firstCheck && !isProximityNear) {
-                    Timber.d("First check and proximity far, stop listening...")
-                    // Stop checking if not near when checking for the first time
-                    ignoreCheck()
-                    return
-                }
-                firstCheck = false
                 Timber.d("Updating ${PocketNoTouchyActivity::class.simpleName} visible state $isProximityNear")
                 PocketNoTouchyActivity.updateState(service, isProximityNear)
 
@@ -84,7 +76,6 @@ class PocketNoTouchy(
                 Intent.ACTION_SCREEN_ON -> {
                     if (!isInCall) {
                         Timber.d("Screen on event and not in call, listening to proximity")
-                        firstCheck = true
                         isListeningSensor = true
                         sensorManager.registerListener(
                             proximityEventListener,
