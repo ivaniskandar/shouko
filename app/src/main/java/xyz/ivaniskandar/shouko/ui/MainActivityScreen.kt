@@ -1,14 +1,11 @@
 package xyz.ivaniskandar.shouko.ui
 
 import android.Manifest.permission.*
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.NotificationManager
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager.*
-import android.net.Uri
-import android.os.PowerManager
 import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.compose.registerForActivityResult
@@ -203,6 +200,15 @@ fun Home(
                             ""
                         }
             }
+            val dndAccessCheck = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                val isGrantedDndAccess = context.getSystemService(NotificationManager::class.java)!!
+                    .isNotificationPolicyAccessGranted
+                if (isGrantedDndAccess) {
+                    // Always true becos
+                    prefs.flipToShushEnabled = true
+                    flipToShush = true
+                }
+            }
             SwitchPreference(
                 title = stringResource(R.string.flip_to_shush_title),
                 subtitle = subtitle,
@@ -218,21 +224,8 @@ fun Home(
                             context.getString(R.string.allow_dnd_access_toast),
                             Toast.LENGTH_LONG
                         ).show()
-                        context.startActivity(Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS))
+                        dndAccessCheck.launch(Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS))
                         return@SwitchPreference
-                    }
-
-                    if (fullTimeFlipToShush) {
-                        val isIgnoringOptimizations = context.getSystemService(PowerManager::class.java)!!
-                            .isIgnoringBatteryOptimizations(context.packageName)
-                        if (!isIgnoringOptimizations) {
-                            @SuppressLint("BatteryLife")
-                            val i = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
-                                data = Uri.parse("package:${context.packageName}")
-                            }
-                            context.startActivity(i)
-                            return@SwitchPreference
-                        }
                     }
                 }
                 prefs.flipToShushEnabled = it
