@@ -1,4 +1,4 @@
-# Shouko / XPERI+
+# Shouko / XPERI+ [![CI](https://github.com/ivaniskandar/shouko/actions/workflows/android-master.yml/badge.svg?branch=master&event=push)](https://github.com/ivaniskandar/shouko/actions/workflows/android-master.yml)
 
 Xpand the feature set of your Xperia! <sub>and *xperience* more</sub>
 
@@ -43,10 +43,12 @@ Device Compatibility
 
 This app is mainly tested on the **Xperia 5 II** running **stock Android 11** firmware. Some features need specific hardware features to work, but other than that it should work properly on other devices.
 
-Prebuilt APK
+Download
 ----------
 
-Get it on the [latest release](https://github.com/ivaniskandar/shouko/releases/latest) page.
+Get the app on the [latest release page](https://github.com/ivaniskandar/shouko/releases/latest).
+
+Canary build to try new features/fixes is also available [here](https://github.com/ivaniskandar/shouko/actions/workflows/android-master.yml), but any issue reported with this build will not be accepted.
 
 Build it yourself
 ----------
