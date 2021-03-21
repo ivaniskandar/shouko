@@ -72,7 +72,7 @@ class TadanoTileParentService : Service() {
             if (event?.sensor?.type == TYPE_PROXIMITY) {
                 val distance = event.values[0]
                 if (distance == 0f) {
-                    vibrator.vibrate(VibrationEffect.createOneShot(21, VibrationEffect.MAX_AMPLITUDE))
+                    vibrator.vibrate(VibrationEffect.createOneShot(21, 255))
                     switchTeaWakeLock(true)
                 } else {
                     switchTeaWakeLock(false)

@@ -89,7 +89,7 @@ class GAKeyOverrider(
         get() = buttonEnabled && customAction != null && service.canReadSystemLogs
 
     // When this observer is registered, the assistant button will always be disabled.
-    private val gaKeyDisabler = object : ContentObserver(Handler(Looper.myLooper())) {
+    private val gaKeyDisabler = object : ContentObserver(Handler(Looper.getMainLooper())) {
         override fun onChange(selfChange: Boolean, uri: Uri?) {
             super.onChange(selfChange, uri)
             if (uri?.lastPathSegment == GA_KEY_DISABLED_GLOBAL_SETTING_KEY) {
@@ -419,7 +419,7 @@ class FlashlightAction : Action() {
                 flashCameraId = getCameraId(cameraManager)
                 cameraManager.registerTorchCallback(torchCallback, null)
             }
-            cameraManager.setTorchMode(flashCameraId, !flashlightEnabled)
+            cameraManager.setTorchMode(flashCameraId!!, !flashlightEnabled)
         } catch (ignored: CameraAccessException) {
         }
     }
