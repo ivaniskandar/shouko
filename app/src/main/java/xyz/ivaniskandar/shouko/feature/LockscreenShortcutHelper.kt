@@ -3,10 +3,9 @@ package xyz.ivaniskandar.shouko.feature
 import android.app.KeyguardManager
 import android.content.*
 import android.provider.Settings
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import xyz.ivaniskandar.shouko.util.canWriteSecureSettings
 
@@ -28,7 +27,7 @@ import xyz.ivaniskandar.shouko.util.canWriteSecureSettings
  * things in the world, can we?
  */
 class LockscreenShortcutHelper(
-    lifecycleOwner: LifecycleOwner,
+    private val lifecycleOwner: LifecycleOwner,
     private val context: Context,
 ) : LifecycleObserver {
     private val receiver = object : BroadcastReceiver() {
@@ -39,19 +38,22 @@ class LockscreenShortcutHelper(
             val keyguardLocked = context.getSystemService(KeyguardManager::class.java).isKeyguardLocked
             val screenOn = intent.action != Intent.ACTION_SCREEN_OFF
             if (screenOn && keyguardLocked) {
-                Timber.d("Set lockscreen shortcuts to custom")
-                // Keyguard is showing
-                val localSettings = getPreferences(context)
-                Settings.Secure.putString(
-                    context.contentResolver,
-                    LOCKSCREEN_LEFT_BUTTON,
-                    localSettings.getString(LOCKSCREEN_LEFT_BUTTON, null)
-                )
-                Settings.Secure.putString(
-                    context.contentResolver,
-                    LOCKSCREEN_RIGHT_BUTTON,
-                    localSettings.getString(LOCKSCREEN_RIGHT_BUTTON, null)
-                )
+                lifecycleOwner.lifecycleScope.launch {
+                    delay(75) // 5 II camera button action fix
+                    Timber.d("Set camera lockscreen shortcuts to custom ${intent.action}")
+                    // Keyguard is showing
+                    val localSettings = getPreferences(context)
+                    Settings.Secure.putString(
+                        context.contentResolver,
+                        LOCKSCREEN_LEFT_BUTTON,
+                        localSettings.getString(LOCKSCREEN_LEFT_BUTTON, null)
+                    )
+                    Settings.Secure.putString(
+                        context.contentResolver,
+                        LOCKSCREEN_RIGHT_BUTTON,
+                        localSettings.getString(LOCKSCREEN_RIGHT_BUTTON, null)
+                    )
+                }
             } else {
                 Timber.d("Set lockscreen shortcuts to system default")
                 Settings.Secure.putString(context.contentResolver, LOCKSCREEN_LEFT_BUTTON, null)
