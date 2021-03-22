@@ -72,3 +72,15 @@ fun Intent.highlightSettingsTo(string: String): Intent {
     putExtra(EXTRA_SHOW_FRAGMENT_ARGUMENTS, bundle)
     return this
 }
+
+/**
+ * Returns a chooser intent for the specified text string
+ */
+fun createShareTextIntent(text: String): Intent {
+    val sendIntent: Intent = Intent().apply {
+        action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_TEXT, text)
+        type = "text/plain"
+    }
+    return Intent.createChooser(sendIntent, null)
+}

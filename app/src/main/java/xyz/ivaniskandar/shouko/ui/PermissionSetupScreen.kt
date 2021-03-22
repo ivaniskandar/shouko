@@ -1,8 +1,6 @@
 package xyz.ivaniskandar.shouko.ui
 
 import android.Manifest
-import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -34,15 +32,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.ui.theme.ShoukoTheme
-
-private fun sendTextContent(context: Context, string: String) {
-    val sendIntent: Intent = Intent().apply {
-        action = Intent.ACTION_SEND
-        putExtra(Intent.EXTRA_TEXT, string)
-        type = "text/plain"
-    }
-    context.startActivity(Intent.createChooser(sendIntent, null))
-}
+import xyz.ivaniskandar.shouko.util.createShareTextIntent
 
 @Composable
 fun PermissionSetup(
@@ -155,7 +145,7 @@ fun PermissionSetupNoRoot(command: String) {
     val adbCommand = "adb shell $command"
     Card(
         modifier = Modifier
-            .clickable { sendTextContent(context, adbCommand) }
+            .clickable { context.startActivity(createShareTextIntent(adbCommand)) }
             .fillMaxWidth(),
         backgroundColor = Color.Black,
         contentColor = Color.White,
