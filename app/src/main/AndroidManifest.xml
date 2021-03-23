@@ -72,6 +72,9 @@
             android:theme="@style/Theme.Shouko.Transparent"
             android:excludeFromRecents="true"
             android:noHistory="true" />
+        <activity
+            android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
+            android:theme="@style/Theme.AppCompat.DayNight" />
 
         <service android:name=".service.TadanoAccessibilityService"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"

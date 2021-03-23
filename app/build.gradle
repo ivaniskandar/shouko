@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'com.google.android.gms.oss-licenses-plugin'
 }
 
 final def keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -87,6 +88,7 @@ dependencies {
     implementation "dev.chrisbanes.accompanist:accompanist-insets:0.6.2"
     implementation "com.github.topjohnwu.libsu:core:3.1.1"
     implementation 'com.jakewharton.timber:timber:4.7.1'
+    implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
 
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.material:material:$compose_version"
