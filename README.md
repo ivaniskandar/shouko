@@ -7,9 +7,9 @@ Features
 
 - **Xperia 5 II Assistant Button Override**
 
-  Launches an app or a shortcut when the Assistant button is pressed.
+  Launches an app or a shortcut when the Assistant button is pressed. You can also disable the button completely.
 
-  This feature needs `READ_LOGS` permission granted manually with ADB or root. A guide to grant this permission is available in the app.
+  This feature needs `READ_LOGS` and `WRITE_SECURE_SETTINGS` permission granted manually with ADB or root. A guide to grant this permission is available in the app.
 
 - **Flip to Shush**
 
@@ -32,6 +32,12 @@ Features
   A Quick Settings tile that runs a service to turn off your phone screen while keeping the CPU awake. Block the proximity sensor when this service enabled to turn off the screen.
 
   This feature is **NOT** a power button replacement. Your phone will be kept awake when you turn off the screen with the proximity sensor. Turning off the screen with the power button will temporarily disable this feature until the screen back on.
+
+- **Lockscreen Shortcut Customizer**
+
+  Customize the shortcuts in your lockscreen to launch any app you want.
+
+  This feature needs `WRITE_SECURE_SETTINGS` permission granted manually with ADB or root. A guide to grant this permission is available in the app.
 
 Accessibility Service
 ----------
