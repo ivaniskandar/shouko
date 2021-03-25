@@ -33,10 +33,10 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.KEY_ROUTE
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigate
+import com.google.accompanist.insets.LocalWindowInsets
+import com.google.accompanist.insets.navigationBarsPadding
+import com.google.accompanist.insets.toPaddingValues
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
-import dev.chrisbanes.accompanist.insets.LocalWindowInsets
-import dev.chrisbanes.accompanist.insets.navigationBarsPadding
-import dev.chrisbanes.accompanist.insets.toPaddingValues
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.activity.EmptyShortcutActivity
 import xyz.ivaniskandar.shouko.activity.MainActivityViewModel
