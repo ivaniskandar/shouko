@@ -19,7 +19,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -341,31 +340,13 @@ fun AssistantActionSelection(
     prefs: Prefs,
     navController: NavController
 ) {
-    var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
     val titles = listOf(
-        R.string.tab_title_apps,
-        R.string.tab_title_shortcuts,
-        R.string.tab_title_other
+        stringResource(R.string.tab_title_apps),
+        stringResource(R.string.tab_title_shortcuts),
+        stringResource(R.string.tab_title_other)
     )
-    Column {
-        TabRow(
-            selectedTabIndex = selectedTabIndex,
-            modifier = Modifier.navigationBarsPadding(bottom = false),
-            backgroundColor = MaterialTheme.colors.background,
-            contentColor = MaterialTheme.colors.primary
-        ) {
-            titles.forEachIndexed { index, title ->
-                Tab(
-                    selected = selectedTabIndex == index,
-                    onClick = { selectedTabIndex = index },
-                    text = {
-                        Text(text = stringResource(id = title).toUpperCase(Locale.getDefault()))
-                    },
-                    unselectedContentColor = MaterialTheme.colors.onBackground.copy(alpha = ContentAlpha.medium)
-                )
-            }
-        }
-        when (selectedTabIndex) {
+    TabPager(pageTitles = titles) { page ->
+        when (page) {
             0 -> {
                 val appItems by mainViewModel.appsList.observeAsState()
                 if (appItems == null) {
@@ -507,31 +488,13 @@ fun LockscreenShortcutSelection(
     navController: NavController,
     settingsKey: String
 ) {
-    var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
     val titles = listOf(
-        R.string.tab_title_apps,
-        R.string.tab_title_other
+        stringResource(R.string.tab_title_apps),
+        stringResource(R.string.tab_title_other)
     )
-    Column {
-        TabRow(
-            selectedTabIndex = selectedTabIndex,
-            modifier = Modifier.navigationBarsPadding(bottom = false),
-            backgroundColor = MaterialTheme.colors.background,
-            contentColor = MaterialTheme.colors.primary
-        ) {
-            titles.forEachIndexed { index, title ->
-                Tab(
-                    selected = selectedTabIndex == index,
-                    onClick = { selectedTabIndex = index },
-                    text = {
-                        Text(text = stringResource(id = title).toUpperCase(Locale.getDefault()))
-                    },
-                    unselectedContentColor = MaterialTheme.colors.onBackground.copy(alpha = ContentAlpha.medium)
-                )
-            }
-        }
+    TabPager(pageTitles = titles) { page ->
         val context = LocalContext.current
-        when (selectedTabIndex) {
+        when (page) {
             0 -> {
                 val appItems by mainViewModel.appsList.observeAsState()
                 if (appItems == null) {
