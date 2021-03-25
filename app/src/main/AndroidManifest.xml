@@ -3,9 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="xyz.ivaniskandar.shouko">
 
-    <uses-permission android:name="android.permission.READ_LOGS"
+    <uses-permission
+        android:name="android.permission.READ_LOGS"
         tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS"
+    <uses-permission
+        android:name="android.permission.WRITE_SECURE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -13,9 +15,15 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
-    <uses-feature android:name="android.hardware.sensor.proximity" android:required="true" />
-    <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
-    <uses-feature android:name="android.hardware.camera.flash" android:required="true" />
+    <uses-feature
+        android:name="android.hardware.sensor.proximity"
+        android:required="true" />
+    <uses-feature
+        android:name="android.hardware.sensor.accelerometer"
+        android:required="true" />
+    <uses-feature
+        android:name="android.hardware.camera.flash"
+        android:required="true" />
 
     <queries>
         <intent>
@@ -29,10 +37,10 @@
     </queries>
 
     <application
+        android:name=".ShoukoApplication"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:name=".ShoukoApplication"
         android:supportsRtl="true"
         android:theme="@style/Theme.Shouko">
 
@@ -48,38 +56,43 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.GAKeyOverriderKeyguardActivity"
-            android:theme="@style/Theme.Shouko.NoActionBar"
+        <activity
+            android:name=".activity.GAKeyOverriderKeyguardActivity"
             android:excludeFromRecents="true"
             android:noHistory="true"
+            android:showForAllUsers="true"
             android:showWhenLocked="true"
-            android:showOnLockScreen="true" />
-        <activity android:name=".activity.PocketNoTouchyActivity"
-            android:theme="@style/Theme.Shouko.NoActionBar"
+            android:theme="@style/Theme.Shouko.NoActionBar" />
+        <activity
+            android:name=".activity.PocketNoTouchyActivity"
+            android:excludeFromRecents="true"
             android:launchMode="singleInstance"
-            android:excludeFromRecents="true"
             android:noHistory="true"
+            android:showForAllUsers="true"
             android:showWhenLocked="true"
-            android:showOnLockScreen="true" />
-        <activity android:name=".activity.TileBoardingActivity"
-            android:theme="@style/Theme.Shouko.Transparent"
+            android:theme="@style/Theme.Shouko.NoActionBar" />
+        <activity
+            android:name=".activity.TileBoardingActivity"
+            android:excludeFromRecents="true"
             android:launchMode="singleInstance"
-            android:excludeFromRecents="true"
             android:noHistory="true"
+            android:showForAllUsers="true"
             android:showWhenLocked="true"
-            android:showOnLockScreen="true" />
-        <activity android:name=".activity.EmptyShortcutActivity"
+            android:theme="@style/Theme.Shouko.Transparent" />
+        <activity
+            android:name=".activity.EmptyShortcutActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
             android:icon="@drawable/blank_icon"
             android:label="@string/do_nothing"
-            android:exported="true"
-            android:theme="@style/Theme.Shouko.Transparent"
-            android:excludeFromRecents="true"
-            android:noHistory="true" />
+            android:noHistory="true"
+            android:theme="@style/Theme.Shouko.Transparent" />
 
-        <service android:name=".service.TadanoAccessibilityService"
-            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
+        <service
+            android:name=".service.TadanoAccessibilityService"
+            android:exported="true"
             android:label="@string/app_name"
-            android:exported="true">
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
             <intent-filter>
                 <action android:name="android.accessibilityservice.AccessibilityService" />
             </intent-filter>
@@ -89,26 +102,28 @@
                 android:resource="@xml/accessibility_service_config" />
         </service>
         <service android:name=".service.TadanoTileParentService" />
-        <service android:name=".service.CoffeeTileService"
+        <service
+            android:name=".service.CoffeeTileService"
             android:exported="true"
             android:icon="@drawable/ic_coffee"
             android:label="@string/coffee_tile_label"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <intent-filter>
-                <action android:name="android.service.quicksettings.action.QS_TILE"/>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>
             <meta-data
                 android:name="android.service.quicksettings.ACTIVE_TILE"
                 android:value="true" />
         </service>
-        <service android:name=".service.TeaTileService"
+        <service
+            android:name=".service.TeaTileService"
             android:enabled="false"
             android:exported="true"
             android:icon="@drawable/ic_tea"
             android:label="@string/tea_tile_label"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <intent-filter>
-                <action android:name="android.service.quicksettings.action.QS_TILE"/>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>
             <meta-data
                 android:name="android.service.quicksettings.ACTIVE_TILE"
