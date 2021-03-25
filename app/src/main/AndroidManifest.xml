@@ -39,7 +39,8 @@
         <activity
             android:name=".activity.MainActivity"
             android:exported="true"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:theme="@style/Theme.Shouko.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -48,11 +49,13 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.GAKeyOverriderKeyguardActivity"
+            android:theme="@style/Theme.Shouko.NoActionBar"
             android:excludeFromRecents="true"
             android:noHistory="true"
             android:showWhenLocked="true"
             android:showOnLockScreen="true" />
         <activity android:name=".activity.PocketNoTouchyActivity"
+            android:theme="@style/Theme.Shouko.NoActionBar"
             android:launchMode="singleInstance"
             android:excludeFromRecents="true"
             android:noHistory="true"
@@ -72,9 +75,6 @@
             android:theme="@style/Theme.Shouko.Transparent"
             android:excludeFromRecents="true"
             android:noHistory="true" />
-        <activity
-            android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
-            android:theme="@style/Theme.AppCompat.DayNight" />
 
         <service android:name=".service.TadanoAccessibilityService"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
