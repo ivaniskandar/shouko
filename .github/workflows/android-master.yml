@@ -41,7 +41,7 @@ jobs:
           java-version: 11
 
       - name: Build APK
-        run: bash ./gradlew assembleRelease --stacktrace
+        run: bash ./gradlew spotlessCheck assembleRelease --stacktrace
 
       - name: Sign APK
         if: github.repository == 'ivaniskandar/shouko'

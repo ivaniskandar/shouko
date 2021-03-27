@@ -2,7 +2,11 @@ package xyz.ivaniskandar.shouko.feature
 
 import android.accessibilityservice.AccessibilityService
 import android.app.NotificationManager
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.content.SharedPreferences
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -10,8 +14,16 @@ import android.hardware.SensorManager
 import android.os.PowerManager
 import android.os.VibrationEffect
 import android.os.Vibrator
-import androidx.lifecycle.*
-import kotlinx.coroutines.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import xyz.ivaniskandar.shouko.util.DeviceModel
 import xyz.ivaniskandar.shouko.util.Prefs
@@ -319,7 +331,7 @@ class FlipToShush(
         fun supportFullTimeListening(context: Context): Boolean {
             val sensorManager = context.getSystemService(SensorManager::class.java)
             return sensorManager?.getAccelerometer()?.isWakeUpSensor == true &&
-                    sensorManager.getProximity()?.isWakeUpSensor == true
+                sensorManager.getProximity()?.isWakeUpSensor == true
         }
     }
 }

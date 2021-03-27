@@ -1,24 +1,38 @@
 package xyz.ivaniskandar.shouko.ui
 
-import android.Manifest.permission.*
 import android.app.Activity
 import android.app.NotificationManager
 import android.content.ComponentName
 import android.content.Intent
-import android.content.pm.PackageManager.*
 import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.compose.registerForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.MoreVert
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -39,12 +53,24 @@ import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.activity.EmptyShortcutActivity
 import xyz.ivaniskandar.shouko.activity.MainActivityViewModel
-import xyz.ivaniskandar.shouko.feature.*
+import xyz.ivaniskandar.shouko.feature.DoNothingAction
+import xyz.ivaniskandar.shouko.feature.FlashlightAction
+import xyz.ivaniskandar.shouko.feature.FlipToShush
+import xyz.ivaniskandar.shouko.feature.GAKeyOverrider
+import xyz.ivaniskandar.shouko.feature.IntentAction
+import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper
 import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper.Companion.LOCKSCREEN_LEFT_BUTTON
 import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper.Companion.LOCKSCREEN_RIGHT_BUTTON
+import xyz.ivaniskandar.shouko.feature.MediaKeyAction
 import xyz.ivaniskandar.shouko.service.TadanoAccessibilityService
-import xyz.ivaniskandar.shouko.util.*
-import java.util.*
+import xyz.ivaniskandar.shouko.util.Prefs
+import xyz.ivaniskandar.shouko.util.RELEASES_PAGE_INTENT
+import xyz.ivaniskandar.shouko.util.canReadSystemLogs
+import xyz.ivaniskandar.shouko.util.canWriteSecureSettings
+import xyz.ivaniskandar.shouko.util.highlightSettingsTo
+import xyz.ivaniskandar.shouko.util.loadLabel
+import xyz.ivaniskandar.shouko.util.setAsAssistantAction
+import xyz.ivaniskandar.shouko.util.toComponentName
 
 const val LOCKSCREEN_SHORTCUT_SELECTION_KEY_ARG = "key"
 
@@ -207,11 +233,11 @@ fun Home(
             val fullTimeFlipToShush = remember { FlipToShush.supportFullTimeListening(context) }
             val subtitle = remember {
                 context.getString(R.string.flip_to_shush_desc) +
-                        if (!fullTimeFlipToShush) {
-                            "\n\n${context.getString(R.string.flip_to_shush_desc_extra_screen_on)}"
-                        } else {
-                            ""
-                        }
+                    if (!fullTimeFlipToShush) {
+                        "\n\n${context.getString(R.string.flip_to_shush_desc_extra_screen_on)}"
+                    } else {
+                        ""
+                    }
             }
             val dndAccessCheck = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 val isGrantedDndAccess = context.getSystemService(NotificationManager::class.java)!!

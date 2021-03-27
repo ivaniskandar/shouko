@@ -19,7 +19,11 @@ import android.os.Looper
 import android.provider.Settings
 import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
-import androidx.lifecycle.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.lifecycleScope
 import com.topjohnwu.superuser.CallbackList
 import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.Dispatchers
@@ -149,7 +153,8 @@ class GAKeyOverrider(
 
     fun onAccessibilityEvent(event: AccessibilityEvent?) {
         if (!assistButtonPressHandled && event?.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED &&
-            event.packageName == GOOGLE_PACKAGE_NAME) {
+            event.packageName == GOOGLE_PACKAGE_NAME
+        ) {
             Timber.d("Opa on foreground after Assist Button event")
             assistButtonPressHandled = true
             if (keyguardManager.isKeyguardLocked) {

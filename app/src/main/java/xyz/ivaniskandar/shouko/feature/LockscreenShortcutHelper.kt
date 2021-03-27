@@ -1,12 +1,21 @@
 package xyz.ivaniskandar.shouko.feature
 
 import android.app.KeyguardManager
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.content.SharedPreferences
 import android.provider.Settings
-import androidx.lifecycle.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper.Companion.getPreferences
 import xyz.ivaniskandar.shouko.util.canWriteSecureSettings
 
 /**
@@ -67,7 +76,7 @@ class LockscreenShortcutHelper(
     fun start() {
         val localSettings = getPreferences(context)
         val ready = localSettings.getString(LOCKSCREEN_LEFT_BUTTON, null) != null ||
-                localSettings.getString(LOCKSCREEN_RIGHT_BUTTON, null) != null
+            localSettings.getString(LOCKSCREEN_RIGHT_BUTTON, null) != null
         updateReceiverState(ready)
     }
 
