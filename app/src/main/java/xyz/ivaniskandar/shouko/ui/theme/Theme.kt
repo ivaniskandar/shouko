@@ -14,7 +14,9 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.ColorUtils
 import xyz.ivaniskandar.shouko.ShoukoApplication.Companion.wallpaperColors
 
-var ShoukoAccent = Color(0xFFF48FB1)
+private val ShoukoOriginalAccent = Color(0xFFF48FB1)
+
+var ShoukoAccent = ShoukoOriginalAccent
     private set
 
 private val ShoukoShapes = Shapes(medium = RoundedCornerShape(8.dp))
@@ -51,10 +53,10 @@ fun ShoukoTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable
  * enough for the background color.
  *
  * @param darkTheme true if getting color for dark theme
- * @return accent selected from WallpaperColors, [ShoukoAccent] if WallpaperColors is not available
+ * @return accent selected from WallpaperColors, [ShoukoOriginalAccent] if WallpaperColors is not available
  */
 private fun getAccent(wallpaperColors: WallpaperColors?, darkTheme: Boolean): Color {
-    val tempAccent = wallpaperColors?.primaryColor?.toArgb() ?: return ShoukoAccent
+    val tempAccent = wallpaperColors?.primaryColor?.toArgb() ?: return ShoukoOriginalAccent
 
     // Make sure it's contrast enough
     val backgroundColor = (if (darkTheme) Color(0xFF121212) else Color.White).toArgb()
