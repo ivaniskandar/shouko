@@ -463,6 +463,31 @@ class FlashlightAction : Action() {
 }
 
 /**
+ * Takes a screenshot. Needs AccessibilityService context to run action.
+ */
+class ScreenshotAction : Action() {
+    override fun runAction(context: Context) {
+        if (context is AccessibilityService) {
+            context.performGlobalAction(AccessibilityService.GLOBAL_ACTION_TAKE_SCREENSHOT)
+        } else {
+            Timber.e("Context is not AccessibilityService, do nothing.")
+        }
+    }
+
+    override fun getLabel(context: Context): String {
+        return context.getString(R.string.screenshot_action_label)
+    }
+
+    override fun toPlainString(): String {
+        return PLAIN_STRING
+    }
+
+    companion object {
+        const val PLAIN_STRING = "ScreenshotAction"
+    }
+}
+
+/**
  * Launches nothing. Basically makes the Assistant button to be a wakeup button.
  */
 class DoNothingAction : Action() {
@@ -502,6 +527,9 @@ sealed class Action {
                 }
                 string == FlashlightAction.PLAIN_STRING -> {
                     FlashlightAction()
+                }
+                string == ScreenshotAction.PLAIN_STRING -> {
+                    ScreenshotAction()
                 }
                 string == DoNothingAction.PLAIN_STRING -> {
                     DoNothingAction()

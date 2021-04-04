@@ -19,6 +19,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.FlashlightOn
+import androidx.compose.material.icons.rounded.Screenshot
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
@@ -34,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.feature.FlashlightAction
 import xyz.ivaniskandar.shouko.feature.MediaKeyAction
+import xyz.ivaniskandar.shouko.feature.ScreenshotAction
 import xyz.ivaniskandar.shouko.item.ApplicationItem
 import xyz.ivaniskandar.shouko.item.ShortcutCreatorItem
 import java.util.Locale
@@ -152,6 +154,36 @@ fun FlashlightRow(onClick: () -> Unit) {
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high) {
                 Text(
                     text = remember { FlashlightAction().getLabel(context) },
+                    style = MaterialTheme.typography.subtitle1
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun ScreenshotRow(onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .clickable(onClick = onClick)
+            .padding(horizontal = 12.dp, vertical = 16.dp)
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = Icons.Rounded.Screenshot,
+            contentDescription = null,
+            modifier = RowIconModifier,
+            tint = MaterialTheme.colors.primary
+        )
+        Spacer(modifier = Modifier.width(24.dp))
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            val context = LocalContext.current
+            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high) {
+                Text(
+                    text = remember { ScreenshotAction().getLabel(context) },
                     style = MaterialTheme.typography.subtitle1
                 )
             }

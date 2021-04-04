@@ -62,6 +62,7 @@ import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper
 import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper.Companion.LOCKSCREEN_LEFT_BUTTON
 import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper.Companion.LOCKSCREEN_RIGHT_BUTTON
 import xyz.ivaniskandar.shouko.feature.MediaKeyAction
+import xyz.ivaniskandar.shouko.feature.ScreenshotAction
 import xyz.ivaniskandar.shouko.service.TadanoAccessibilityService
 import xyz.ivaniskandar.shouko.util.Prefs
 import xyz.ivaniskandar.shouko.util.RELEASES_PAGE_INTENT
@@ -452,6 +453,12 @@ fun AssistantActionSelection(
                                 prefs.assistButtonAction = FlashlightAction()
                                 navController.popBackStack()
                             }
+                        }
+                    }
+                    item {
+                        ScreenshotRow {
+                            prefs.assistButtonAction = ScreenshotAction()
+                            navController.popBackStack()
                         }
                     }
                     item {

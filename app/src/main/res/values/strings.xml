@@ -58,6 +58,7 @@
     <string name="media_key_previous">Previous</string>
     <string name="media_key_next">Next</string>
     <string name="flashlight_action_label">Flashlight</string>
+    <string name="screenshot_action_label">Take screenshot</string>
 
     <string name="hide_assistant_cue_title">Hide Assistant sound cue</string>
     <string name="hide_assistant_cue_desc">Mutes media stream for a brief period of time after pressing the Assistant button</string>
