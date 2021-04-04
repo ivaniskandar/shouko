@@ -171,6 +171,7 @@ fun MainActivityActions(
                         LockscreenShortcutHelper.getPreferences(context).edit {
                             remove(key)
                         }
+                        Settings.Secure.putString(context.contentResolver, key, null)
                         showPopup = false
                         navController.popBackStack()
                     }
