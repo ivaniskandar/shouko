@@ -36,6 +36,7 @@ import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.feature.FlashlightAction
 import xyz.ivaniskandar.shouko.feature.MediaKeyAction
 import xyz.ivaniskandar.shouko.feature.ScreenshotAction
+import xyz.ivaniskandar.shouko.feature.StatusBarAction
 import xyz.ivaniskandar.shouko.item.ApplicationItem
 import xyz.ivaniskandar.shouko.item.ShortcutCreatorItem
 import java.util.Locale
@@ -186,6 +187,32 @@ fun ScreenshotRow(onClick: () -> Unit) {
                     text = remember { ScreenshotAction().getLabel(context) },
                     style = MaterialTheme.typography.subtitle1
                 )
+            }
+        }
+    }
+}
+
+@Composable
+fun StatusBarRow(type: StatusBarAction.PanelType, onClick: (StatusBarAction) -> Unit) {
+    Row(
+        modifier = Modifier
+            .clickable(onClick = { onClick.invoke(StatusBarAction(type)) })
+            .padding(horizontal = 12.dp, vertical = 16.dp)
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = type.iconVector,
+            contentDescription = null,
+            modifier = RowIconModifier,
+            tint = MaterialTheme.colors.primary
+        )
+        Spacer(modifier = Modifier.width(24.dp))
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high) {
+                Text(text = stringResource(id = type.labelResId), style = MaterialTheme.typography.subtitle1)
             }
         }
     }

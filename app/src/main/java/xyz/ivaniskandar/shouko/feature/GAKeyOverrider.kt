@@ -2,6 +2,7 @@ package xyz.ivaniskandar.shouko.feature
 
 import android.accessibilityservice.AccessibilityService
 import android.app.KeyguardManager
+import android.app.StatusBarManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -19,6 +20,10 @@ import android.os.Looper
 import android.provider.Settings
 import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.AdUnits
+import androidx.compose.material.icons.rounded.Aod
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -488,6 +493,49 @@ class ScreenshotAction : Action() {
 }
 
 /**
+ * Expands status bar panel
+ */
+class StatusBarAction(private val type: PanelType) : Action() {
+    override fun runAction(context: Context) {
+        try {
+            val sbmClz = StatusBarManager::class.java
+            sbmClz
+                .getMethod(type.method)
+                .invoke(context.getSystemService(sbmClz))
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to run statusbar action.")
+        }
+    }
+
+    override fun getLabel(context: Context): String {
+        return context.getString(type.labelResId)
+    }
+
+    override fun toPlainString(): String {
+        return PLAIN_STRING_PREFIX + type.name
+    }
+
+    enum class PanelType(val method: String, val labelResId: Int, val iconVector: ImageVector) {
+        NOTIFICATION("expandNotificationsPanel", R.string.statusbar_action_notifications, Icons.Rounded.Aod),
+        QS("expandSettingsPanel", R.string.statusbar_action_qs, Icons.Rounded.AdUnits)
+    }
+
+    companion object {
+        const val PLAIN_STRING_PREFIX = "StatusBarAction::"
+
+        fun fromPlainString(string: String): StatusBarAction? {
+            val typeName = string.substringAfter(PLAIN_STRING_PREFIX, "null")
+            try {
+                return StatusBarAction(PanelType.valueOf(typeName))
+            } catch (e: Exception) {
+                Timber.e(e, "$typeName doesn't exists in PanelType")
+            }
+            return null
+        }
+    }
+}
+
+/**
  * Launches nothing. Basically makes the Assistant button to be a wakeup button.
  */
 class DoNothingAction : Action() {
@@ -530,6 +578,9 @@ sealed class Action {
                 }
                 string == ScreenshotAction.PLAIN_STRING -> {
                     ScreenshotAction()
+                }
+                string.startsWith(StatusBarAction.PLAIN_STRING_PREFIX) -> {
+                    StatusBarAction.fromPlainString(string)
                 }
                 string == DoNothingAction.PLAIN_STRING -> {
                     DoNothingAction()

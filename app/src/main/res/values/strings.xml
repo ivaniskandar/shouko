@@ -79,4 +79,7 @@
     <string name="lockscreen_shortcut_desc">Customize lockscreen shortcut</string>
     <string name="lockscreen_shortcut_left">Left shortcut</string>
     <string name="lockscreen_shortcut_right">Right shortcut</string>
+
+    <string name="statusbar_action_notifications">Open notification panel</string>
+    <string name="statusbar_action_qs">Open quick settings panel</string>
 </resources>
