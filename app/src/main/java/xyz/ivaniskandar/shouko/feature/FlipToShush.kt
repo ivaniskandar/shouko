@@ -11,7 +11,9 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.hardware.SensorManager.SENSOR_DELAY_NORMAL
 import android.os.PowerManager
+import android.os.SystemClock
 import android.os.VibrationEffect
 import android.os.Vibrator
 import androidx.lifecycle.Lifecycle
@@ -19,9 +21,9 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -32,14 +34,14 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 
 /**
- * A feature module for [AccessibilityService]
+ * A feature module for [AccessibilityService].
  *
  * Enables Priority Do Not Disturb when device is put face down on
  * a flat surface and lock the screen.
  *
- * On a device without either wake up type of proximity sensor or
- * accelerometer sensor, the detection will only run when the screen
- * is on. Otherwise the gesture detection is always-on.
+ * On a device without wake up type of proximity sensor, the
+ * detection will only run when the screen is on. Otherwise the
+ * gesture detection is always-on.
  *
  * Device screen will be turned off after enabling DND.
  */
@@ -51,48 +53,35 @@ class FlipToShush(
     private val sensorManager = service.getSystemService(SensorManager::class.java)!!
     private val notificationManager = service.getSystemService(NotificationManager::class.java)!!
     private val vibrator = service.getSystemService(Vibrator::class.java)!!
-    private val checkerWakeLock = service.getSystemService(PowerManager::class.java)!!
-        .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Shouko::ShushConditionChecker")
+    private val sensorWakeLock = service.getSystemService(PowerManager::class.java)!!
+        .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Shouko::FlipToShushSensor")
+
+    private val isFullTimeListening = supportFullTimeListening(service)
 
     private val shushOnVibrationEffect = VibrationEffect
         .createWaveform(longArrayOf(16L, 150L, 14L, 250L, 12L), intArrayOf(200, 0, 150, 0, 100), -1)
     private val shushOffVibrationEffect = VibrationEffect.createOneShot(20, 255)
 
-    private var x = .1F
-    private var y = .1f
-    private var z = .1F
+    private var deviceInclination = 0.0
     private var isProximityNear = false
     private var isDndOnByService = false
 
     private val isDoNotDisturbOff: Boolean
         get() = notificationManager.currentInterruptionFilter == NotificationManager.INTERRUPTION_FILTER_ALL
-    private val isDeviceFaceDown: Boolean
-        get() = z < -6
+
     private val isDeviceFlatFaceDown: Boolean
-        get() = if (isDeviceFaceDown) {
-            // From https://stackoverflow.com/a/15149421/13755568
-            val nG = sqrt(x.pow(2) + y.pow(2) + z.pow(2)).toDouble()
-            val inclination = Math.toDegrees(acos(z / nG))
-            inclination >= 170
-        } else {
-            false
-        }
+        get() = deviceInclination >= 170
 
     private var accelerometerListenerRegistered = false
     private val accelerometerEventListener = object : SensorEventListener {
         override fun onSensorChanged(event: SensorEvent?) {
             when (event?.sensor?.type) {
                 SOMC_WAKEUP_ACCELEROMETER, Sensor.TYPE_ACCELEROMETER -> {
-                    // "I hate doing math so I'll keep the values and do it when I really need to" - The service (maybe)
-                    x = event.values[0]
-                    y = event.values[1]
-                    z = event.values[2]
-
-                    // Route to start shush
-                    if (!isDndOnByService && currentJob == null && isDoNotDisturbOff && isDeviceFaceDown) {
-                        registerSensors(proximity = true, accelerometer = true)
-                        currentJob = checkWhileFacingDownAndShush()
-                    }
+                    // Calculate inclination
+                    // From https://stackoverflow.com/a/15149421/13755568
+                    val (x, y, z) = event.values
+                    val nG = sqrt(x.pow(2) + y.pow(2) + z.pow(2)).toDouble()
+                    deviceInclination = Math.toDegrees(acos(z / nG))
                 }
             }
         }
@@ -109,9 +98,18 @@ class FlipToShush(
                 Sensor.TYPE_PROXIMITY -> {
                     isProximityNear = event.values[0] == 0F
 
+                    // Cancel previous job
+                    shushCheckerJob?.cancel()
+                    unshushCheckerJob?.cancel()
+
+                    // Route to start shush
+                    if (!isDndOnByService && isDoNotDisturbOff && isProximityNear) {
+                        shushCheckerJob = startCheckForShush()
+                    }
+
                     // Route to end shush
-                    if (isDndOnByService && currentJob == null && !isProximityNear) {
-                        currentJob = delayCheckProximityFarBeforeUnshush()
+                    if (isDndOnByService && !isProximityNear) {
+                        unshushCheckerJob = startCheckForUnshush()
                     }
                 }
             }
@@ -132,14 +130,15 @@ class FlipToShush(
         }
     }
 
-    private var currentJob: Job? = null
+    private var shushCheckerJob: Job? = null
+    private var unshushCheckerJob: Job? = null
 
     @Synchronized
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun start() {
         val shouldEnable = prefs.flipToShushEnabled && notificationManager.isNotificationPolicyAccessGranted
         updateFlipToShush(shouldEnable)
-        updateScreenReceiverState(shouldEnable && !supportFullTimeListening(service))
+        updateScreenReceiverState(shouldEnable && !isFullTimeListening)
         if (!shouldEnable) {
             switchDndState(false)
         }
@@ -173,11 +172,9 @@ class FlipToShush(
     // Master switch
     private fun updateFlipToShush(state: Boolean) {
         if (state) {
-            registerSensors(proximity = isDndOnByService, accelerometer = !isDndOnByService)
+            registerSensors(proximity = true, accelerometer = false)
         } else {
             registerSensors(proximity = false, accelerometer = false)
-            currentJob?.cancel()
-            currentJob = null
         }
     }
 
@@ -185,8 +182,8 @@ class FlipToShush(
         if (proximity) {
             if (!proximityListenerRegistered) {
                 val sensor = sensorManager.getProximity()
-                Timber.d("Registering $sensor to $proximityEventListener")
-                sensorManager.registerListener(proximityEventListener, sensor, SENSOR_SAMPLING_PERIOD)
+                Timber.d("Registering \"${sensor?.name}\" to $proximityEventListener")
+                sensorManager.registerListener(proximityEventListener, sensor, SENSOR_DELAY_NORMAL)
                 proximityListenerRegistered = true
             }
         } else if (proximityListenerRegistered) {
@@ -197,13 +194,20 @@ class FlipToShush(
         if (accelerometer) {
             if (!accelerometerListenerRegistered) {
                 val sensor = sensorManager.getAccelerometer()
-                Timber.d("Registering sensor $sensor to $accelerometerEventListener")
-                sensorManager.registerListener(accelerometerEventListener, sensor, SENSOR_SAMPLING_PERIOD)
+                Timber.d("Registering sensor \"${sensor?.name}\" to $accelerometerEventListener")
+                if (isFullTimeListening && !sensor!!.isWakeUpSensor) {
+                    Timber.d("Acquiring wakelock because \"${sensor.name}\" is a non-wakeup sensor")
+                    sensorWakeLock.acquire(SENSOR_WAKELOCK_TIMEOUT)
+                }
+                sensorManager.registerListener(accelerometerEventListener, sensor, SENSOR_DELAY_NORMAL)
                 accelerometerListenerRegistered = true
             }
         } else if (accelerometerListenerRegistered) {
             Timber.d("Unregistering accelerometer $accelerometerEventListener")
             sensorManager.unregisterListener(accelerometerEventListener)
+            if (sensorWakeLock.isHeld) {
+                sensorWakeLock.release()
+            }
             accelerometerListenerRegistered = false
         }
     }
@@ -230,45 +234,53 @@ class FlipToShush(
         }
     }
 
-    // Make sure isDeviceFaceDown is true, no user and system DND enabled before starting this job
-    private fun checkWhileFacingDownAndShush() = lifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
-        Timber.d("Continuously checking conditions while facing down")
-        while (isActive && isDeviceFaceDown) {
-            if (!isDndOnByService && isProximityNear && isDoNotDisturbOff && isDeviceFlatFaceDown) {
-                Timber.d("Waiting period before rechecking conditions")
-                checkerWakeLock.acquire(SHUSH_WAITING_PERIOD * 2)
-                delay(SHUSH_WAITING_PERIOD)
-                if (!isDndOnByService && isProximityNear && isDoNotDisturbOff && isDeviceFlatFaceDown) {
-                    Timber.d("Shush conditions met and stopping check")
-                    switchDndState(true)
-                    registerSensors(proximity = true, accelerometer = false)
-                    currentJob = null
-                    return@launch
-                } else {
-                    Timber.d("Shush conditions unmet")
-                }
-                checkerWakeLock.release()
-            }
-        }
-        Timber.d("Is cancelled or not facing down anymore, stopping check")
-        registerSensors(proximity = false, accelerometer = true)
-        currentJob = null
-    }
+    private fun startCheckForShush() = lifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
+        try {
+            Timber.d("Waiting period before rechecking conditions")
+            registerSensors(proximity = true, accelerometer = true)
 
-    // Make sure the service DND is enabled and proximity far before starting this job
-    private fun delayCheckProximityFarBeforeUnshush() = lifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
-        Timber.d("Waiting period before rechecking conditions")
-        checkerWakeLock.acquire(UNSHUSH_WAITING_PERIOD * 2)
-        delay(UNSHUSH_WAITING_PERIOD)
-        if (isDndOnByService && !isProximityNear) {
-            Timber.d("Unshush condition met")
-            switchDndState(false)
-            registerSensors(proximity = false, accelerometer = true)
-        } else {
-            Timber.d("Unshush condition unmet, shush state unchanged")
+            val startWait = SystemClock.elapsedRealtime()
+            while (SystemClock.elapsedRealtime() - startWait < SHUSH_WAITING_PERIOD) {
+                if (!isActive) {
+                    throw CancellationException()
+                }
+            }
+
+            if (!isDndOnByService && isProximityNear && isDoNotDisturbOff && isDeviceFlatFaceDown) {
+                Timber.d("Shush conditions met and stopping check")
+                switchDndState(true)
+            } else {
+                Timber.d("Shush conditions unmet")
+            }
+        } catch (e: CancellationException) {
+            Timber.d("Job cancelled")
+        } finally {
+            registerSensors(proximity = true, accelerometer = false)
         }
-        checkerWakeLock.release()
-        currentJob = null
+    }
+    private fun startCheckForUnshush() = lifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
+        try {
+            Timber.d("Waiting period before rechecking conditions")
+            registerSensors(proximity = true, accelerometer = true)
+
+            val startWait = SystemClock.elapsedRealtime()
+            while (SystemClock.elapsedRealtime() - startWait < UNSHUSH_WAITING_PERIOD) {
+                if (!isActive) {
+                    throw CancellationException()
+                }
+            }
+
+            if (isDndOnByService && !isProximityNear) {
+                Timber.d("Unshush condition met")
+                switchDndState(false)
+            } else {
+                Timber.d("Unshush condition unmet, shush state unchanged")
+            }
+        } catch (e: CancellationException) {
+            Timber.d("Job cancelled")
+        } finally {
+            registerSensors(proximity = true, accelerometer = false)
+        }
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
@@ -284,9 +296,10 @@ class FlipToShush(
     }
 
     companion object {
-        private const val SENSOR_SAMPLING_PERIOD = 1000000 // us = 1s
-        private const val SHUSH_WAITING_PERIOD = 500L // ms = 0.5s
+        private const val SHUSH_WAITING_PERIOD = 1000L // ms = 1s
         private const val UNSHUSH_WAITING_PERIOD = 350L // ms = 0.35s
+
+        private const val SENSOR_WAKELOCK_TIMEOUT = 2000L // ms = 2s
 
         /**
          * name="lsm6dsm somc Accelerometer Wakeup"
@@ -304,12 +317,17 @@ class FlipToShush(
          * Returns wake up accelerometer, null if can't find even the non-wake up one.
          */
         private fun SensorManager.getAccelerometer(): Sensor? {
+            var sensor: Sensor? = null
             if (DeviceModel.isPDX206 || DeviceModel.isPDX203) {
-                return getDefaultSensor(SOMC_WAKEUP_ACCELEROMETER, true)
+                sensor = getDefaultSensor(SOMC_WAKEUP_ACCELEROMETER, true)
             }
 
-            // Try to get wake up variant first
-            var sensor = getDefaultSensor(Sensor.TYPE_ACCELEROMETER, true)
+            // Try to get wake-up sensor
+            if (sensor == null) {
+                sensor = getDefaultSensor(Sensor.TYPE_ACCELEROMETER, true)
+            }
+
+            // Fallback to non-wakeup sensor
             if (sensor == null) {
                 sensor = getDefaultSensor(Sensor.TYPE_ACCELEROMETER, false)
             }
@@ -330,8 +348,7 @@ class FlipToShush(
 
         fun supportFullTimeListening(context: Context): Boolean {
             val sensorManager = context.getSystemService(SensorManager::class.java)
-            return sensorManager?.getAccelerometer()?.isWakeUpSensor == true &&
-                sensorManager.getProximity()?.isWakeUpSensor == true
+            return sensorManager.getProximity()?.isWakeUpSensor == true
         }
     }
 }
