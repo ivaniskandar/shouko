@@ -98,6 +98,7 @@ dependencies {
     implementation "com.google.accompanist:accompanist-insets:$accompanist_version"
     implementation "com.google.accompanist:accompanist-pager:$accompanist_version"
     implementation "com.google.accompanist:accompanist-pager-indicators:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-swiperefresh:$accompanist_version"
 
     def coroutines_version = "1.4.3"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"

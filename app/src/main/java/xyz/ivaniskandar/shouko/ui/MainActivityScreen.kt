@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
@@ -28,6 +27,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -49,6 +49,8 @@ import androidx.navigation.compose.navigate
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.toPaddingValues
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.activity.EmptyShortcutActivity
@@ -377,60 +379,66 @@ fun AssistantActionSelection(
     TabPager(pageTitles = titles) { page ->
         when (page) {
             0 -> {
-                val appItems by mainViewModel.appsList.observeAsState()
-                if (appItems == null) {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
-                    }
-                } else {
-                    LazyColumn(contentPadding = LocalWindowInsets.current.navigationBars.toPaddingValues()) {
-                        items(appItems!!) { item ->
-                            ApplicationRow(item = item) {
-                                val intent = Intent().apply {
-                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                    component = it
+                val items by mainViewModel.appsList.observeAsState()
+                val isRefreshing by mainViewModel.isRefreshingAppsList.collectAsState()
+                SwipeRefresh(
+                    state = rememberSwipeRefreshState(isRefreshing),
+                    onRefresh = { mainViewModel.refreshAppsList() },
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    if (items != null) {
+                        LazyColumn(contentPadding = LocalWindowInsets.current.navigationBars.toPaddingValues()) {
+                            items(items!!) { item ->
+                                ApplicationRow(item = item) {
+                                    val intent = Intent().apply {
+                                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                        component = it
+                                    }
+                                    prefs.assistButtonAction = IntentAction(intent)
+                                    navController.popBackStack()
                                 }
-                                prefs.assistButtonAction = IntentAction(intent)
-                                navController.popBackStack()
                             }
                         }
                     }
-                    Spacer(modifier = Modifier.navigationBarsPadding())
                 }
+                Spacer(modifier = Modifier.navigationBarsPadding())
             }
             1 -> {
-                val appItems by mainViewModel.shortcutList.observeAsState()
-                if (appItems == null) {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
-                    }
-                } else {
-                    val context = LocalContext.current
-                    val createShortcut = registerForActivityResult(
-                        contract = ActivityResultContracts.StartActivityForResult(),
-                        onResult = {
-                            if (it.resultCode == Activity.RESULT_OK) {
-                                val intent = it.data
-                                if (intent != null) {
-                                    intent.setAsAssistantAction(prefs)
-                                } else {
-                                    Toast.makeText(
-                                        context,
-                                        context.getString(R.string.assistant_action_save_failed_toast),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                                navController.popBackStack()
+                val items by mainViewModel.shortcutList.observeAsState()
+                val context = LocalContext.current
+                val createShortcut = registerForActivityResult(
+                    contract = ActivityResultContracts.StartActivityForResult(),
+                    onResult = {
+                        if (it.resultCode == Activity.RESULT_OK) {
+                            val intent = it.data
+                            if (intent != null) {
+                                intent.setAsAssistantAction(prefs)
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.assistant_action_save_failed_toast),
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
+                            navController.popBackStack()
                         }
-                    )
-                    LazyColumn(contentPadding = LocalWindowInsets.current.navigationBars.toPaddingValues()) {
-                        items(appItems!!) { item ->
-                            ShortcutCreatorRow(item = item) {
-                                val i = Intent(Intent.ACTION_CREATE_SHORTCUT).apply {
-                                    component = it
+                    }
+                )
+                val isRefreshing by mainViewModel.isRefreshingShortcutList.collectAsState()
+                SwipeRefresh(
+                    state = rememberSwipeRefreshState(isRefreshing),
+                    onRefresh = { mainViewModel.refreshShortcutCreatorList() },
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    if (items != null) {
+                        LazyColumn(contentPadding = LocalWindowInsets.current.navigationBars.toPaddingValues()) {
+                            items(items!!) { item ->
+                                ShortcutCreatorRow(item = item) {
+                                    val i = Intent(Intent.ACTION_CREATE_SHORTCUT).apply {
+                                        component = it
+                                    }
+                                    createShortcut.launch(i)
                                 }
-                                createShortcut.launch(i)
                             }
                         }
                     }
@@ -537,24 +545,27 @@ fun LockscreenShortcutSelection(
         val context = LocalContext.current
         when (page) {
             0 -> {
-                val appItems by mainViewModel.appsList.observeAsState()
-                if (appItems == null) {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
-                    }
-                } else {
-                    LazyColumn(contentPadding = LocalWindowInsets.current.navigationBars.toPaddingValues()) {
-                        items(appItems!!) { item ->
-                            ApplicationRow(item = item) {
-                                LockscreenShortcutHelper.getPreferences(context).edit {
-                                    putString(settingsKey, it.flattenToString())
+                val items by mainViewModel.appsList.observeAsState()
+                val isRefreshing by mainViewModel.isRefreshingAppsList.collectAsState()
+                SwipeRefresh(
+                    state = rememberSwipeRefreshState(isRefreshing),
+                    onRefresh = { mainViewModel.refreshAppsList() },
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    if (items != null) {
+                        LazyColumn(contentPadding = LocalWindowInsets.current.navigationBars.toPaddingValues()) {
+                            items(items!!) { item ->
+                                ApplicationRow(item = item) {
+                                    LockscreenShortcutHelper.getPreferences(context).edit {
+                                        putString(settingsKey, it.flattenToString())
+                                    }
+                                    navController.popBackStack()
                                 }
-                                navController.popBackStack()
                             }
                         }
                     }
-                    Spacer(modifier = Modifier.navigationBarsPadding())
                 }
+                Spacer(modifier = Modifier.navigationBarsPadding())
             }
             1 -> {
                 LazyColumn(contentPadding = LocalWindowInsets.current.navigationBars.toPaddingValues()) {
