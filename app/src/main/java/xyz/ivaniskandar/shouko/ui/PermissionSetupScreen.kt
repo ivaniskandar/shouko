@@ -23,7 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.PermDeviceInformation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -84,15 +84,17 @@ fun PermissionSetup(
     }
 
     // Permission listener
-    rememberCoroutineScope().launch(Dispatchers.Default) {
-        while (context.checkSelfPermission(permissionName) != PackageManager.PERMISSION_GRANTED) {
-            Timber.d("Waiting for $permissionName permission")
-            // Check every 1 second
-            delay(1000)
-        }
-        launch(Dispatchers.Main) {
-            Timber.d("$permissionName permission granted. Calling callback...")
-            onPermissionGranted()
+    LaunchedEffect(true) {
+        launch(Dispatchers.Default) {
+            while (context.checkSelfPermission(permissionName) != PackageManager.PERMISSION_GRANTED) {
+                Timber.d("Waiting for $permissionName permission")
+                // Check every 1 second
+                delay(1000)
+            }
+            launch(Dispatchers.Main) {
+                Timber.d("$permissionName permission granted. Calling callback...")
+                onPermissionGranted()
+            }
         }
     }
 }
@@ -102,12 +104,16 @@ fun PermissionSetupRoot(command: String) {
     CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
         Text(
             text = stringResource(R.string.shell_permission_setup_desc_root),
-            modifier = Modifier.padding(vertical = 16.dp).fillMaxWidth(),
+            modifier = Modifier
+                .padding(vertical = 16.dp)
+                .fillMaxWidth(),
             style = MaterialTheme.typography.body1
         )
         Text(
             text = stringResource(R.string.shell_permission_setup_desc_extra),
-            modifier = Modifier.padding(bottom = 24.dp).fillMaxWidth(),
+            modifier = Modifier
+                .padding(bottom = 24.dp)
+                .fillMaxWidth(),
             style = MaterialTheme.typography.body1
         )
     }
