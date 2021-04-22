@@ -6,8 +6,8 @@ import android.content.ComponentName
 import android.content.Intent
 import android.provider.Settings
 import android.widget.Toast
-import androidx.activity.compose.registerForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ColumnScope
@@ -244,7 +244,7 @@ fun Home(
                         ""
                     }
             }
-            val dndAccessCheck = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            val dndAccessCheck = rememberLauncherForActivityResult(StartActivityForResult()) {
                 val isGrantedDndAccess = context.getSystemService(NotificationManager::class.java)!!
                     .isNotificationPolicyAccessGranted
                 if (isGrantedDndAccess) {
@@ -406,24 +406,21 @@ fun AssistantActionSelection(
             1 -> {
                 val items by mainViewModel.shortcutList.observeAsState()
                 val context = LocalContext.current
-                val createShortcut = registerForActivityResult(
-                    contract = ActivityResultContracts.StartActivityForResult(),
-                    onResult = {
-                        if (it.resultCode == Activity.RESULT_OK) {
-                            val intent = it.data
-                            if (intent != null) {
-                                intent.setAsAssistantAction(prefs)
-                            } else {
-                                Toast.makeText(
-                                    context,
-                                    context.getString(R.string.assistant_action_save_failed_toast),
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                            navController.popBackStack()
+                val createShortcut = rememberLauncherForActivityResult(StartActivityForResult()) {
+                    if (it.resultCode == Activity.RESULT_OK) {
+                        val intent = it.data
+                        if (intent != null) {
+                            intent.setAsAssistantAction(prefs)
+                        } else {
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.assistant_action_save_failed_toast),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
+                        navController.popBackStack()
                     }
-                )
+                }
                 val isRefreshing by mainViewModel.isRefreshingShortcutList.collectAsState()
                 SwipeRefresh(
                     state = rememberSwipeRefreshState(isRefreshing),
