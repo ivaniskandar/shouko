@@ -12,6 +12,7 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.hardware.SensorManager.SENSOR_DELAY_NORMAL
+import android.hardware.SensorManager.SENSOR_DELAY_UI
 import android.os.PowerManager
 import android.os.SystemClock
 import android.os.VibrationEffect
@@ -29,6 +30,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import xyz.ivaniskandar.shouko.util.DeviceModel
 import xyz.ivaniskandar.shouko.util.Prefs
+import java.math.RoundingMode
 import kotlin.math.acos
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -199,7 +201,7 @@ class FlipToShush(
                     Timber.d("Acquiring wakelock because \"${sensor.name}\" is a non-wakeup sensor")
                     sensorWakeLock.acquire(SENSOR_WAKELOCK_TIMEOUT)
                 }
-                sensorManager.registerListener(accelerometerEventListener, sensor, SENSOR_DELAY_NORMAL)
+                sensorManager.registerListener(accelerometerEventListener, sensor, SENSOR_DELAY_UI)
                 accelerometerListenerRegistered = true
             }
         } else if (accelerometerListenerRegistered) {
@@ -239,16 +241,28 @@ class FlipToShush(
             Timber.d("Waiting period before rechecking conditions")
             registerSensors(proximity = true, accelerometer = true)
 
+            val inclinations = mutableListOf<Double>()
             val startWait = SystemClock.elapsedRealtime()
-            while (SystemClock.elapsedRealtime() - startWait < SHUSH_WAITING_PERIOD) {
+            var currentWaitTime = SystemClock.elapsedRealtime() - startWait
+            while (currentWaitTime < SHUSH_WAITING_PERIOD) {
                 if (!isActive) {
                     throw CancellationException()
                 }
+                if (currentWaitTime >= SHUSH_WAITING_PERIOD / 3) {
+                    inclinations += deviceInclination
+                }
+                currentWaitTime = SystemClock.elapsedRealtime() - startWait
             }
 
             if (!isDndOnByService && isProximityNear && isDoNotDisturbOff && isDeviceFlatFaceDown) {
-                Timber.d("Shush conditions met and stopping check")
-                switchDndState(true)
+                val inclinationsAvg = inclinations.average().toBigDecimal().setScale(1, RoundingMode.HALF_EVEN)
+                val currentInclination = deviceInclination.toBigDecimal().setScale(1, RoundingMode.HALF_EVEN)
+                if (inclinationsAvg == currentInclination) {
+                    Timber.d("Shush conditions met and stopping check")
+                    switchDndState(true)
+                } else {
+                    Timber.d("No shush, device wasn't in stationary position")
+                }
             } else {
                 Timber.d("Shush conditions unmet")
             }
@@ -296,7 +310,7 @@ class FlipToShush(
     }
 
     companion object {
-        private const val SHUSH_WAITING_PERIOD = 1000L // ms = 1s
+        private const val SHUSH_WAITING_PERIOD = 1500L // ms = 1.5s
         private const val UNSHUSH_WAITING_PERIOD = 350L // ms = 0.35s
 
         private const val SENSOR_WAKELOCK_TIMEOUT = 2000L // ms = 2s
