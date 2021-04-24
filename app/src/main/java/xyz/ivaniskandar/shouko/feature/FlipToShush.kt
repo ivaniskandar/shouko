@@ -310,7 +310,7 @@ class FlipToShush(
     }
 
     companion object {
-        private const val SHUSH_WAITING_PERIOD = 1500L // ms = 1.5s
+        private const val SHUSH_WAITING_PERIOD = 2000L // ms = 2s
         private const val UNSHUSH_WAITING_PERIOD = 350L // ms = 0.35s
 
         private const val SENSOR_WAKELOCK_TIMEOUT = 2000L // ms = 2s
