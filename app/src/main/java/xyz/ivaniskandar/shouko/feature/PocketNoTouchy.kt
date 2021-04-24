@@ -57,14 +57,15 @@ class PocketNoTouchy(
         override fun onSensorChanged(event: SensorEvent?) {
             if (event?.sensor?.type == Sensor.TYPE_PROXIMITY) {
                 isProximityNear = event.values[0] == 0F
-                Timber.d("Updating ${PocketNoTouchyActivity::class.simpleName} visible state $isProximityNear")
-                PocketNoTouchyActivity.updateState(service, isProximityNear)
 
-                // Only reset when proximity is far
-                if (!isProximityNear) {
-                    Timber.d("Resetting check timeout")
-                    handler.removeCallbacks(proximityDelayedRunnable)
+                handler.removeCallbacks(activityDelayedRunnable)
+                if (isProximityNear) {
+                    // Delay show activity
+                    handler.postDelayed(activityDelayedRunnable, ACTIVITY_DELAY_DURATION)
                     handler.postDelayed(proximityDelayedRunnable, PROXIMITY_LISTEN_DURATION)
+                } else {
+                    handler.post(activityDelayedRunnable)
+                    handler.removeCallbacks(proximityDelayedRunnable)
                 }
             }
         }
@@ -86,7 +87,6 @@ class PocketNoTouchy(
                             sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY),
                             SensorManager.SENSOR_DELAY_UI
                         )
-                        handler.postDelayed(proximityDelayedRunnable, PROXIMITY_LISTEN_DURATION)
                     } else {
                         Timber.d("Screen on event but in call, do nothing...")
                     }
@@ -98,13 +98,10 @@ class PocketNoTouchy(
         }
     }
     private val proximityDelayedRunnable = Runnable {
-        Timber.d("Check timeout")
+        // Turn off screen when timeout and proximity is still in near position
+        Timber.d("Proximity still near after timeout, locking screen...")
         sensorManager.unregisterListener(proximityEventListener)
-        if (isProximityNear) {
-            Timber.d("Proximity still near after timeout, locking screen...")
-            // Turn off screen when timeout and proximity is still in near position
-            service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN)
-        }
+        service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN)
     }
     private val ignoreActionReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -112,6 +109,11 @@ class PocketNoTouchy(
             // Ignore button clicked, just unregister sensor and cancel delayed runnable.
             ignoreCheck()
         }
+    }
+
+    private val activityDelayedRunnable = Runnable {
+        Timber.d("Updating ${PocketNoTouchyActivity::class.simpleName} visible state $isProximityNear")
+        PocketNoTouchyActivity.updateState(service, isProximityNear)
     }
 
     private val isInCall: Boolean
@@ -177,6 +179,8 @@ class PocketNoTouchy(
     companion object {
         // Time for proximity sensor listening after screen on
         private const val PROXIMITY_LISTEN_DURATION = 2000L // 2s
+
+        private const val ACTIVITY_DELAY_DURATION = 500L // .5s
 
         const val ACTION_IGNORE_SENSOR = "PocketNoTouchy.action.IGNORE_SENSOR"
     }
