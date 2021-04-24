@@ -62,11 +62,12 @@ class PocketNoTouchy(
                 if (isProximityNear) {
                     // Delay show activity
                     handler.postDelayed(activityDelayedRunnable, ACTIVITY_DELAY_DURATION)
-                    handler.postDelayed(proximityDelayedRunnable, PROXIMITY_LISTEN_DURATION)
                 } else {
                     handler.post(activityDelayedRunnable)
-                    handler.removeCallbacks(proximityDelayedRunnable)
                 }
+
+                handler.removeCallbacks(proximityDelayedRunnable)
+                handler.postDelayed(proximityDelayedRunnable, PROXIMITY_LISTEN_DURATION)
             }
         }
 
@@ -98,10 +99,15 @@ class PocketNoTouchy(
         }
     }
     private val proximityDelayedRunnable = Runnable {
-        // Turn off screen when timeout and proximity is still in near position
-        Timber.d("Proximity still near after timeout, locking screen...")
-        sensorManager.unregisterListener(proximityEventListener)
-        service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN)
+        if (isProximityNear) {
+            // Turn off screen when timeout and proximity is still in near position
+            Timber.d("Proximity still near after timeout, locking screen...")
+            sensorManager.unregisterListener(proximityEventListener)
+            service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN)
+        } else {
+            Timber.d("Proximity still far after timeout, stop listening...")
+            sensorManager.unregisterListener(proximityEventListener)
+        }
     }
     private val ignoreActionReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -139,6 +145,7 @@ class PocketNoTouchy(
             Timber.d("Go to idle state")
             sensorManager.unregisterListener(proximityEventListener)
             handler.removeCallbacks(proximityDelayedRunnable)
+            handler.removeCallbacks(activityDelayedRunnable)
             PocketNoTouchyActivity.updateState(service, false)
         }
     }
