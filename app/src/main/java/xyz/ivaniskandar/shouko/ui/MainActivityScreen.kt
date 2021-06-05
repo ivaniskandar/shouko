@@ -43,12 +43,10 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.KEY_ROUTE
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.navigate
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.navigationBarsPadding
-import com.google.accompanist.insets.toPaddingValues
+import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
@@ -89,7 +87,7 @@ const val ROUTE_LOCKSCREEN_SHORTCUT_SELECTION = "lockscreen_shortcut_selection/{
 @Composable
 fun getAppBarTitle(navController: NavController): String {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    return when (navBackStackEntry?.arguments?.getString(KEY_ROUTE)) {
+    return when (navBackStackEntry?.destination?.route) {
         ROUTE_ASSISTANT_BUTTON_SETTINGS -> stringResource(id = R.string.assistant_button_title)
         ROUTE_ASSISTANT_LAUNCH_SELECTION -> stringResource(id = R.string.assistant_launch_selection_title)
         ROUTE_READ_LOGS_PERMISSION_SETUP,
@@ -114,10 +112,9 @@ fun MainActivityActions(
     val context = LocalContext.current
     var showPopup by remember { mutableStateOf(false) }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.arguments?.getString(KEY_ROUTE)
 
     val menuItems = mutableListOf<@Composable ColumnScope.() -> Unit>()
-    when (currentRoute) {
+    when (navBackStackEntry?.destination?.route) {
         ROUTE_HOME -> {
             menuItems += {
                 DropdownMenuItem(
@@ -209,7 +206,7 @@ fun Home(
     navController: NavController
 ) {
     val context = LocalContext.current
-    LazyColumn(contentPadding = LocalWindowInsets.current.navigationBars.toPaddingValues()) {
+    LazyColumn(contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.navigationBars)) {
         item {
             AccessibilityServiceCard(visible = !TadanoAccessibilityService.isActive) {
                 val serviceCn = ComponentName(context, TadanoAccessibilityService::class.java).flattenToString()
@@ -318,7 +315,7 @@ fun AssistantButtonSettings(
 ) {
     val context = LocalContext.current
     var buttonEnabled by remember { mutableStateOf(prefs.assistButtonEnabled) }
-    LazyColumn(contentPadding = LocalWindowInsets.current.navigationBars.toPaddingValues()) {
+    LazyColumn(contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.navigationBars)) {
         item {
             ReadLogsCard(visible = !context.canReadSystemLogs) {
                 navController.navigate(ROUTE_READ_LOGS_PERMISSION_SETUP)
@@ -387,7 +384,9 @@ fun AssistantActionSelection(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     if (items != null) {
-                        LazyColumn(contentPadding = LocalWindowInsets.current.navigationBars.toPaddingValues()) {
+                        LazyColumn(
+                            contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.navigationBars)
+                        ) {
                             items(items!!) { item ->
                                 ApplicationRow(item = item) {
                                     val intent = Intent().apply {
@@ -428,7 +427,9 @@ fun AssistantActionSelection(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     if (items != null) {
-                        LazyColumn(contentPadding = LocalWindowInsets.current.navigationBars.toPaddingValues()) {
+                        LazyColumn(
+                            contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.navigationBars)
+                        ) {
                             items(items!!) { item ->
                                 ShortcutCreatorRow(item = item) {
                                     val i = Intent(Intent.ACTION_CREATE_SHORTCUT).apply {
@@ -443,7 +444,7 @@ fun AssistantActionSelection(
             }
             2 -> {
                 val context = LocalContext.current
-                LazyColumn(contentPadding = LocalWindowInsets.current.navigationBars.toPaddingValues()) {
+                LazyColumn(contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.navigationBars)) {
                     item { CategoryHeader(title = stringResource(id = R.string.category_title_media_key)) }
                     items(MediaKeyAction.Key.values()) { item ->
                         MediaKeyRow(key = item) {
@@ -491,7 +492,7 @@ fun LockscreenShortcutSettings(
 ) {
     val context = LocalContext.current
     ComponentName.unflattenFromString("")
-    LazyColumn(contentPadding = LocalWindowInsets.current.navigationBars.toPaddingValues()) {
+    LazyColumn(contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.navigationBars)) {
         item {
             WriteSettingsCard(visible = !context.canWriteSecureSettings) {
                 navController.navigate(ROUTE_WRITE_SECURE_SETTINGS_PERMISSION_SETUP)
@@ -550,7 +551,9 @@ fun LockscreenShortcutSelection(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     if (items != null) {
-                        LazyColumn(contentPadding = LocalWindowInsets.current.navigationBars.toPaddingValues()) {
+                        LazyColumn(
+                            contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.navigationBars)
+                        ) {
                             items(items!!) { item ->
                                 ApplicationRow(item = item) {
                                     LockscreenShortcutHelper.getPreferences(context).edit {
@@ -565,7 +568,7 @@ fun LockscreenShortcutSelection(
                 Spacer(modifier = Modifier.navigationBarsPadding())
             }
             1 -> {
-                LazyColumn(contentPadding = LocalWindowInsets.current.navigationBars.toPaddingValues()) {
+                LazyColumn(contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.navigationBars)) {
                     item {
                         DoNothingRow {
                             val emptyCn = ComponentName(context, EmptyShortcutActivity::class.java)

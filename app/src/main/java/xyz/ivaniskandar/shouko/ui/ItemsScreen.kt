@@ -50,7 +50,7 @@ fun CategoryHeader(title: String, divider: Boolean = false) {
     }
     CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
         Text(
-            text = title.toUpperCase(Locale.getDefault()),
+            text = title.uppercase(Locale.getDefault()),
             modifier = Modifier.padding(start = 72.dp, top = 20.dp, end = 16.dp, bottom = 8.dp),
             style = TextStyle(
                 fontWeight = FontWeight.Medium,

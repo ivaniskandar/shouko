@@ -49,7 +49,7 @@ fun TabPager(
                             pagerState.animateScrollToPage(index)
                         }
                     },
-                    text = { Text(text = title.toUpperCase(Locale.getDefault())) },
+                    text = { Text(text = title.uppercase(Locale.getDefault())) },
                     unselectedContentColor = MaterialTheme.colors.onBackground.copy(alpha = ContentAlpha.medium)
                 )
             }

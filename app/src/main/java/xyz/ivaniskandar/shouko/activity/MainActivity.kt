@@ -38,7 +38,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
-import androidx.navigation.compose.KEY_ROUTE
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -83,7 +82,7 @@ class MainActivity : AppCompatActivity() {
                     Scaffold(
                         topBar = {
                             val navBackStackEntry by navController.currentBackStackEntryAsState()
-                            val currentRoute = navBackStackEntry?.arguments?.getString(KEY_ROUTE)
+                            val currentRoute = navBackStackEntry?.destination?.route
                             InsetAwareTopAppBar(
                                 title = {
                                     Text(
