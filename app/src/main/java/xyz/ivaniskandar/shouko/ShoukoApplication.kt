@@ -13,15 +13,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.getSystemService
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.ProcessLifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import com.topjohnwu.superuser.Shell
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import xyz.ivaniskandar.shouko.service.TeaTileService
 import xyz.ivaniskandar.shouko.util.isRootAvailable
 
-class ShoukoApplication : Application() {
+class ShoukoApplication : Application(), LifecycleObserver {
     private val wallpaperColorListener = WallpaperManager.OnColorsChangedListener { colors, which ->
         if (which == WallpaperManager.FLAG_SYSTEM) {
             wallpaperColors = colors
@@ -49,11 +49,13 @@ class ShoukoApplication : Application() {
                 PackageManager.DONT_KILL_APP
             )
         }
+    }
 
-        // Prepare wallpaper colors
-        WallpaperManager.getInstance(this).apply {
-            addOnColorsChangedListener(wallpaperColorListener, Handler(Looper.getMainLooper()))
-            GlobalScope.launch(Dispatchers.Default) {
+    init {
+        ProcessLifecycleOwner.get().lifecycleScope.launchWhenCreated {
+            // Prepare wallpaper colors
+            WallpaperManager.getInstance(this@ShoukoApplication).apply {
+                addOnColorsChangedListener(wallpaperColorListener, Handler(Looper.getMainLooper()))
                 wallpaperColors = getWallpaperColors(WallpaperManager.FLAG_SYSTEM)
             }
         }
