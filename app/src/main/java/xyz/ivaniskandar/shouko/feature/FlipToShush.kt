@@ -249,7 +249,7 @@ class FlipToShush(
                 if (!isActive) {
                     throw CancellationException()
                 }
-                if (currentWaitTime >= SHUSH_WAITING_PERIOD / 3) {
+                if (currentWaitTime >= SHUSH_WAITING_PERIOD / 2) {
                     inclinations += deviceInclination
                 }
                 currentWaitTime = SystemClock.elapsedRealtime() - startWait
