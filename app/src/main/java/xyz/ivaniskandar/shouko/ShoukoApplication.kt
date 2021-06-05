@@ -12,6 +12,7 @@ import android.os.Looper
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.core.content.getSystemService
 import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -41,8 +42,7 @@ class ShoukoApplication : Application() {
         )
 
         // Enable when proximity exists
-        val sensorManager = getSystemService(SensorManager::class.java)
-        if (sensorManager?.getDefaultSensor(Sensor.TYPE_PROXIMITY) != null) {
+        if (getSystemService<SensorManager>()?.getDefaultSensor(Sensor.TYPE_PROXIMITY) != null) {
             packageManager.setComponentEnabledSetting(
                 ComponentName(this, TeaTileService::class.java),
                 PackageManager.COMPONENT_ENABLED_STATE_ENABLED,

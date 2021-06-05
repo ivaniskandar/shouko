@@ -24,6 +24,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AdUnits
 import androidx.compose.material.icons.rounded.Aod
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.core.content.getSystemService
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -86,8 +87,8 @@ class GAKeyOverrider(
     private val service: AccessibilityService,
 ) : LifecycleObserver, SharedPreferences.OnSharedPreferenceChangeListener {
     private val prefs = Prefs(service)
-    private val keyguardManager = service.getSystemService(KeyguardManager::class.java)!!
-    private val audioManager = service.getSystemService(AudioManager::class.java)!!
+    private val keyguardManager: KeyguardManager = service.getSystemService()!!
+    private val audioManager: AudioManager = service.getSystemService()!!
 
     private var customAction = prefs.assistButtonAction
     private var hideAssistantCue = prefs.hideAssistantCue
@@ -363,7 +364,7 @@ class IntentAction(private val intent: Intent) : Action() {
  */
 class MediaKeyAction(private val key: Key) : Action() {
     override fun runAction(context: Context) {
-        context.getSystemService(AudioManager::class.java)?.run {
+        context.getSystemService<AudioManager>()?.run {
             dispatchMediaKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, key.code))
             dispatchMediaKeyEvent(KeyEvent(KeyEvent.ACTION_UP, key.code))
         }
@@ -422,7 +423,7 @@ class FlashlightAction : Action() {
 
     @Synchronized
     override fun runAction(context: Context) {
-        val cameraManager = context.getSystemService(CameraManager::class.java)
+        val cameraManager = context.getSystemService<CameraManager>()!!
         try {
             // Get cameraId and register torch callback
             if (flashCameraId == null) {
@@ -498,10 +499,9 @@ class ScreenshotAction : Action() {
 class StatusBarAction(private val type: PanelType) : Action() {
     override fun runAction(context: Context) {
         try {
-            val sbmClz = StatusBarManager::class.java
-            sbmClz
+            StatusBarManager::class.java
                 .getMethod(type.method)
-                .invoke(context.getSystemService(sbmClz))
+                .invoke(context.getSystemService<StatusBarManager>())
         } catch (e: Exception) {
             Timber.e(e, "Failed to run statusbar action.")
         }

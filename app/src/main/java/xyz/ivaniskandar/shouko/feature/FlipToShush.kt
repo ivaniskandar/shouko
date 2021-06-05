@@ -17,6 +17,7 @@ import android.os.PowerManager
 import android.os.SystemClock
 import android.os.VibrationEffect
 import android.os.Vibrator
+import androidx.core.content.getSystemService
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -52,10 +53,10 @@ class FlipToShush(
     private val service: AccessibilityService,
 ) : LifecycleObserver, SharedPreferences.OnSharedPreferenceChangeListener {
     private val prefs = Prefs(service)
-    private val sensorManager = service.getSystemService(SensorManager::class.java)!!
-    private val notificationManager = service.getSystemService(NotificationManager::class.java)!!
-    private val vibrator = service.getSystemService(Vibrator::class.java)!!
-    private val sensorWakeLock = service.getSystemService(PowerManager::class.java)!!
+    private val sensorManager: SensorManager = service.getSystemService()!!
+    private val notificationManager: NotificationManager = service.getSystemService()!!
+    private val vibrator: Vibrator = service.getSystemService()!!
+    private val sensorWakeLock = service.getSystemService<PowerManager>()!!
         .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Shouko::FlipToShushSensor")
 
     private val isFullTimeListening = supportFullTimeListening(service)
@@ -361,8 +362,7 @@ class FlipToShush(
         }
 
         fun supportFullTimeListening(context: Context): Boolean {
-            val sensorManager = context.getSystemService(SensorManager::class.java)
-            return sensorManager.getProximity()?.isWakeUpSensor == true
+            return context.getSystemService<SensorManager>()?.getProximity()?.isWakeUpSensor == true
         }
     }
 }

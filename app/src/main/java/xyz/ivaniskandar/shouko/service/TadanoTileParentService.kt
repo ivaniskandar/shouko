@@ -28,6 +28,7 @@ import android.provider.Settings
 import android.service.quicksettings.TileService
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
+import androidx.core.content.getSystemService
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.ui.theme.ShoukoAccent
 
@@ -43,18 +44,18 @@ import xyz.ivaniskandar.shouko.ui.theme.ShoukoAccent
  * @see TeaTileService
  */
 class TadanoTileParentService : Service() {
-    private val vibrator by lazy { getSystemService(Vibrator::class.java)!! }
-    private val sensorManager by lazy { getSystemService(SensorManager::class.java)!! }
+    private val vibrator: Vibrator by lazy { getSystemService()!! }
+    private val sensorManager: SensorManager by lazy { getSystemService()!! }
 
     private var isCoffeeReceiverRegistered = false
     private var isTeaReceiverRegistered = false
 
     @Suppress("DEPRECATION")
     private val coffeeWakeLock by lazy {
-        getSystemService(PowerManager::class.java)!!.newWakeLock(FULL_WAKE_LOCK, "Shouko::Coffee")
+        getSystemService<PowerManager>()!!.newWakeLock(FULL_WAKE_LOCK, "Shouko::Coffee")
     }
     private val teaWakeLock by lazy {
-        getSystemService(PowerManager::class.java)!!.newWakeLock(PROXIMITY_SCREEN_OFF_WAKE_LOCK, "Shouko::Tea")
+        getSystemService<PowerManager>()!!.newWakeLock(PROXIMITY_SCREEN_OFF_WAKE_LOCK, "Shouko::Tea")
     }
 
     private val teaScreenActionReceiver = object : BroadcastReceiver() {

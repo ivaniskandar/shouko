@@ -41,6 +41,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
+import androidx.core.content.getSystemService
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -242,7 +243,7 @@ fun Home(
                     }
             }
             val dndAccessCheck = rememberLauncherForActivityResult(StartActivityForResult()) {
-                val isGrantedDndAccess = context.getSystemService(NotificationManager::class.java)!!
+                val isGrantedDndAccess = context.getSystemService<NotificationManager>()!!
                     .isNotificationPolicyAccessGranted
                 if (isGrantedDndAccess) {
                     // Always true becos
@@ -257,7 +258,7 @@ fun Home(
                 enabled = TadanoAccessibilityService.isActive
             ) {
                 if (it) {
-                    val isGrantedDndAccess = context.getSystemService(NotificationManager::class.java)!!
+                    val isGrantedDndAccess = context.getSystemService<NotificationManager>()!!
                         .isNotificationPolicyAccessGranted
                     if (!isGrantedDndAccess) {
                         Toast.makeText(

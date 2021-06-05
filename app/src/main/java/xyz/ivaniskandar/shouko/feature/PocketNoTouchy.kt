@@ -13,6 +13,7 @@ import android.hardware.SensorManager
 import android.media.AudioManager
 import android.os.Handler
 import android.os.Looper
+import androidx.core.content.getSystemService
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -44,8 +45,8 @@ class PocketNoTouchy(
     private val service: AccessibilityService,
 ) : LifecycleObserver, SharedPreferences.OnSharedPreferenceChangeListener {
     private val prefs = Prefs(service)
-    private val sensorManager = service.getSystemService(SensorManager::class.java)!!
-    private val audioManager = service.getSystemService(AudioManager::class.java)!!
+    private val sensorManager: SensorManager = service.getSystemService()!!
+    private val audioManager: AudioManager = service.getSystemService()!!
 
     private val handler = Handler(Looper.getMainLooper())
 

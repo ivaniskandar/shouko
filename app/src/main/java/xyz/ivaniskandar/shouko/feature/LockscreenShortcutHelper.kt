@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.provider.Settings
+import androidx.core.content.getSystemService
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -45,7 +46,7 @@ class LockscreenShortcutHelper(
             if (!context.canWriteSecureSettings) {
                 return
             }
-            val keyguardLocked = context.getSystemService(KeyguardManager::class.java).isKeyguardLocked
+            val keyguardLocked = context.getSystemService<KeyguardManager>()!!.isKeyguardLocked
             val screenOn = intent.action != Intent.ACTION_SCREEN_OFF
             if (screenOn && keyguardLocked) {
                 lifecycleOwner.lifecycleScope.launch {

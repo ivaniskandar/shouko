@@ -16,6 +16,7 @@ import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.core.content.getSystemService
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.delay
@@ -60,7 +61,7 @@ class GAKeyOverriderKeyguardActivity : AppCompatActivity() {
     }
 
     private fun dismissKeyguard() {
-        getSystemService(KeyguardManager::class.java)?.requestDismissKeyguard(
+        getSystemService<KeyguardManager>()?.requestDismissKeyguard(
             this,
             object : KeyguardManager.KeyguardDismissCallback() {
                 override fun onDismissSucceeded() {
