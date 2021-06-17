@@ -23,6 +23,7 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.lifecycleScope
+import java.math.BigDecimal
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -258,7 +259,7 @@ class FlipToShush(
             if (!isDndOnByService && isProximityNear && isDoNotDisturbOff && isDeviceFlatFaceDown) {
                 val inclinationsAvg = inclinations.average().toBigDecimal().setScale(1, RoundingMode.HALF_EVEN)
                 val currentInclination = deviceInclination.toBigDecimal().setScale(1, RoundingMode.HALF_EVEN)
-                if (inclinationsAvg == currentInclination) {
+                if ((inclinationsAvg - currentInclination).abs() <= BigDecimal.ONE) {
                     Timber.d("Shush conditions met and stopping check")
                     switchDndState(true)
                 } else {
@@ -273,6 +274,7 @@ class FlipToShush(
             registerSensors(proximity = true, accelerometer = false)
         }
     }
+
     private fun startCheckForUnshush() = lifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
         try {
             Timber.d("Waiting period before rechecking conditions")
