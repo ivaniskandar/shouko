@@ -75,27 +75,16 @@ import xyz.ivaniskandar.shouko.util.loadLabel
 import xyz.ivaniskandar.shouko.util.setAsAssistantAction
 import xyz.ivaniskandar.shouko.util.toComponentName
 
-const val LOCKSCREEN_SHORTCUT_SELECTION_KEY_ARG = "key"
-
-const val ROUTE_HOME = "home"
-const val ROUTE_READ_LOGS_PERMISSION_SETUP = "read_logs_permission_setup"
-const val ROUTE_WRITE_SECURE_SETTINGS_PERMISSION_SETUP = "write_secure_settings_permission_setup"
-const val ROUTE_ASSISTANT_BUTTON_SETTINGS = "assistant_button_settings"
-const val ROUTE_ASSISTANT_LAUNCH_SELECTION = "assistant_launch_selection"
-const val ROUTE_LOCKSCREEN_SHORTCUT_SETTINGS = "lockscreen_shortcut_settings"
-const val ROUTE_LOCKSCREEN_SHORTCUT_SELECTION = "lockscreen_shortcut_selection/{$LOCKSCREEN_SHORTCUT_SELECTION_KEY_ARG}"
-
 @Composable
 fun getAppBarTitle(navController: NavController): String {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     return when (navBackStackEntry?.destination?.route) {
-        ROUTE_ASSISTANT_BUTTON_SETTINGS -> stringResource(id = R.string.assistant_button_title)
-        ROUTE_ASSISTANT_LAUNCH_SELECTION -> stringResource(id = R.string.assistant_launch_selection_title)
-        ROUTE_READ_LOGS_PERMISSION_SETUP,
-        ROUTE_WRITE_SECURE_SETTINGS_PERMISSION_SETUP -> ""
-        ROUTE_LOCKSCREEN_SHORTCUT_SETTINGS -> stringResource(id = R.string.lockscreen_shortcut_title)
-        ROUTE_LOCKSCREEN_SHORTCUT_SELECTION -> {
-            when (navBackStackEntry?.arguments?.getString(LOCKSCREEN_SHORTCUT_SELECTION_KEY_ARG)) {
+        Screen.AssistantButtonSettings.route -> stringResource(id = R.string.assistant_button_title)
+        Screen.AssistantLaunchSelection.route -> stringResource(id = R.string.assistant_launch_selection_title)
+        Screen.ReadLogsSetup.route, Screen.SecureSettingsSetup.route -> ""
+        Screen.LockscreenShortcutSettings.route -> stringResource(id = R.string.lockscreen_shortcut_title)
+        Screen.LockscreenShortcutSelection.route -> {
+            when (navBackStackEntry?.arguments?.getString("key")) {
                 LOCKSCREEN_RIGHT_BUTTON -> stringResource(id = R.string.lockscreen_shortcut_right)
                 LOCKSCREEN_LEFT_BUTTON -> stringResource(id = R.string.lockscreen_shortcut_left)
                 else -> stringResource(id = R.string.lockscreen_shortcut_title)
@@ -116,7 +105,7 @@ fun MainActivityActions(
 
     val menuItems = mutableListOf<@Composable ColumnScope.() -> Unit>()
     when (navBackStackEntry?.destination?.route) {
-        ROUTE_HOME -> {
+        Screen.Home.route -> {
             menuItems += {
                 DropdownMenuItem(
                     onClick = {
@@ -144,7 +133,7 @@ fun MainActivityActions(
                 }
             }
         }
-        ROUTE_ASSISTANT_LAUNCH_SELECTION -> {
+        Screen.AssistantLaunchSelection.route -> {
             menuItems += {
                 DropdownMenuItem(
                     onClick = {
@@ -165,11 +154,11 @@ fun MainActivityActions(
                 }
             }
         }
-        ROUTE_LOCKSCREEN_SHORTCUT_SELECTION -> {
+        Screen.LockscreenShortcutSelection.route -> {
             menuItems += {
                 DropdownMenuItem(
                     onClick = {
-                        val key = navBackStackEntry?.arguments?.getString(LOCKSCREEN_SHORTCUT_SELECTION_KEY_ARG)
+                        val key = navBackStackEntry?.arguments?.getString("key")
                         LockscreenShortcutHelper.getPreferences(context).edit {
                             remove(key)
                         }
@@ -227,7 +216,7 @@ fun Home(
                     },
                     enabled = TadanoAccessibilityService.isActive
                 ) {
-                    navController.navigate(ROUTE_ASSISTANT_BUTTON_SETTINGS)
+                    navController.navigate(Screen.AssistantButtonSettings.route)
                 }
             }
         }
@@ -294,7 +283,7 @@ fun Home(
                 subtitle = stringResource(R.string.lockscreen_shortcut_desc),
                 enabled = TadanoAccessibilityService.isActive
             ) {
-                navController.navigate(ROUTE_LOCKSCREEN_SHORTCUT_SETTINGS)
+                navController.navigate(Screen.LockscreenShortcutSettings.route)
             }
         }
     }
@@ -319,12 +308,12 @@ fun AssistantButtonSettings(
     LazyColumn(contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.navigationBars)) {
         item {
             ReadLogsCard(visible = !context.canReadSystemLogs) {
-                navController.navigate(ROUTE_READ_LOGS_PERMISSION_SETUP)
+                navController.navigate(Screen.ReadLogsSetup.route)
             }
         }
         item {
             WriteSettingsCard(visible = !context.canWriteSecureSettings) {
-                navController.navigate(ROUTE_WRITE_SECURE_SETTINGS_PERMISSION_SETUP)
+                navController.navigate(Screen.SecureSettingsSetup.route)
             }
         }
         item {
@@ -344,7 +333,7 @@ fun AssistantButtonSettings(
                     ?: stringResource(id = R.string.assistant_action_select_default_value),
                 enabled = buttonEnabled && context.canReadSystemLogs
             ) {
-                navController.navigate(ROUTE_ASSISTANT_LAUNCH_SELECTION)
+                navController.navigate(Screen.AssistantLaunchSelection.route)
             }
         }
         item {
@@ -496,7 +485,7 @@ fun LockscreenShortcutSettings(
     LazyColumn(contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.navigationBars)) {
         item {
             WriteSettingsCard(visible = !context.canWriteSecureSettings) {
-                navController.navigate(ROUTE_WRITE_SECURE_SETTINGS_PERMISSION_SETUP)
+                navController.navigate(Screen.SecureSettingsSetup.route)
             }
         }
         item {
@@ -507,10 +496,7 @@ fun LockscreenShortcutSettings(
                     ?: stringResource(id = R.string.assistant_action_select_default_value),
                 enabled = context.canWriteSecureSettings
             ) {
-                navController.navigate(
-                    ROUTE_LOCKSCREEN_SHORTCUT_SELECTION
-                        .replace("{$LOCKSCREEN_SHORTCUT_SELECTION_KEY_ARG}", LOCKSCREEN_LEFT_BUTTON)
-                )
+                navController.navigate(Screen.LockscreenShortcutSelection.createRoute(LOCKSCREEN_LEFT_BUTTON))
             }
         }
         item {
@@ -521,10 +507,7 @@ fun LockscreenShortcutSettings(
                     ?: stringResource(id = R.string.assistant_action_select_default_value),
                 enabled = context.canWriteSecureSettings
             ) {
-                navController.navigate(
-                    ROUTE_LOCKSCREEN_SHORTCUT_SELECTION
-                        .replace("{$LOCKSCREEN_SHORTCUT_SELECTION_KEY_ARG}", LOCKSCREEN_RIGHT_BUTTON)
-                )
+                navController.navigate(Screen.LockscreenShortcutSelection.createRoute(LOCKSCREEN_RIGHT_BUTTON))
             }
         }
     }

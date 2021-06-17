@@ -45,28 +45,21 @@ import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
+import kotlin.system.exitProcess
 import timber.log.Timber
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.ui.AssistantActionSelection
 import xyz.ivaniskandar.shouko.ui.AssistantButtonSettings
 import xyz.ivaniskandar.shouko.ui.Home
-import xyz.ivaniskandar.shouko.ui.LOCKSCREEN_SHORTCUT_SELECTION_KEY_ARG
 import xyz.ivaniskandar.shouko.ui.LockscreenShortcutSelection
 import xyz.ivaniskandar.shouko.ui.LockscreenShortcutSettings
 import xyz.ivaniskandar.shouko.ui.MainActivityActions
 import xyz.ivaniskandar.shouko.ui.PermissionSetup
-import xyz.ivaniskandar.shouko.ui.ROUTE_ASSISTANT_BUTTON_SETTINGS
-import xyz.ivaniskandar.shouko.ui.ROUTE_ASSISTANT_LAUNCH_SELECTION
-import xyz.ivaniskandar.shouko.ui.ROUTE_HOME
-import xyz.ivaniskandar.shouko.ui.ROUTE_LOCKSCREEN_SHORTCUT_SELECTION
-import xyz.ivaniskandar.shouko.ui.ROUTE_LOCKSCREEN_SHORTCUT_SETTINGS
-import xyz.ivaniskandar.shouko.ui.ROUTE_READ_LOGS_PERMISSION_SETUP
-import xyz.ivaniskandar.shouko.ui.ROUTE_WRITE_SECURE_SETTINGS_PERMISSION_SETUP
+import xyz.ivaniskandar.shouko.ui.Screen
 import xyz.ivaniskandar.shouko.ui.getAppBarTitle
 import xyz.ivaniskandar.shouko.ui.theme.ShoukoTheme
 import xyz.ivaniskandar.shouko.util.Prefs
 import xyz.ivaniskandar.shouko.util.isRootAvailable
-import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
     private val viewModel by viewModels<MainActivityViewModel>()
@@ -92,7 +85,7 @@ class MainActivity : AppCompatActivity() {
                                         maxLines = 2
                                     )
                                 },
-                                navigationIcon = if (currentRoute != ROUTE_HOME) {
+                                navigationIcon = if (currentRoute != Screen.Home.route) {
                                     {
                                         IconButton(onClick = { navController.popBackStack() }) {
                                             Icon(imageVector = Icons.Rounded.ArrowBack, contentDescription = null)
@@ -106,9 +99,9 @@ class MainActivity : AppCompatActivity() {
                         },
                     ) {
                         val rootAvailable = remember { isRootAvailable }
-                        NavHost(navController = navController, startDestination = ROUTE_HOME) {
-                            composable(ROUTE_HOME) { Home(prefs, navController) }
-                            composable(ROUTE_READ_LOGS_PERMISSION_SETUP) {
+                        NavHost(navController = navController, startDestination = Screen.Home.route) {
+                            composable(Screen.Home.route) { Home(prefs, navController) }
+                            composable(Screen.ReadLogsSetup.route) {
                                 PermissionSetup(
                                     title = stringResource(id = R.string.read_logs_permission_setup_title),
                                     permissionName = Manifest.permission.READ_LOGS,
@@ -119,7 +112,7 @@ class MainActivity : AppCompatActivity() {
                                     exitProcess(0)
                                 }
                             }
-                            composable(ROUTE_WRITE_SECURE_SETTINGS_PERMISSION_SETUP) {
+                            composable(Screen.SecureSettingsSetup.route) {
                                 PermissionSetup(
                                     title = stringResource(id = R.string.write_secure_settings_permission_setup_title),
                                     permissionName = Manifest.permission.WRITE_SECURE_SETTINGS,
@@ -130,17 +123,17 @@ class MainActivity : AppCompatActivity() {
                                     exitProcess(0)
                                 }
                             }
-                            composable(ROUTE_ASSISTANT_BUTTON_SETTINGS) {
+                            composable(Screen.AssistantButtonSettings.route) {
                                 AssistantButtonSettings(prefs, navController)
                             }
-                            composable(ROUTE_ASSISTANT_LAUNCH_SELECTION) {
+                            composable(Screen.AssistantLaunchSelection.route) {
                                 AssistantActionSelection(viewModel, prefs, navController)
                             }
-                            composable(ROUTE_LOCKSCREEN_SHORTCUT_SETTINGS) {
+                            composable(Screen.LockscreenShortcutSettings.route) {
                                 LockscreenShortcutSettings(navController)
                             }
-                            composable(ROUTE_LOCKSCREEN_SHORTCUT_SELECTION) {
-                                val key = it.arguments?.getString(LOCKSCREEN_SHORTCUT_SELECTION_KEY_ARG)
+                            composable(Screen.LockscreenShortcutSelection.route) {
+                                val key = it.arguments?.getString("key")
                                 if (key != null) {
                                     LockscreenShortcutSelection(
                                         mainViewModel = viewModel,
