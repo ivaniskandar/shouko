@@ -1,6 +1,8 @@
 package xyz.ivaniskandar.shouko.service
 
+import android.content.ComponentName
 import android.content.Intent
+import android.os.IBinder
 import android.service.quicksettings.Tile.STATE_ACTIVE
 import android.service.quicksettings.Tile.STATE_INACTIVE
 import android.service.quicksettings.TileService
@@ -11,6 +13,11 @@ import xyz.ivaniskandar.shouko.service.TadanoTileParentService.Companion.EXTRA_S
 import xyz.ivaniskandar.shouko.util.Prefs
 
 class TeaTileService : TileService() {
+
+    override fun onBind(intent: Intent?): IBinder? {
+        requestListeningState(this, ComponentName(this, TeaTileService::class.java))
+        return super.onBind(intent)
+    }
 
     override fun onStartListening() {
         super.onStartListening()
