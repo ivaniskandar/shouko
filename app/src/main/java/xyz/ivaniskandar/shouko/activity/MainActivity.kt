@@ -45,7 +45,6 @@ import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
-import kotlin.system.exitProcess
 import timber.log.Timber
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.ui.AssistantActionSelection
@@ -60,6 +59,7 @@ import xyz.ivaniskandar.shouko.ui.getAppBarTitle
 import xyz.ivaniskandar.shouko.ui.theme.ShoukoTheme
 import xyz.ivaniskandar.shouko.util.Prefs
 import xyz.ivaniskandar.shouko.util.isRootAvailable
+import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
     private val viewModel by viewModels<MainActivityViewModel>()

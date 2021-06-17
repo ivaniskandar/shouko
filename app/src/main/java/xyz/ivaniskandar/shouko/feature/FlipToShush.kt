@@ -23,7 +23,6 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.lifecycleScope
-import java.math.BigDecimal
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -32,6 +31,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import xyz.ivaniskandar.shouko.util.DeviceModel
 import xyz.ivaniskandar.shouko.util.Prefs
+import java.math.BigDecimal
 import java.math.RoundingMode
 import kotlin.math.acos
 import kotlin.math.pow
