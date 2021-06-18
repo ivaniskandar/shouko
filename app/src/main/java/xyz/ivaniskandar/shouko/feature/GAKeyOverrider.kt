@@ -292,10 +292,12 @@ class GAKeyOverrider(
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when (key) {
             Prefs.ASSIST_BUTTON_ACTION, Prefs.HIDE_ASSISTANT_CUE, Prefs.ASSIST_BUTTON_ENABLED -> {
-                customAction = prefs.assistButtonAction
-                hideAssistantCue = prefs.hideAssistantCue
-                buttonEnabled = prefs.assistButtonEnabled
-                start()
+                lifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
+                    customAction = prefs.assistButtonAction
+                    hideAssistantCue = prefs.hideAssistantCue
+                    buttonEnabled = prefs.assistButtonEnabled
+                    start()
+                }
             }
         }
     }
