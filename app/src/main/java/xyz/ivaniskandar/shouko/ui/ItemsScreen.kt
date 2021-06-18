@@ -118,7 +118,7 @@ fun MediaKeyRow(key: MediaKeyAction.Key, onClick: (MediaKeyAction) -> Unit) {
         Icon(
             painter = painterResource(id = key.iconResId),
             contentDescription = null,
-            modifier = RowIconModifier,
+            modifier = Modifier.size(36.dp).padding(2.dp),
             tint = MaterialTheme.colors.primary
         )
         Spacer(modifier = Modifier.width(24.dp))
@@ -144,7 +144,7 @@ fun FlashlightRow(onClick: () -> Unit) {
         Icon(
             imageVector = Icons.Rounded.FlashlightOn,
             contentDescription = null,
-            modifier = RowIconModifier,
+            modifier = Modifier.size(36.dp).padding(2.dp),
             tint = MaterialTheme.colors.primary
         )
         Spacer(modifier = Modifier.width(24.dp))
@@ -174,7 +174,7 @@ fun ScreenshotRow(onClick: () -> Unit) {
         Icon(
             imageVector = Icons.Rounded.Screenshot,
             contentDescription = null,
-            modifier = RowIconModifier,
+            modifier = Modifier.size(36.dp).padding(2.dp),
             tint = MaterialTheme.colors.primary
         )
         Spacer(modifier = Modifier.width(24.dp))
@@ -204,7 +204,7 @@ fun StatusBarRow(type: StatusBarAction.PanelType, onClick: (StatusBarAction) -> 
         Icon(
             imageVector = type.iconVector,
             contentDescription = null,
-            modifier = RowIconModifier,
+            modifier = Modifier.size(36.dp).padding(2.dp),
             tint = MaterialTheme.colors.primary
         )
         Spacer(modifier = Modifier.width(24.dp))
@@ -230,7 +230,7 @@ fun DoNothingRow(onClick: () -> Unit) {
         Icon(
             imageVector = Icons.Rounded.Clear,
             contentDescription = null,
-            modifier = RowIconModifier,
+            modifier = Modifier.size(36.dp).padding(2.dp),
             tint = MaterialTheme.colors.primary
         )
         Spacer(modifier = Modifier.width(24.dp))
