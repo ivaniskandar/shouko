@@ -54,9 +54,9 @@ Download
 
 Get the app on the [latest release page](https://github.com/ivaniskandar/shouko/releases/latest).
 
-Canary build to try new features/fixes is also available [here](https://github.com/ivaniskandar/shouko/actions/workflows/android-master.yml), but any issue reported with this build will not be accepted.
+Canary build to try new features/fixes is also available [here](https://github.com/ivaniskandar/shouko/actions/workflows/android-master.yml).
 
 Build it yourself
 ----------
 
-Currently, you can only use the latest Canary of [Android Studio Arctic Fox](https://developer.android.com/studio/preview) to build this project since Jetpack Compose is used to *compose* the UI.
+Currently, you will need [Android Studio Arctic Fox Beta](https://developer.android.com/studio/preview) or newer to build this project.
