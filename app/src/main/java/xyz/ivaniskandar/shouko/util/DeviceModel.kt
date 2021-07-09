@@ -23,4 +23,12 @@ object DeviceModel {
         "XQ-AT52",
         "XQ-AT72"
     ).contains(Build.MODEL)
+
+    // Xperia 10 III
+    val isPDX213 = arrayOf(
+        "A102SO",
+        "SO-52B",
+        "SOG04",
+        "XQ-BT52"
+    ).contains(Build.MODEL)
 }
