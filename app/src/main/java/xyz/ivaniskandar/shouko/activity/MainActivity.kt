@@ -5,11 +5,13 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.AppBarDefaults
 import androidx.compose.material.ContentAlpha
@@ -78,12 +80,15 @@ class MainActivity : AppCompatActivity() {
                             val currentRoute = navBackStackEntry?.destination?.route
                             InsetAwareTopAppBar(
                                 title = {
-                                    Text(
-                                        text = getAppBarTitle(navController = navController),
-                                        color = MaterialTheme.colors.onBackground,
-                                        textAlign = TextAlign.Center,
-                                        maxLines = 2
-                                    )
+                                    Crossfade(targetState = getAppBarTitle(navController = navController)) {
+                                        Text(
+                                            text = it,
+                                            modifier = Modifier.fillMaxWidth(),
+                                            color = MaterialTheme.colors.onBackground,
+                                            textAlign = TextAlign.Center,
+                                            maxLines = 1
+                                        )
+                                    }
                                 },
                                 navigationIcon = if (currentRoute != Screen.Home.route) {
                                     {
