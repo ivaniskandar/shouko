@@ -1,6 +1,10 @@
 package xyz.ivaniskandar.shouko.ui.theme
 
 import android.app.WallpaperColors
+import android.content.Context
+import android.content.res.ColorStateList
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
@@ -10,6 +14,7 @@ import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.ColorUtils
 import xyz.ivaniskandar.shouko.ShoukoApplication.Companion.wallpaperColors
@@ -23,16 +28,44 @@ private val ShoukoShapes = Shapes(medium = RoundedCornerShape(8.dp))
 
 @Composable
 fun ShoukoTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
-    ShoukoAccent = getAccent(wallpaperColors, darkTheme)
-    val bg = getAccentedBackground(ShoukoAccent, darkTheme)
+    ShoukoAccent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        getMonetAccent(LocalContext.current, darkTheme)
+    } else {
+        getAccent(wallpaperColors, darkTheme)
+    }
+    val background = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        getMonetBackground(LocalContext.current, darkTheme)
+    } else {
+        getAccentedBackground(ShoukoAccent, darkTheme)
+    }
+    val surface = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        getMonetSurface(LocalContext.current, darkTheme)
+    } else {
+        background
+    }
+    val onBackground = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        if (darkTheme) {
+            Color(LocalContext.current.getColor(android.R.color.system_neutral1_50))
+        } else {
+            Color(LocalContext.current.getColor(android.R.color.system_neutral1_900))
+        }
+    } else {
+        if (darkTheme) {
+            Color.White
+        } else {
+            Color.Black
+        }
+    }
     val colors = if (darkTheme) {
         darkColors(
             primary = ShoukoAccent,
             primaryVariant = ShoukoAccent,
             secondary = ShoukoAccent,
             secondaryVariant = ShoukoAccent,
-            background = bg,
-            surface = bg
+            background = background,
+            surface = surface,
+            onBackground = onBackground,
+            onSurface = onBackground
         )
     } else {
         lightColors(
@@ -40,11 +73,45 @@ fun ShoukoTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable
             primaryVariant = ShoukoAccent,
             secondary = ShoukoAccent,
             secondaryVariant = ShoukoAccent,
-            background = bg,
-            surface = bg
+            background = background,
+            surface = surface,
+            onBackground = onBackground,
+            onSurface = onBackground
         )
     }
     MaterialTheme(colors = colors, shapes = ShoukoShapes, content = content)
+}
+
+@RequiresApi(Build.VERSION_CODES.S)
+private fun getMonetAccent(context: Context, darkTheme: Boolean): Color {
+    val colorInt = if (darkTheme) {
+        context.getColor(android.R.color.system_accent1_200)
+    } else {
+        context.getColor(android.R.color.system_accent1_600)
+    }
+    return Color(colorInt)
+}
+
+@RequiresApi(Build.VERSION_CODES.S)
+private fun getMonetBackground(context: Context, darkTheme: Boolean): Color {
+    val colorInt = if (darkTheme) {
+        context.getColor(android.R.color.system_neutral1_900)
+    } else {
+        context.getColor(android.R.color.system_neutral1_50)
+    }
+    return Color(colorInt)
+}
+
+@RequiresApi(Build.VERSION_CODES.S)
+private fun getMonetSurface(context: Context, darkTheme: Boolean): Color {
+    val colorInt = if (darkTheme) {
+        context.getColor(android.R.color.system_neutral1_800)
+    } else {
+        ColorStateList.valueOf(context.getColor(android.R.color.system_neutral1_500))
+            .withLStar(98F)
+            .defaultColor
+    }
+    return Color(colorInt)
 }
 
 /**

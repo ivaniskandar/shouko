@@ -7,6 +7,7 @@ import android.content.ComponentName
 import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorManager
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.runtime.getValue
@@ -52,11 +53,13 @@ class ShoukoApplication : Application(), LifecycleObserver {
     }
 
     init {
-        ProcessLifecycleOwner.get().lifecycleScope.launchWhenCreated {
-            // Prepare wallpaper colors
-            WallpaperManager.getInstance(this@ShoukoApplication).apply {
-                addOnColorsChangedListener(wallpaperColorListener, Handler(Looper.getMainLooper()))
-                wallpaperColors = getWallpaperColors(WallpaperManager.FLAG_SYSTEM)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            ProcessLifecycleOwner.get().lifecycleScope.launchWhenCreated {
+                // Prepare wallpaper colors
+                WallpaperManager.getInstance(this@ShoukoApplication).apply {
+                    addOnColorsChangedListener(wallpaperColorListener, Handler(Looper.getMainLooper()))
+                    wallpaperColors = getWallpaperColors(WallpaperManager.FLAG_SYSTEM)
+                }
             }
         }
     }
