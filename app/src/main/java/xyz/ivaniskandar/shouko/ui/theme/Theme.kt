@@ -38,11 +38,6 @@ fun ShoukoTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable
     } else {
         getAccentedBackground(ShoukoAccent, darkTheme)
     }
-    val surface = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        getMonetSurface(LocalContext.current, darkTheme)
-    } else {
-        background
-    }
     val onBackground = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         if (darkTheme) {
             Color(LocalContext.current.getColor(android.R.color.system_neutral1_50))
@@ -63,7 +58,7 @@ fun ShoukoTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable
             secondary = ShoukoAccent,
             secondaryVariant = ShoukoAccent,
             background = background,
-            surface = surface,
+            surface = background,
             onBackground = onBackground,
             onSurface = onBackground
         )
@@ -74,7 +69,7 @@ fun ShoukoTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable
             secondary = ShoukoAccent,
             secondaryVariant = ShoukoAccent,
             background = background,
-            surface = surface,
+            surface = background,
             onBackground = onBackground,
             onSurface = onBackground
         )
