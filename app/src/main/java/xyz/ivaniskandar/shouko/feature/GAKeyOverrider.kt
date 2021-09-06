@@ -314,8 +314,8 @@ class GAKeyOverrider(
 
         private const val GA_KEY_DISABLED_GLOBAL_SETTING_KEY = "somc.game_enhancer_gab_key_disabled"
 
-        // Only supports Xperia 5 II
-        val isSupported = DeviceModel.isPDX206 || DeviceModel.isPDX213
+        // Only supports Xperia 5 II, Xperia 10 III, Xperia 1 III
+        val isSupported = DeviceModel.isPDX206 || DeviceModel.isPDX213 || DeviceModel.isPDX215
     }
 }
 
