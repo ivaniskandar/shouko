@@ -12,8 +12,7 @@ val Context.canWriteSecureSettings: Boolean
 
 fun Context.isPackageInstalled(packageName: String): Boolean {
     return try {
-        packageManager.getApplicationInfo(packageName, 0)
-        true
+        packageManager.getApplicationInfo(packageName, 0).enabled
     } catch (e: PackageManager.NameNotFoundException) {
         false
     }
