@@ -45,6 +45,7 @@ import xyz.ivaniskandar.shouko.feature.MediaKeyAction.Key
 import xyz.ivaniskandar.shouko.util.DeviceModel
 import xyz.ivaniskandar.shouko.util.Prefs
 import xyz.ivaniskandar.shouko.util.canReadSystemLogs
+import xyz.ivaniskandar.shouko.util.isPackageInstalled
 import xyz.ivaniskandar.shouko.util.loadLabel
 import java.net.URISyntaxException
 
@@ -52,15 +53,17 @@ import java.net.URISyntaxException
  * A feature module for [AccessibilityService]
  *
  * Overrides the Assistant Button action from launching Google
- * Assistant to any Intent. Only supports Sony Xperia 5 II (PDX-206).
+ * Assistant to any Intent. Supported device models is defined in
+ * [isSupported].
  *
  * Implementing [AccessibilityService] needs to listen to window
- * state changes.
+ * state changes ([AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED]).
  *
  * This class reads logcat to listen for Assistant button event. The
  * rest of what this class does is as follows:
  * 1. User pressed the Assistant button as it shows on logcat
- * ([ASSISTANT_LAUNCHED_CUE] or [ASSISTANT_GUIDE_LAUNCHED_CUE]).
+ * ([ASSISTANT_LAUNCHED_CUE] or [ASSISTANT_GUIDE_LAUNCHED_CUE]). If
+ * the Google app is not installed, step 2 will be skipped.
  *
  * 2. When implementing service called [onAccessibilityEvent] on
  * window state is changed, it will check if the foreground
@@ -120,7 +123,11 @@ class GAKeyOverrider(
         override fun onAddElement(e: String) {
             if (e.contains(ASSISTANT_LAUNCHED_CUE) || e.contains(ASSISTANT_GUIDE_LAUNCHED_CUE)) {
                 Timber.d("Assistant Button event detected")
-                assistButtonPressHandled = false
+                if (service.isPackageInstalled(GOOGLE_PACKAGE_NAME)) {
+                    assistButtonPressHandled = false
+                } else {
+                    runGAKeyAction(false)
+                }
                 if (hideAssistantCue) {
                     muteMusicStream(true)
                 }
@@ -163,11 +170,7 @@ class GAKeyOverrider(
         ) {
             Timber.d("Opa on foreground after Assist Button event")
             assistButtonPressHandled = true
-            if (keyguardManager.isKeyguardLocked) {
-                onOpaLaunchedAboveKeyguard()
-            } else {
-                onOpaLaunched()
-            }
+            runGAKeyAction(true)
         }
     }
 
@@ -227,14 +230,22 @@ class GAKeyOverrider(
         }
     }
 
-    private fun onOpaLaunched() {
+    private fun runGAKeyAction(withOpa: Boolean) {
+        if (keyguardManager.isKeyguardLocked) {
+            runGAKeyActionAboveKeyguard(withOpa)
+        } else {
+            runGAKeyActionUnlocked(withOpa)
+        }
+    }
+
+    private fun runGAKeyActionUnlocked(withOpa: Boolean) {
         customAction?.let {
-            Timber.d("Launching action $it")
-            service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
+            Timber.d("Launching action $it withOpa=$withOpa")
+            if (withOpa) service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
             when (it) {
                 is IntentAction -> {
                     lifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
-                        delay(100)
+                        if (withOpa) delay(100)
                         it.runAction(service)
                     }
                 }
@@ -246,14 +257,14 @@ class GAKeyOverrider(
     }
 
     @Suppress("DEPRECATION")
-    private fun onOpaLaunchedAboveKeyguard() {
+    private fun runGAKeyActionAboveKeyguard(withOpa: Boolean) {
         customAction?.let {
-            Timber.d("With Keyguard running action $it")
+            Timber.d("With Keyguard running action $it withOpa=$withOpa")
             lifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
-                service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
+                if (withOpa) service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
                 when (it) {
                     is IntentAction -> {
-                        delay(500)
+                        if (withOpa) delay(500)
                         Timber.d("Starting keyguard launch activity")
                         val i = Intent(service, GAKeyOverriderKeyguardActivity::class.java).apply {
                             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -261,9 +272,9 @@ class GAKeyOverrider(
                         service.startActivity(i)
                     }
                     else -> {
-                        delay(200)
+                        if (withOpa) delay(200)
                         it.runAction(service)
-                        service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
+                        if (withOpa) service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
                     }
                 }
             }

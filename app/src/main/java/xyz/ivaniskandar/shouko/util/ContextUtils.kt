@@ -9,3 +9,12 @@ val Context.canReadSystemLogs
 
 val Context.canWriteSecureSettings: Boolean
     get() = checkSelfPermission(Manifest.permission.WRITE_SECURE_SETTINGS) == PackageManager.PERMISSION_GRANTED
+
+fun Context.isPackageInstalled(packageName: String): Boolean {
+    return try {
+        packageManager.getApplicationInfo(packageName, 0)
+        true
+    } catch (e: PackageManager.NameNotFoundException) {
+        false
+    }
+}
