@@ -23,6 +23,7 @@ import timber.log.Timber
 import xyz.ivaniskandar.shouko.activity.PocketNoTouchyActivity
 import xyz.ivaniskandar.shouko.feature.PocketNoTouchy.Companion.PROXIMITY_LISTEN_DURATION
 import xyz.ivaniskandar.shouko.util.Prefs
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * A feature module for [AccessibilityService]
@@ -50,17 +51,17 @@ class PocketNoTouchy(
 
     private val handler = Handler(Looper.getMainLooper())
 
-    private var isProximityNear = false
+    private val isProximityNear = AtomicBoolean(false)
     private var isScreenOnReceiverRegistered = false
     private var isListeningSensor = false
 
     private val proximityEventListener: SensorEventListener = object : SensorEventListener {
         override fun onSensorChanged(event: SensorEvent?) {
             if (event?.sensor?.type == Sensor.TYPE_PROXIMITY) {
-                isProximityNear = event.values[0] == 0F
+                isProximityNear.set(event.values[0] == 0F)
 
                 handler.removeCallbacks(activityDelayedRunnable)
-                if (isProximityNear) {
+                if (isProximityNear.get()) {
                     // Delay show activity
                     handler.postDelayed(activityDelayedRunnable, ACTIVITY_DELAY_DURATION)
                 } else {
@@ -100,7 +101,7 @@ class PocketNoTouchy(
         }
     }
     private val proximityDelayedRunnable = Runnable {
-        if (isProximityNear) {
+        if (isProximityNear.get()) {
             // Turn off screen when timeout and proximity is still in near position
             Timber.d("Proximity still near after timeout, locking screen...")
             sensorManager.unregisterListener(proximityEventListener)
@@ -119,8 +120,8 @@ class PocketNoTouchy(
     }
 
     private val activityDelayedRunnable = Runnable {
-        Timber.d("Updating ${PocketNoTouchyActivity::class.simpleName} visible state $isProximityNear")
-        PocketNoTouchyActivity.updateState(service, isProximityNear)
+        Timber.d("Updating ${PocketNoTouchyActivity::class.simpleName} visible state ${isProximityNear.get()}")
+        PocketNoTouchyActivity.updateState(service, isProximityNear.get())
     }
 
     private val isInCall: Boolean
