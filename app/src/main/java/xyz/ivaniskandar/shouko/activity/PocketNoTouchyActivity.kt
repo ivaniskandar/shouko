@@ -53,7 +53,6 @@ class PocketNoTouchyActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        overridePendingTransition(R.anim.no_anim, R.anim.no_anim)
         super.onCreate(savedInstanceState)
 
         // Set full screen
@@ -81,11 +80,6 @@ class PocketNoTouchyActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    override fun finish() {
-        super.finish()
-        overridePendingTransition(R.anim.no_anim, R.anim.no_anim)
     }
 
     override fun onDestroy() {
@@ -141,6 +135,7 @@ class PocketNoTouchyActivity : AppCompatActivity() {
             if (show) {
                 val intent = Intent(context, PocketNoTouchyActivity::class.java).apply {
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
                 }
                 context.startActivity(intent)
             } else {
