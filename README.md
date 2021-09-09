@@ -61,4 +61,4 @@ Canary build to try new features/fixes is also available [here](https://github.c
 Build it yourself
 ----------
 
-Currently, you will need [Android Studio Arctic Fox Beta](https://developer.android.com/studio/preview) or newer to build this project.
+You will need [Android Studio Arctic Fox](https://developer.android.com/studio) or newer to build this project.
