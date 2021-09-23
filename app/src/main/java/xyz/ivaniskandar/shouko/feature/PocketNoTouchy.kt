@@ -14,10 +14,8 @@ import android.media.AudioManager
 import android.os.Handler
 import android.os.Looper
 import androidx.core.content.getSystemService
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.OnLifecycleEvent
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import timber.log.Timber
 import xyz.ivaniskandar.shouko.activity.PocketNoTouchyActivity
@@ -42,9 +40,9 @@ import java.util.concurrent.atomic.AtomicBoolean
  * @see PocketNoTouchyActivity
  */
 class PocketNoTouchy(
-    lifecycleOwner: LifecycleOwner,
+    private val lifecycleOwner: LifecycleOwner,
     private val service: AccessibilityService,
-) : LifecycleObserver, SharedPreferences.OnSharedPreferenceChangeListener {
+) : DefaultLifecycleObserver, SharedPreferences.OnSharedPreferenceChangeListener {
     private val prefs = Prefs(service)
     private val sensorManager: SensorManager = service.getSystemService()!!
     private val audioManager: AudioManager = service.getSystemService()!!
@@ -132,13 +130,11 @@ class PocketNoTouchy(
             else -> false
         }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    fun start() {
+    override fun onStart(owner: LifecycleOwner) {
         updatePocketNoTouchy(prefs.preventPocketTouchEnabled)
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    fun stop() {
+    override fun onDestroy(owner: LifecycleOwner) {
         updatePocketNoTouchy(false)
     }
 
@@ -176,7 +172,7 @@ class PocketNoTouchy(
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         if (key == Prefs.PREVENT_POCKET_TOUCH) {
             Timber.d("${Prefs.PREVENT_POCKET_TOUCH} changed to ${prefs.preventPocketTouchEnabled}")
-            start()
+            onStart(lifecycleOwner)
         }
     }
 

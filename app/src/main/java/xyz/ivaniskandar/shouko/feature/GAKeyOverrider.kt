@@ -25,10 +25,9 @@ import androidx.compose.material.icons.rounded.AdUnits
 import androidx.compose.material.icons.rounded.Aod
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.core.content.getSystemService
+import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.lifecycleScope
 import com.topjohnwu.superuser.CallbackList
 import com.topjohnwu.superuser.Shell
@@ -88,7 +87,7 @@ import java.net.URISyntaxException
 class GAKeyOverrider(
     private val lifecycleOwner: LifecycleOwner,
     private val service: AccessibilityService,
-) : LifecycleObserver, SharedPreferences.OnSharedPreferenceChangeListener {
+) : DefaultLifecycleObserver, SharedPreferences.OnSharedPreferenceChangeListener {
     private val prefs = Prefs(service)
     private val keyguardManager: KeyguardManager = service.getSystemService()!!
     private val audioManager: AudioManager = service.getSystemService()!!
@@ -152,14 +151,12 @@ class GAKeyOverrider(
     }
 
     @Synchronized
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    fun start() {
+    override fun onStart(owner: LifecycleOwner) {
         updateGAKeyDisabler(!buttonEnabled)
         updateOpaOverrider(isReady)
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    fun stop() {
+    override fun onDestroy(owner: LifecycleOwner) {
         updateGAKeyDisabler(false)
         updateOpaOverrider(false)
     }
@@ -203,7 +200,7 @@ class GAKeyOverrider(
                     Timber.d("Logcat observer stopped")
                     isActive = false
                     if (lifecycleOwner.lifecycle.currentState == Lifecycle.State.STARTED) {
-                        start() // Restart when needed
+                        onStart(lifecycleOwner) // Restart when needed
                     }
                 }
                 isActive = true
@@ -307,7 +304,7 @@ class GAKeyOverrider(
                     customAction = prefs.assistButtonAction
                     hideAssistantCue = prefs.hideAssistantCue
                     buttonEnabled = prefs.assistButtonEnabled
-                    start()
+                    onStart(lifecycleOwner)
                 }
             }
         }

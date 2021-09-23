@@ -18,10 +18,8 @@ import android.os.SystemClock
 import android.os.VibrationEffect
 import android.os.Vibrator
 import androidx.core.content.getSystemService
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -52,7 +50,7 @@ import kotlin.math.sqrt
 class FlipToShush(
     private val lifecycleOwner: LifecycleOwner,
     private val service: AccessibilityService,
-) : LifecycleObserver, SharedPreferences.OnSharedPreferenceChangeListener {
+) : DefaultLifecycleObserver, SharedPreferences.OnSharedPreferenceChangeListener {
     private val prefs = Prefs(service)
     private val sensorManager: SensorManager = service.getSystemService()!!
     private val notificationManager: NotificationManager = service.getSystemService()!!
@@ -138,8 +136,7 @@ class FlipToShush(
     private var unshushCheckerJob: Job? = null
 
     @Synchronized
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    fun start() {
+    override fun onStart(owner: LifecycleOwner) {
         val shouldEnable = prefs.flipToShushEnabled && notificationManager.isNotificationPolicyAccessGranted
         updateFlipToShush(shouldEnable)
         updateScreenReceiverState(shouldEnable && !isFullTimeListening)
@@ -148,8 +145,7 @@ class FlipToShush(
         }
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    fun stop() {
+    override fun onDestroy(owner: LifecycleOwner) {
         updateFlipToShush(false)
         updateScreenReceiverState(false)
         switchDndState(false)
@@ -303,7 +299,7 @@ class FlipToShush(
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         if (key == Prefs.FLIP_TO_SHUSH) {
             Timber.d("${Prefs.FLIP_TO_SHUSH} changed to ${prefs.flipToShushEnabled}")
-            start()
+            onStart(lifecycleOwner)
         }
     }
 

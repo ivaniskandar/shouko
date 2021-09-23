@@ -8,10 +8,8 @@ import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.provider.Settings
 import androidx.core.content.getSystemService
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -39,7 +37,7 @@ import xyz.ivaniskandar.shouko.util.canWriteSecureSettings
 class LockscreenShortcutHelper(
     private val lifecycleOwner: LifecycleOwner,
     private val context: Context,
-) : LifecycleObserver, SharedPreferences.OnSharedPreferenceChangeListener {
+) : DefaultLifecycleObserver, SharedPreferences.OnSharedPreferenceChangeListener {
     private var receiverRegistered = false
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -73,16 +71,14 @@ class LockscreenShortcutHelper(
         }
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    fun start() {
+    override fun onStart(owner: LifecycleOwner) {
         val localSettings = getPreferences(context)
         val ready = localSettings.getString(LOCKSCREEN_LEFT_BUTTON, null) != null ||
             localSettings.getString(LOCKSCREEN_RIGHT_BUTTON, null) != null
         updateReceiverState(ready)
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    fun stop() {
+    override fun onDestroy(owner: LifecycleOwner) {
         updateReceiverState(false)
     }
 
@@ -106,7 +102,7 @@ class LockscreenShortcutHelper(
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        start()
+        onStart(lifecycleOwner)
     }
 
     init {
