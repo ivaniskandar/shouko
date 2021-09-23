@@ -26,7 +26,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import timber.log.Timber
+import logcat.logcat
 import xyz.ivaniskandar.shouko.util.DeviceModel
 import xyz.ivaniskandar.shouko.util.Prefs
 import java.math.BigDecimal
@@ -154,7 +154,7 @@ class FlipToShush(
     private fun updateScreenReceiverState(state: Boolean) {
         if (state) {
             if (!screenEventReceiverRegistered) {
-                Timber.d("Registering screen listener")
+                logcat { "Registering screen listener" }
                 val filter = IntentFilter().apply {
                     addAction(Intent.ACTION_SCREEN_ON)
                     addAction(Intent.ACTION_SCREEN_OFF)
@@ -163,7 +163,7 @@ class FlipToShush(
                 screenEventReceiverRegistered = true
             }
         } else if (screenEventReceiverRegistered) {
-            Timber.d("Unregistering screen listener")
+            logcat { "Unregistering screen listener" }
             service.unregisterReceiver(screenEventReceiver)
             screenEventReceiverRegistered = false
         }
@@ -182,28 +182,28 @@ class FlipToShush(
         if (proximity) {
             if (!proximityListenerRegistered) {
                 val sensor = sensorManager.getProximity()
-                Timber.d("Registering \"${sensor?.name}\" to $proximityEventListener")
+                logcat { "Registering \"${sensor?.name}\" to $proximityEventListener" }
                 sensorManager.registerListener(proximityEventListener, sensor, SENSOR_DELAY_NORMAL)
                 proximityListenerRegistered = true
             }
         } else if (proximityListenerRegistered) {
-            Timber.d("Unregistering proximity $proximityEventListener")
+            logcat { "Unregistering proximity $proximityEventListener" }
             sensorManager.unregisterListener(proximityEventListener)
             proximityListenerRegistered = false
         }
         if (accelerometer) {
             if (!accelerometerListenerRegistered) {
                 val sensor = sensorManager.getAccelerometer()
-                Timber.d("Registering sensor \"${sensor?.name}\" to $accelerometerEventListener")
+                logcat { "Registering sensor \"${sensor?.name}\" to $accelerometerEventListener" }
                 if (isFullTimeListening && !sensor!!.isWakeUpSensor) {
-                    Timber.d("Acquiring wakelock because \"${sensor.name}\" is a non-wakeup sensor")
+                    logcat { "Acquiring wakelock because \"${sensor.name}\" is a non-wakeup sensor" }
                     sensorWakeLock.acquire(SENSOR_WAKELOCK_TIMEOUT)
                 }
                 sensorManager.registerListener(accelerometerEventListener, sensor, SENSOR_DELAY_UI)
                 accelerometerListenerRegistered = true
             }
         } else if (accelerometerListenerRegistered) {
-            Timber.d("Unregistering accelerometer $accelerometerEventListener")
+            logcat { "Unregistering accelerometer $accelerometerEventListener" }
             sensorManager.unregisterListener(accelerometerEventListener)
             if (sensorWakeLock.isHeld) {
                 sensorWakeLock.release()
@@ -215,18 +215,18 @@ class FlipToShush(
     private fun switchDndState(state: Boolean) {
         isDndOnByService = if (state) {
             if (!isDndOnByService) {
-                Timber.d("Shush state on")
+                logcat { "Shush state on" }
                 notificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_PRIORITY)
                 vibrator.vibrate(shushOnVibrationEffect)
                 service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN)
                 true
             } else {
-                Timber.d("User DND is active, shush state unchanged")
+                logcat { "User DND is active, shush state unchanged" }
                 false
             }
         } else {
             if (isDndOnByService) {
-                Timber.d("Shush state off")
+                logcat { "Shush state off" }
                 notificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL)
                 vibrator.vibrate(shushOffVibrationEffect)
             }
@@ -236,7 +236,7 @@ class FlipToShush(
 
     private fun startCheckForShush() = lifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
         try {
-            Timber.d("Waiting period before rechecking conditions")
+            logcat { "Waiting period before rechecking conditions" }
             registerSensors(proximity = true, accelerometer = true)
 
             val inclinations = mutableListOf<Double>()
@@ -256,16 +256,16 @@ class FlipToShush(
                 val inclinationsAvg = inclinations.average().toBigDecimal().setScale(1, RoundingMode.HALF_EVEN)
                 val currentInclination = deviceInclination.toBigDecimal().setScale(1, RoundingMode.HALF_EVEN)
                 if ((inclinationsAvg - currentInclination).abs() <= BigDecimal.ONE) {
-                    Timber.d("Shush conditions met and stopping check")
+                    logcat { "Shush conditions met and stopping check" }
                     switchDndState(true)
                 } else {
-                    Timber.d("No shush, device wasn't in stationary position")
+                    logcat { "No shush, device wasn't in stationary position" }
                 }
             } else {
-                Timber.d("Shush conditions unmet")
+                logcat { "Shush conditions unmet" }
             }
         } catch (e: CancellationException) {
-            Timber.d("Job cancelled")
+            logcat { "Job cancelled" }
         } finally {
             registerSensors(proximity = true, accelerometer = false)
         }
@@ -273,7 +273,7 @@ class FlipToShush(
 
     private fun startCheckForUnshush() = lifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
         try {
-            Timber.d("Waiting period before rechecking conditions")
+            logcat { "Waiting period before rechecking conditions" }
             registerSensors(proximity = true, accelerometer = true)
 
             val startWait = SystemClock.elapsedRealtime()
@@ -284,13 +284,13 @@ class FlipToShush(
             }
 
             if (isDndOnByService && !isProximityNear) {
-                Timber.d("Unshush condition met")
+                logcat { "Unshush condition met" }
                 switchDndState(false)
             } else {
-                Timber.d("Unshush condition unmet, shush state unchanged")
+                logcat { "Unshush condition unmet, shush state unchanged" }
             }
         } catch (e: CancellationException) {
-            Timber.d("Job cancelled")
+            logcat { "Job cancelled" }
         } finally {
             registerSensors(proximity = true, accelerometer = false)
         }
@@ -298,7 +298,7 @@ class FlipToShush(
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         if (key == Prefs.FLIP_TO_SHUSH) {
-            Timber.d("${Prefs.FLIP_TO_SHUSH} changed to ${prefs.flipToShushEnabled}")
+            logcat { "${Prefs.FLIP_TO_SHUSH} changed to ${prefs.flipToShushEnabled}" }
             onStart(lifecycleOwner)
         }
     }

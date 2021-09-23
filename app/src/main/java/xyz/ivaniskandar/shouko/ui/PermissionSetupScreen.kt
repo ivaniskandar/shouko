@@ -42,7 +42,7 @@ import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import timber.log.Timber
+import logcat.logcat
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.ui.theme.ShoukoTheme
 import xyz.ivaniskandar.shouko.util.createShareTextIntent
@@ -87,12 +87,12 @@ fun PermissionSetup(
     LaunchedEffect(true) {
         launch(Dispatchers.Default) {
             while (context.checkSelfPermission(permissionName) != PackageManager.PERMISSION_GRANTED) {
-                Timber.d("Waiting for $permissionName permission")
+                logcat { "Waiting for $permissionName permission" }
                 // Check every 1 second
                 delay(1000)
             }
             launch(Dispatchers.Main) {
-                Timber.d("$permissionName permission granted. Calling callback...")
+                logcat { "$permissionName permission granted. Calling callback..." }
                 onPermissionGranted()
             }
         }

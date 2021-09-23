@@ -34,7 +34,9 @@ import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import timber.log.Timber
+import logcat.LogPriority
+import logcat.asLog
+import logcat.logcat
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.activity.GAKeyOverriderKeyguardActivity
 import xyz.ivaniskandar.shouko.feature.GAKeyOverrider.Companion.ASSISTANT_GUIDE_LAUNCHED_CUE
@@ -121,7 +123,7 @@ class GAKeyOverrider(
     private val logcatCallback = object : CallbackList<String>() {
         override fun onAddElement(e: String) {
             if (e.contains(ASSISTANT_LAUNCHED_CUE) || e.contains(ASSISTANT_GUIDE_LAUNCHED_CUE)) {
-                Timber.d("Assistant Button event detected")
+                logcat { "Assistant Button event detected" }
                 if (service.isPackageInstalled(GOOGLE_PACKAGE_NAME)) {
                     assistButtonPressHandled = false
                 } else {
@@ -165,7 +167,7 @@ class GAKeyOverrider(
         if (!assistButtonPressHandled && event?.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED &&
             event.packageName == GOOGLE_PACKAGE_NAME
         ) {
-            Timber.d("Opa on foreground after Assist Button event")
+            logcat { "Opa on foreground after Assist Button event" }
             assistButtonPressHandled = true
             runGAKeyAction(true)
         }
@@ -174,7 +176,7 @@ class GAKeyOverrider(
     private fun updateGAKeyDisabler(state: Boolean) {
         if (state) {
             if (!isGAKeyDisablerRegistered) {
-                Timber.d("Registering Assist button disabler")
+                logcat { "Registering Assist button disabler" }
                 isButtonSystemDisabled = true
                 service.contentResolver.registerContentObserver(
                     Settings.Global.getUriFor(GA_KEY_DISABLED_GLOBAL_SETTING_KEY),
@@ -184,7 +186,7 @@ class GAKeyOverrider(
                 isGAKeyDisablerRegistered = true
             }
         } else if (isGAKeyDisablerRegistered) {
-            Timber.d("Unregistering Assist Button disabler")
+            logcat { "Unregistering Assist Button disabler" }
             service.contentResolver.unregisterContentObserver(gaKeyDisabler)
             isButtonSystemDisabled = false
             isGAKeyDisablerRegistered = false
@@ -194,10 +196,10 @@ class GAKeyOverrider(
     private fun updateOpaOverrider(state: Boolean) {
         if (state) {
             if (!isActive) {
-                Timber.d("Enabling logcat observer")
+                logcat { "Enabling logcat observer" }
                 Shell.sh("logcat -c").exec()
                 Shell.sh("logcat").to(logcatCallback).submit {
-                    Timber.d("Logcat observer stopped")
+                    logcat { "Logcat observer stopped" }
                     isActive = false
                     if (lifecycleOwner.lifecycle.currentState == Lifecycle.State.STARTED) {
                         onStart(lifecycleOwner) // Restart when needed
@@ -207,7 +209,7 @@ class GAKeyOverrider(
             }
         } else {
             if (isActive) {
-                Timber.d("Disabling logcat observer")
+                logcat { "Disabling logcat observer" }
                 Shell.getCachedShell()?.close()
                 isActive = false
             }
@@ -216,12 +218,12 @@ class GAKeyOverrider(
         // Audio listener for hiding assistant cue
         if (state && hideAssistantCue) {
             if (!audioPlaybackCallbackRegistered) {
-                Timber.d("Registering audio playback listener")
+                logcat { "Registering audio playback listener" }
                 audioManager.registerAudioPlaybackCallback(audioPlaybackCallback, null)
                 audioPlaybackCallbackRegistered = true
             }
         } else if (!hideAssistantCue && audioPlaybackCallbackRegistered) {
-            Timber.d("Unregistering audio playback listener")
+            logcat { "Unregistering audio playback listener" }
             audioManager.unregisterAudioPlaybackCallback(audioPlaybackCallback)
             audioPlaybackCallbackRegistered = false
         }
@@ -237,7 +239,7 @@ class GAKeyOverrider(
 
     private fun runGAKeyActionUnlocked(withOpa: Boolean) {
         customAction?.let {
-            Timber.d("Launching action $it withOpa=$withOpa")
+            logcat { "Launching action $it withOpa=$withOpa" }
             if (withOpa) service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
             when (it) {
                 is IntentAction -> {
@@ -256,13 +258,13 @@ class GAKeyOverrider(
     @Suppress("DEPRECATION")
     private fun runGAKeyActionAboveKeyguard(withOpa: Boolean) {
         customAction?.let {
-            Timber.d("With Keyguard running action $it withOpa=$withOpa")
+            logcat { "With Keyguard running action $it withOpa=$withOpa" }
             lifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
                 if (withOpa) service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
                 when (it) {
                     is IntentAction -> {
                         if (withOpa) delay(500)
-                        Timber.d("Starting keyguard launch activity")
+                        logcat { "Starting keyguard launch activity" }
                         val i = Intent(service, GAKeyOverriderKeyguardActivity::class.java).apply {
                             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         }
@@ -283,7 +285,7 @@ class GAKeyOverrider(
         if (mute) {
             if (volumeBeforeMuted == null) {
                 volumeBeforeMuted = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
-                Timber.d("Muting music stream volume with previous value $volumeBeforeMuted")
+                logcat { "Muting music stream volume with previous value $volumeBeforeMuted" }
                 audioManager.setStreamVolume(
                     AudioManager.STREAM_MUSIC,
                     audioManager.getStreamMinVolume(AudioManager.STREAM_MUSIC),
@@ -291,7 +293,7 @@ class GAKeyOverrider(
                 )
             }
         } else if (volumeBeforeMuted != null) {
-            Timber.d("Restoring music stream volume to $volumeBeforeMuted")
+            logcat { "Restoring music stream volume to $volumeBeforeMuted" }
             audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volumeBeforeMuted!!, 0)
             volumeBeforeMuted = null
         }
@@ -357,7 +359,7 @@ class IntentAction(private val intent: Intent) : Action() {
                 val intent = Intent.parseUri(intentUri, 0)
                 return IntentAction(intent)
             } catch (e: URISyntaxException) {
-                Timber.e(e, "Malformed intent uri $string")
+                logcat(LogPriority.ERROR) { "Malformed intent uri $string\n${e.asLog()}" }
             }
             return null
         }
@@ -409,7 +411,7 @@ class MediaKeyAction(private val key: Key) : Action() {
             try {
                 return MediaKeyAction(Key.valueOf(keyName))
             } catch (e: Exception) {
-                Timber.e(e, "$keyName doesn't exists in Key")
+                logcat(LogPriority.ERROR) { "$keyName doesn't exists in Key\n${e.asLog()}" }
             }
             return null
         }
@@ -486,7 +488,7 @@ class ScreenshotAction : Action() {
         if (context is AccessibilityService) {
             context.performGlobalAction(AccessibilityService.GLOBAL_ACTION_TAKE_SCREENSHOT)
         } else {
-            Timber.e("Context is not AccessibilityService, do nothing.")
+            logcat(LogPriority.ERROR) { "Context is not AccessibilityService, do nothing." }
         }
     }
 
@@ -513,7 +515,7 @@ class StatusBarAction(private val type: PanelType) : Action() {
                 .getMethod(type.method)
                 .invoke(context.getSystemService<StatusBarManager>())
         } catch (e: Exception) {
-            Timber.e(e, "Failed to run statusbar action.")
+            logcat(LogPriority.ERROR) { "Failed to run statusbar action.\n${e.asLog()}" }
         }
     }
 
@@ -538,7 +540,7 @@ class StatusBarAction(private val type: PanelType) : Action() {
             try {
                 return StatusBarAction(PanelType.valueOf(typeName))
             } catch (e: Exception) {
-                Timber.e(e, "$typeName doesn't exists in PanelType")
+                logcat(LogPriority.ERROR) { "$typeName doesn't exists in PanelType\n${e.asLog()}" }
             }
             return null
         }
@@ -596,7 +598,7 @@ sealed class Action {
                     DoNothingAction()
                 }
                 else -> {
-                    Timber.e("Unrecognized string: $string")
+                    logcat(LogPriority.ERROR) { "Unrecognized string: $string" }
                     null
                 }
             }

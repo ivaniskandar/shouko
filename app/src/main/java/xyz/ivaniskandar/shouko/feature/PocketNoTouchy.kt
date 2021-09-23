@@ -17,7 +17,7 @@ import androidx.core.content.getSystemService
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import timber.log.Timber
+import logcat.logcat
 import xyz.ivaniskandar.shouko.activity.PocketNoTouchyActivity
 import xyz.ivaniskandar.shouko.feature.PocketNoTouchy.Companion.PROXIMITY_LISTEN_DURATION
 import xyz.ivaniskandar.shouko.util.Prefs
@@ -81,7 +81,7 @@ class PocketNoTouchy(
             when (intent.action) {
                 Intent.ACTION_SCREEN_ON -> {
                     if (!isInCall) {
-                        Timber.d("Screen on event and not in call, listening to proximity")
+                        logcat { "Screen on event and not in call, listening to proximity" }
                         isListeningSensor = true
                         sensorManager.registerListener(
                             proximityEventListener,
@@ -89,7 +89,7 @@ class PocketNoTouchy(
                             SensorManager.SENSOR_DELAY_UI
                         )
                     } else {
-                        Timber.d("Screen on event but in call, do nothing...")
+                        logcat { "Screen on event but in call, do nothing..." }
                     }
                 }
                 Intent.ACTION_SCREEN_OFF -> {
@@ -101,24 +101,24 @@ class PocketNoTouchy(
     private val proximityDelayedRunnable = Runnable {
         if (isProximityNear.get()) {
             // Turn off screen when timeout and proximity is still in near position
-            Timber.d("Proximity still near after timeout, locking screen...")
+            logcat { "Proximity still near after timeout, locking screen..." }
             sensorManager.unregisterListener(proximityEventListener)
             service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN)
         } else {
-            Timber.d("Proximity still far after timeout, stop listening...")
+            logcat { "Proximity still far after timeout, stop listening..." }
             sensorManager.unregisterListener(proximityEventListener)
         }
     }
     private val ignoreActionReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            Timber.d("Ignore action received")
+            logcat { "Ignore action received" }
             // Ignore button clicked, just unregister sensor and cancel delayed runnable.
             ignoreCheck()
         }
     }
 
     private val activityDelayedRunnable = Runnable {
-        Timber.d("Updating ${PocketNoTouchyActivity::class.simpleName} visible state ${isProximityNear.get()}")
+        logcat { "Updating ${PocketNoTouchyActivity::class.simpleName} visible state ${isProximityNear.get()}" }
         PocketNoTouchyActivity.updateState(service, isProximityNear.get())
     }
 
@@ -140,7 +140,7 @@ class PocketNoTouchy(
 
     private fun ignoreCheck() {
         if (isListeningSensor) {
-            Timber.d("Go to idle state")
+            logcat { "Go to idle state" }
             sensorManager.unregisterListener(proximityEventListener)
             handler.removeCallbacks(proximityDelayedRunnable)
             handler.removeCallbacks(activityDelayedRunnable)
@@ -152,7 +152,7 @@ class PocketNoTouchy(
         val lbm = LocalBroadcastManager.getInstance(service)
         if (state) {
             if (!isScreenOnReceiverRegistered) {
-                Timber.d("Enabling screen on event receiver")
+                logcat { "Enabling screen on event receiver" }
                 val screenEventFilter = IntentFilter().apply {
                     addAction(Intent.ACTION_SCREEN_ON)
                     addAction(Intent.ACTION_SCREEN_OFF)
@@ -162,7 +162,7 @@ class PocketNoTouchy(
                 isScreenOnReceiverRegistered = true
             }
         } else if (isScreenOnReceiverRegistered) {
-            Timber.d("Disabling screen on event receiver")
+            logcat { "Disabling screen on event receiver" }
             lbm.unregisterReceiver(ignoreActionReceiver)
             service.unregisterReceiver(screenOnReceiver)
             isScreenOnReceiverRegistered = false
@@ -171,7 +171,7 @@ class PocketNoTouchy(
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         if (key == Prefs.PREVENT_POCKET_TOUCH) {
-            Timber.d("${Prefs.PREVENT_POCKET_TOUCH} changed to ${prefs.preventPocketTouchEnabled}")
+            logcat { "${Prefs.PREVENT_POCKET_TOUCH} changed to ${prefs.preventPocketTouchEnabled}" }
             onStart(lifecycleOwner)
         }
     }

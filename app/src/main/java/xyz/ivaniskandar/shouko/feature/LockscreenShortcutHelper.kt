@@ -13,7 +13,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import timber.log.Timber
+import logcat.logcat
 import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper.Companion.getPreferences
 import xyz.ivaniskandar.shouko.util.canWriteSecureSettings
 
@@ -49,7 +49,7 @@ class LockscreenShortcutHelper(
             if (screenOn && keyguardLocked) {
                 lifecycleOwner.lifecycleScope.launch {
                     delay(75) // 5 II camera button action fix
-                    Timber.d("Set camera lockscreen shortcuts to custom ${intent.action}")
+                    logcat { "Set camera lockscreen shortcuts to custom ${intent.action}" }
                     // Keyguard is showing
                     val localSettings = getPreferences(context)
                     Settings.Secure.putString(
@@ -64,7 +64,7 @@ class LockscreenShortcutHelper(
                     )
                 }
             } else {
-                Timber.d("Set lockscreen shortcuts to system default")
+                logcat { "Set lockscreen shortcuts to system default" }
                 Settings.Secure.putString(context.contentResolver, LOCKSCREEN_LEFT_BUTTON, null)
                 Settings.Secure.putString(context.contentResolver, LOCKSCREEN_RIGHT_BUTTON, null)
             }
@@ -85,7 +85,7 @@ class LockscreenShortcutHelper(
     private fun updateReceiverState(state: Boolean) {
         if (state) {
             if (!receiverRegistered) {
-                Timber.d("Registering receiver")
+                logcat { "Registering receiver" }
                 val filter = IntentFilter().apply {
                     addAction(Intent.ACTION_SCREEN_OFF)
                     addAction(Intent.ACTION_SCREEN_ON)
@@ -95,7 +95,7 @@ class LockscreenShortcutHelper(
                 receiverRegistered = true
             }
         } else if (receiverRegistered) {
-            Timber.d("Unregistering receiver")
+            logcat { "Unregistering receiver" }
             context.unregisterReceiver(receiver)
             receiverRegistered = false
         }

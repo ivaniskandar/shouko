@@ -8,7 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ServiceLifecycleDispatcher
-import timber.log.Timber
+import logcat.logcat
 import xyz.ivaniskandar.shouko.feature.FlipToShush
 import xyz.ivaniskandar.shouko.feature.GAKeyOverrider
 import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper
@@ -34,7 +34,7 @@ class TadanoAccessibilityService : AccessibilityService(), LifecycleOwner {
         dispatcher.onServicePreSuperOnBind()
         super.onServiceConnected()
         isActive = true
-        Timber.d("onServiceConnected")
+        logcat { "onServiceConnected" }
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
@@ -42,7 +42,7 @@ class TadanoAccessibilityService : AccessibilityService(), LifecycleOwner {
     }
 
     override fun onInterrupt() {
-        Timber.d("onInterrupt")
+        logcat { "onInterrupt" }
     }
 
     override fun onCreate() {
@@ -54,12 +54,12 @@ class TadanoAccessibilityService : AccessibilityService(), LifecycleOwner {
         lockscreenShortcutHelper = LockscreenShortcutHelper(this, this)
         dispatcher.onServicePreSuperOnCreate()
         super.onCreate()
-        Timber.d("onCreate")
+        logcat { "onCreate" }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         dispatcher.onServicePreSuperOnStart()
-        Timber.d("onstartCommand")
+        logcat { "onStartCommand" }
         return super.onStartCommand(intent, flags, startId)
     }
 
@@ -67,7 +67,7 @@ class TadanoAccessibilityService : AccessibilityService(), LifecycleOwner {
         dispatcher.onServicePreSuperOnDestroy()
         isActive = false
         super.onDestroy()
-        Timber.d("onDestroy")
+        logcat { "onDestroy" }
     }
 
     override fun getLifecycle() = dispatcher.lifecycle

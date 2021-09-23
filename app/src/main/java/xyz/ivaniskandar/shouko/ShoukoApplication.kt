@@ -18,7 +18,8 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.topjohnwu.superuser.Shell
-import timber.log.Timber
+import logcat.AndroidLogcatLogger
+import logcat.LogPriority
 import xyz.ivaniskandar.shouko.service.TeaTileService
 import xyz.ivaniskandar.shouko.util.isRootAvailable
 
@@ -31,9 +32,7 @@ class ShoukoApplication : Application(), LifecycleObserver {
 
     override fun onCreate() {
         super.onCreate()
-        if (BuildConfig.DEBUG) {
-            Timber.plant(Timber.DebugTree())
-        }
+        AndroidLogcatLogger.installOnDebuggableApp(this, minPriority = LogPriority.VERBOSE)
 
         // Prepare Shell builder
         Shell.setDefaultBuilder(

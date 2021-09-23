@@ -47,7 +47,8 @@ import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
-import timber.log.Timber
+import logcat.LogPriority
+import logcat.logcat
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.ui.AssistantActionSelection
 import xyz.ivaniskandar.shouko.ui.AssistantButtonSettings
@@ -146,7 +147,7 @@ class MainActivity : AppCompatActivity() {
                                         settingsKey = key
                                     )
                                 } else {
-                                    Timber.e("Lockscreen shortcut settings key is not specified.")
+                                    logcat(LogPriority.ERROR) { "Lockscreen shortcut settings key is not specified." }
                                     navController.popBackStack()
                                 }
                             }
