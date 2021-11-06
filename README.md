@@ -7,7 +7,7 @@ Features
 
 - **Assistant Button Override**
 
-  This feature is available on Xperia 5 II, Xperia 10 III, Xperia 1 III.
+  This feature is available on Xperia 5 II, Xperia 10 III, Xperia 5 III and Xperia 1 III.
 
   Launches an app or a shortcut when the Assistant button is pressed. You can also disable the button completely.
 
