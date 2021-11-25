@@ -28,7 +28,7 @@ fun TabPager(
     content: @Composable ColumnScope.(page: Int) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val pagerState = rememberPagerState(pageCount = pageTitles.size)
+    val pagerState = rememberPagerState()
 
     Column(Modifier.fillMaxSize()) {
         TabRow(
@@ -56,6 +56,7 @@ fun TabPager(
         }
 
         HorizontalPager(
+            count = pageTitles.size,
             state = pagerState,
             modifier = Modifier.weight(1f),
             verticalAlignment = Alignment.Top,
