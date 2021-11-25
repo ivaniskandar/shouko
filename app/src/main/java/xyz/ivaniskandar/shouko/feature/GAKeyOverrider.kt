@@ -39,8 +39,6 @@ import logcat.asLog
 import logcat.logcat
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.activity.GAKeyOverriderKeyguardActivity
-import xyz.ivaniskandar.shouko.feature.GAKeyOverrider.Companion.ASSISTANT_GUIDE_LAUNCHED_CUE
-import xyz.ivaniskandar.shouko.feature.GAKeyOverrider.Companion.ASSISTANT_LAUNCHED_CUE
 import xyz.ivaniskandar.shouko.feature.GAKeyOverrider.Companion.GOOGLE_PACKAGE_NAME
 import xyz.ivaniskandar.shouko.feature.MediaKeyAction.Key
 import xyz.ivaniskandar.shouko.util.DeviceModel
@@ -63,8 +61,8 @@ import java.net.URISyntaxException
  * This class reads logcat to listen for Assistant button event. The
  * rest of what this class does is as follows:
  * 1. User pressed the Assistant button as it shows on logcat
- * ([ASSISTANT_LAUNCHED_CUE] or [ASSISTANT_GUIDE_LAUNCHED_CUE]). If
- * the Google app is not installed, step 2 will be skipped.
+ * ([ASSIST_BUTTON_LOG_TRIGGER]). If the Google app is not
+ * installed, step 2 will be skipped.
  *
  * 2. When implementing service called [onAccessibilityEvent] on
  * window state is changed, it will check if the foreground
@@ -122,7 +120,8 @@ class GAKeyOverrider(
 
     private val logcatCallback = object : CallbackList<String>() {
         override fun onAddElement(e: String) {
-            if (e.contains(ASSISTANT_LAUNCHED_CUE) || e.contains(ASSISTANT_GUIDE_LAUNCHED_CUE)) {
+            val check = ASSIST_BUTTON_LOG_TRIGGER.find { e.contains(it) } != null
+            if (check) {
                 logcat { "Assistant Button event detected" }
                 if (service.isPackageInstalled(GOOGLE_PACKAGE_NAME)) {
                     assistButtonPressHandled = false
@@ -318,8 +317,11 @@ class GAKeyOverrider(
     }
 
     companion object {
-        private const val ASSISTANT_LAUNCHED_CUE = "WindowManager: startAssist launchMode=1"
-        private const val ASSISTANT_GUIDE_LAUNCHED_CUE = "GAKeyEventHandler: launchAssistGuideActivity"
+        private val ASSIST_BUTTON_LOG_TRIGGER = arrayOf(
+            "WindowManager: startAssist launchMode=1",
+            "GAKeyEventHandler: launchAssistGuideActivity",
+            "GAKeyEventHandler: launchDefaultAssistSettings",
+        )
         private const val GOOGLE_PACKAGE_NAME = "com.google.android.googlequicksearchbox"
 
         private const val GA_KEY_DISABLED_GLOBAL_SETTING_KEY = "somc.game_enhancer_gab_key_disabled"
