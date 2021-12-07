@@ -46,6 +46,7 @@ object DeviceModel {
         "SOG03",
         "XQ-BC72",
         "XQ-BC62",
-        "XQ-BC52"
+        "XQ-BC52",
+        "XQ-BC42"
     ).contains(Build.MODEL)
 }
