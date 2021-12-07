@@ -29,7 +29,8 @@ object DeviceModel {
         "A102SO",
         "SO-52B",
         "SOG04",
-        "XQ-BT52"
+        "XQ-BT52",
+        "XQ-BT44"
     ).contains(Build.MODEL)
 
     // Xperia 5 III
