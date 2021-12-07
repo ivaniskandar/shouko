@@ -35,6 +35,9 @@ object DeviceModel {
 
     // Xperia 5 III
     val isPDX214 = arrayOf(
+        "A103SO",
+        "SOG05",
+        "SO-53B",
         "XQ-BQ52",
         "XQ-BQ62",
         "XQ-BQ72"
