@@ -24,25 +24,17 @@ class CoffeeTileService : TileService() {
         updateQsState()
     }
 
-    override fun onStopListening() {
-        super.onStopListening()
-        updateQsState()
-    }
-
     override fun onClick() {
         super.onClick()
         with(qsTile) {
             when (state) {
                 STATE_ACTIVE -> {
-                    state = STATE_INACTIVE
                     switchService(false)
                 }
                 STATE_INACTIVE -> {
-                    state = STATE_ACTIVE
                     switchService(true)
                 }
             }
-            updateTile()
         }
     }
 
