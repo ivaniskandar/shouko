@@ -82,4 +82,8 @@
 
     <string name="statusbar_action_notifications">Open notification panel</string>
     <string name="statusbar_action_qs">Open quick settings panel</string>
+
+    <string name="link_cleaner_label">Link Cleaner</string>
+    <string name="link_cleaner_success">Link cleaned</string>
+    <string name="link_cleaner_failed">Failed to clean link</string>
 </resources>

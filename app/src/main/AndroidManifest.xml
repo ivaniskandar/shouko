@@ -57,6 +57,17 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity android:name=".activity.LinkCleanerTargetActivity"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:label="@string/link_cleaner_label"
+            android:theme="@style/Theme.Shouko.Transparent">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/*" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".activity.GAKeyOverriderKeyguardActivity"
             android:excludeFromRecents="true"
