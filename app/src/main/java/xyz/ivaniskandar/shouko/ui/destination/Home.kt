@@ -135,6 +135,14 @@ fun Home(
                 navController.navigate(Screen.LockscreenShortcutSettings.route)
             }
         }
+        item {
+            Preference(
+                title = stringResource(R.string.android_app_link_title),
+                subtitle = stringResource(id = R.string.android_app_link_subtitle)
+            ) {
+                navController.navigate(Screen.AndroidAppLinkSettings.route)
+            }
+        }
     }
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomEnd) {
         Image(

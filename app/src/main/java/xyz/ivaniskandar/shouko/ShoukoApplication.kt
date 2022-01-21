@@ -5,6 +5,7 @@ import android.content.ComponentName
 import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorManager
+import android.os.Build
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -18,6 +19,7 @@ import com.topjohnwu.superuser.Shell
 import dev.kdrag0n.monet.theme.ColorScheme
 import logcat.AndroidLogcatLogger
 import logcat.LogPriority
+import xyz.ivaniskandar.shouko.activity.LinkTargetChooserActivity
 import xyz.ivaniskandar.shouko.service.TeaTileService
 import xyz.ivaniskandar.shouko.util.isRootAvailable
 
@@ -42,6 +44,18 @@ class ShoukoApplication : Application(), LifecycleObserver, MonetColorsChangedLi
                 PackageManager.DONT_KILL_APP
             )
         }
+
+        // Enable app link chooser on S
+        val state = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+        } else {
+            PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+        }
+        packageManager.setComponentEnabledSetting(
+            ComponentName(this, LinkTargetChooserActivity::class.java),
+            state,
+            PackageManager.DONT_KILL_APP
+        )
     }
 
     override fun onMonetColorsChanged(monet: MonetCompat, monetColors: ColorScheme, isInitialChange: Boolean) {

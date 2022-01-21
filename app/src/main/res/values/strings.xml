@@ -93,4 +93,18 @@
     <string name="mute_microphone_on">Microphone muted</string>
     <string name="mute_microphone_off">Microphone unmuted</string>
     <string name="mute_microphone_action_cancel">Unmute</string>
+
+    <string name="android_app_link_title">Android App Link</string>
+    <string name="android_app_link_subtitle">Manage link target apps</string>
+    <string name="link_chooser_dialog_title">Open with</string>
+    <string name="link_chooser_toggle_label">Use custom chooser</string>
+    <string name="link_chooser_enable_dialog">Set %s as default browser to enable custom link target chooser.</string>
+    <string name="link_chooser_info">Custom chooser is shown when an opened link has multiple targets.\n\nAny approved target of said link must have the \"Open supported links\" settings disabled.</string>
+    <string name="approved_link_target_title">Approved Link Targets</string>
+    <string name="approved_link_target_subtitle">Target apps that have verified or manually approved domain</string>
+    <string name="unapproved_link_target_title">Unapproved Link Targets</string>
+    <string name="unapproved_link_target_subtitle">Target apps that have unapproved domain</string>
+    <string name="approved_link_disabled_text">This app will never automatically open supported links</string>
+    <string name="disabled">Disabled</string>
+    <string name="open_settings">Open settings</string>
 </resources>

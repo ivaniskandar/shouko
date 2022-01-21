@@ -3,7 +3,12 @@ package xyz.ivaniskandar.shouko.activity
 import android.app.Application
 import android.content.ComponentName
 import android.content.Intent
+import android.content.pm.verify.domain.DomainVerificationManager
+import android.content.pm.verify.domain.DomainVerificationUserState
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.core.content.getSystemService
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -15,6 +20,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import xyz.ivaniskandar.shouko.item.ApplicationItem
+import xyz.ivaniskandar.shouko.item.LinkHandlerAppItem
 import xyz.ivaniskandar.shouko.item.ShortcutCreatorItem
 import xyz.ivaniskandar.shouko.ui.IconDrawableShadowWrapper
 
@@ -26,11 +32,17 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     private val _isRefreshingShortcutList = MutableStateFlow(true)
     private val _shortcutList = MutableLiveData<List<ShortcutCreatorItem>>()
 
+    private val _isRefreshingLinkHandlerList = MutableStateFlow(true)
+    private val _linkHandlerList = MutableLiveData<List<LinkHandlerAppItem>>()
+
     val isRefreshingAppsList: StateFlow<Boolean>
         get() = _isRefreshingAppsList.asStateFlow()
 
     val isRefreshingShortcutList: StateFlow<Boolean>
         get() = _isRefreshingShortcutList.asStateFlow()
+
+    val isRefreshingLinkHandlerList: StateFlow<Boolean>
+        get() = _isRefreshingLinkHandlerList.asStateFlow()
 
     /**
      * LiveData of list containing available launcher intents as [ApplicationItem]
@@ -54,6 +66,16 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
             return _shortcutList
         }
 
+    /**
+     * LiveData of list containing apps that can open a supported link by default as [ApplicationItem]
+     */
+    val linkHandlerList: LiveData<List<LinkHandlerAppItem>>
+        @RequiresApi(Build.VERSION_CODES.S)
+        get() {
+            if (_linkHandlerList.value == null) refreshLinkHandlerList()
+            return _linkHandlerList
+        }
+
     fun refreshAppsList() {
         viewModelScope.launch(Dispatchers.Default) {
             _isRefreshingAppsList.emit(true)
@@ -67,6 +89,15 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
             _isRefreshingShortcutList.emit(true)
             _shortcutList.postValue(getShortcutCreatorList())
             _isRefreshingShortcutList.emit(false)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    fun refreshLinkHandlerList() {
+        viewModelScope.launch(Dispatchers.Default) {
+            _isRefreshingLinkHandlerList.emit(true)
+            _linkHandlerList.postValue(getLinkHandlerList())
+            _isRefreshingLinkHandlerList.emit(false)
         }
     }
 
@@ -105,5 +136,39 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
                 pm.getApplicationLabel(pm.getApplicationInfo(it.activityInfo.packageName, 0)).toString()
             )
         }.sortedBy { it.label }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    private fun getLinkHandlerList(): List<LinkHandlerAppItem> {
+        val context = getApplication<Application>()
+        val pm = context.packageManager
+        val shadowWrapper = IconDrawableShadowWrapper()
+        val manager = context.getSystemService<DomainVerificationManager>() ?: return emptyList()
+        return pm.getInstalledApplications(0).asSequence()
+            .map { Pair(manager.getDomainVerificationUserState(it.packageName), it) }
+            .filter { !it.first?.hostToStateMap.isNullOrEmpty() }
+            .map { (userState, ai) ->
+                val verified = userState!!.hostToStateMap
+                    ?.filterValues { it == DomainVerificationUserState.DOMAIN_STATE_VERIFIED }
+                    ?.keys
+                val selected = userState!!.hostToStateMap
+                    ?.filterValues { it == DomainVerificationUserState.DOMAIN_STATE_SELECTED }
+                    ?.keys
+                val unapproved = userState!!.hostToStateMap
+                    ?.filterValues { it == DomainVerificationUserState.DOMAIN_STATE_NONE }
+                    ?.keys
+
+                LinkHandlerAppItem(
+                    userState!!.packageName,
+                    ai.loadLabel(pm).toString(),
+                    shadowWrapper.run(ai.loadIcon(pm)).toBitmap().asImageBitmap(),
+                    userState!!.isLinkHandlingAllowed,
+                    verified ?: emptySet(),
+                    selected ?: emptySet(),
+                    unapproved ?: emptySet()
+                )
+            }
+            .sortedBy { it.label }
+            .toList()
     }
 }
