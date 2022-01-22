@@ -91,7 +91,7 @@ class MainActivity : AppCompatActivity() {
                                         )
                                     }
                                 },
-                                navigationIcon = if (currentRoute != Screen.Home.route) {
+                                navigationIcon = if (currentRoute != null && currentRoute != Screen.Home.route) {
                                     {
                                         IconButton(onClick = { navController.popBackStack() }) {
                                             Icon(imageVector = Icons.Rounded.ArrowBack, contentDescription = null)
