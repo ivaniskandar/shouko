@@ -550,6 +550,35 @@ class StatusBarAction(private val type: PanelType) : Action() {
 }
 
 /**
+ * Cycle between normal and vibrate mode
+ */
+class RingerModeAction : Action() {
+    override fun runAction(context: Context) {
+        val am = context.getSystemService<AudioManager>()!!
+        am.ringerMode = if (am.ringerMode == AudioManager.RINGER_MODE_NORMAL) {
+            AudioManager.RINGER_MODE_VIBRATE
+        } else {
+            AudioManager.RINGER_MODE_NORMAL
+        }
+        if (am.ringerMode == AudioManager.RINGER_MODE_NORMAL) {
+            am.playSoundEffect(AudioManager.FX_KEYPRESS_STANDARD, -1F)
+        }
+    }
+
+    override fun getLabel(context: Context): String {
+        return context.getString(R.string.ringer_mode_action_label)
+    }
+
+    override fun toPlainString(): String {
+        return PLAIN_STRING
+    }
+
+    companion object {
+        const val PLAIN_STRING = "RingerModeAction"
+    }
+}
+
+/**
  * Launches nothing. Basically makes the Assistant button to be a wakeup button.
  */
 class DoNothingAction : Action() {
@@ -595,6 +624,9 @@ sealed class Action {
                 }
                 string.startsWith(StatusBarAction.PLAIN_STRING_PREFIX) -> {
                     StatusBarAction.fromPlainString(string)
+                }
+                string == RingerModeAction.PLAIN_STRING -> {
+                    RingerModeAction()
                 }
                 string == DoNothingAction.PLAIN_STRING -> {
                     DoNothingAction()

@@ -19,6 +19,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.FlashlightOn
+import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material.icons.rounded.Screenshot
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -35,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.feature.FlashlightAction
 import xyz.ivaniskandar.shouko.feature.MediaKeyAction
+import xyz.ivaniskandar.shouko.feature.RingerModeAction
 import xyz.ivaniskandar.shouko.feature.ScreenshotAction
 import xyz.ivaniskandar.shouko.feature.StatusBarAction
 import xyz.ivaniskandar.shouko.item.ApplicationItem
@@ -213,6 +215,36 @@ fun StatusBarRow(type: StatusBarAction.PanelType, onClick: (StatusBarAction) -> 
         ) {
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high) {
                 Text(text = stringResource(id = type.labelResId), style = MaterialTheme.typography.subtitle1)
+            }
+        }
+    }
+}
+
+@Composable
+fun RingerModeRow(onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .clickable(onClick = onClick)
+            .padding(horizontal = 12.dp, vertical = 16.dp)
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = Icons.Rounded.Notifications,
+            contentDescription = null,
+            modifier = Modifier.size(36.dp).padding(2.dp),
+            tint = MaterialTheme.colors.primary
+        )
+        Spacer(modifier = Modifier.width(24.dp))
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            val context = LocalContext.current
+            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high) {
+                Text(
+                    text = remember { RingerModeAction().getLabel(context) },
+                    style = MaterialTheme.typography.subtitle1
+                )
             }
         }
     }

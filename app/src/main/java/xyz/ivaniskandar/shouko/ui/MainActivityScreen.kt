@@ -63,6 +63,7 @@ import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper
 import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper.Companion.LOCKSCREEN_LEFT_BUTTON
 import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper.Companion.LOCKSCREEN_RIGHT_BUTTON
 import xyz.ivaniskandar.shouko.feature.MediaKeyAction
+import xyz.ivaniskandar.shouko.feature.RingerModeAction
 import xyz.ivaniskandar.shouko.feature.ScreenshotAction
 import xyz.ivaniskandar.shouko.feature.StatusBarAction
 import xyz.ivaniskandar.shouko.service.TadanoAccessibilityService
@@ -461,6 +462,12 @@ fun AssistantActionSelection(
                     items(StatusBarAction.PanelType.values()) { item ->
                         StatusBarRow(type = item) {
                             prefs.assistButtonAction = it
+                            navController.popBackStack()
+                        }
+                    }
+                    item {
+                        RingerModeRow {
+                            prefs.assistButtonAction = RingerModeAction()
                             navController.popBackStack()
                         }
                     }
