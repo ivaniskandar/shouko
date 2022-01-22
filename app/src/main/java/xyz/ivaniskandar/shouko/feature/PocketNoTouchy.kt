@@ -16,7 +16,9 @@ import android.os.Looper
 import androidx.core.content.getSystemService
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.launch
 import logcat.logcat
 import xyz.ivaniskandar.shouko.activity.PocketNoTouchyActivity
 import xyz.ivaniskandar.shouko.feature.PocketNoTouchy.Companion.PROXIMITY_LISTEN_DURATION
@@ -109,13 +111,6 @@ class PocketNoTouchy(
             sensorManager.unregisterListener(proximityEventListener)
         }
     }
-    private val ignoreActionReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            logcat { "Ignore action received" }
-            // Ignore button clicked, just unregister sensor and cancel delayed runnable.
-            ignoreCheck()
-        }
-    }
 
     private val activityDelayedRunnable = Runnable {
         logcat { "Updating ${PocketNoTouchyActivity::class.simpleName} visible state ${isProximityNear.get()}" }
@@ -149,7 +144,6 @@ class PocketNoTouchy(
     }
 
     private fun updatePocketNoTouchy(state: Boolean) {
-        val lbm = LocalBroadcastManager.getInstance(service)
         if (state) {
             if (!isScreenOnReceiverRegistered) {
                 logcat { "Enabling screen on event receiver" }
@@ -158,12 +152,10 @@ class PocketNoTouchy(
                     addAction(Intent.ACTION_SCREEN_OFF)
                 }
                 service.registerReceiver(screenOnReceiver, screenEventFilter)
-                lbm.registerReceiver(ignoreActionReceiver, IntentFilter(ACTION_IGNORE_SENSOR))
                 isScreenOnReceiverRegistered = true
             }
         } else if (isScreenOnReceiverRegistered) {
             logcat { "Disabling screen on event receiver" }
-            lbm.unregisterReceiver(ignoreActionReceiver)
             service.unregisterReceiver(screenOnReceiver)
             isScreenOnReceiverRegistered = false
         }
@@ -179,6 +171,15 @@ class PocketNoTouchy(
     init {
         lifecycleOwner.lifecycle.addObserver(this)
         prefs.registerListener(this)
+
+        // Ignore button listener
+        lifecycleOwner.lifecycleScope.launch {
+            ignoreCheckFlow.collect {
+                logcat { "Ignore action received" }
+                // Ignore button clicked, just unregister sensor and cancel delayed runnable.
+                ignoreCheck()
+            }
+        }
     }
 
     companion object {
@@ -187,6 +188,6 @@ class PocketNoTouchy(
 
         private const val ACTIVITY_DELAY_DURATION = 500L // .5s
 
-        const val ACTION_IGNORE_SENSOR = "PocketNoTouchy.action.IGNORE_SENSOR"
+        val ignoreCheckFlow = MutableSharedFlow<Unit>()
     }
 }

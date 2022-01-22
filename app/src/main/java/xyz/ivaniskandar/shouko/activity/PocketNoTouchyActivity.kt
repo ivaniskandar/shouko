@@ -1,9 +1,7 @@
 package xyz.ivaniskandar.shouko.activity
 
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.os.Bundle
 import android.view.View
 import androidx.activity.compose.setContent
@@ -34,7 +32,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.feature.PocketNoTouchy
 import xyz.ivaniskandar.shouko.ui.theme.ShoukoTheme
@@ -46,13 +45,8 @@ import xyz.ivaniskandar.shouko.ui.theme.ShoukoTheme
  */
 class PocketNoTouchyActivity : AppCompatActivity() {
 
-    private val actionHideReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            finish()
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (intent.getBooleanExtra(EXTRA_HIDE, false)) finish()
         super.onCreate(savedInstanceState)
 
         // Set full screen
@@ -63,9 +57,6 @@ class PocketNoTouchyActivity : AppCompatActivity() {
         window.decorView.systemUiVisibility =
             window.decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
 
-        val lbm = LocalBroadcastManager.getInstance(this)
-        lbm.registerReceiver(actionHideReceiver, IntentFilter(ACTION_HIDE))
-
         setContent {
             ShoukoTheme(darkTheme = true) {
                 Surface(color = Color.Black) {
@@ -74,7 +65,7 @@ class PocketNoTouchyActivity : AppCompatActivity() {
                         contentAlignment = Alignment.Center
                     ) {
                         DialogCard {
-                            lbm.sendBroadcast(Intent(PocketNoTouchy.ACTION_IGNORE_SENSOR))
+                            lifecycleScope.launch { PocketNoTouchy.ignoreCheckFlow.emit(Unit) }
                         }
                     }
                 }
@@ -82,9 +73,9 @@ class PocketNoTouchyActivity : AppCompatActivity() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(actionHideReceiver)
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        if (intent.getBooleanExtra(EXTRA_HIDE, false)) finish()
     }
 
     @Composable
@@ -129,18 +120,15 @@ class PocketNoTouchyActivity : AppCompatActivity() {
     }
 
     companion object {
-        private const val ACTION_HIDE = "PocketNoTouchyActivity.action.HIDE"
+        private const val EXTRA_HIDE = "PocketNoTouchyActivity.extra.HIDE"
 
         fun updateState(context: Context, show: Boolean) {
-            if (show) {
-                val intent = Intent(context, PocketNoTouchyActivity::class.java).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
-                }
-                context.startActivity(intent)
-            } else {
-                LocalBroadcastManager.getInstance(context).sendBroadcast(Intent(ACTION_HIDE))
+            val intent = Intent(context, PocketNoTouchyActivity::class.java).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+                if (!show) putExtra(EXTRA_HIDE, true)
             }
+            context.startActivity(intent)
         }
     }
 }
