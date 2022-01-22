@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
@@ -116,6 +117,8 @@ fun MainActivityActions(
                 ) {
                     Text(
                         text = stringResource(R.string.check_for_update),
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1,
                         style = MaterialTheme.typography.body1
                     )
                 }
@@ -129,6 +132,8 @@ fun MainActivityActions(
                 ) {
                     Text(
                         text = stringResource(R.string.oss_license_title),
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1,
                         style = MaterialTheme.typography.body1
                     )
                 }
@@ -150,6 +155,8 @@ fun MainActivityActions(
                 ) {
                     Text(
                         text = stringResource(id = R.string.reset_to_default),
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1,
                         style = MaterialTheme.typography.body1
                     )
                 }
@@ -170,6 +177,8 @@ fun MainActivityActions(
                 ) {
                     Text(
                         text = stringResource(id = R.string.reset_to_default),
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1,
                         style = MaterialTheme.typography.body1
                     )
                 }
