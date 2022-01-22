@@ -1,15 +1,10 @@
 package xyz.ivaniskandar.shouko
 
 import android.app.Application
-import android.app.WallpaperColors
-import android.app.WallpaperManager
 import android.content.ComponentName
 import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorManager
-import android.os.Build
-import android.os.Handler
-import android.os.Looper
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -17,18 +12,16 @@ import androidx.core.content.getSystemService
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import com.kieronquinn.monetcompat.core.MonetCompat
+import com.kieronquinn.monetcompat.interfaces.MonetColorsChangedListener
 import com.topjohnwu.superuser.Shell
+import dev.kdrag0n.monet.theme.ColorScheme
 import logcat.AndroidLogcatLogger
 import logcat.LogPriority
 import xyz.ivaniskandar.shouko.service.TeaTileService
 import xyz.ivaniskandar.shouko.util.isRootAvailable
 
-class ShoukoApplication : Application(), LifecycleObserver {
-    private val wallpaperColorListener = WallpaperManager.OnColorsChangedListener { colors, which ->
-        if (which == WallpaperManager.FLAG_SYSTEM) {
-            wallpaperColors = colors
-        }
-    }
+class ShoukoApplication : Application(), LifecycleObserver, MonetColorsChangedListener {
 
     override fun onCreate() {
         super.onCreate()
@@ -51,20 +44,21 @@ class ShoukoApplication : Application(), LifecycleObserver {
         }
     }
 
+    override fun onMonetColorsChanged(monet: MonetCompat, monetColors: ColorScheme, isInitialChange: Boolean) {
+        ShoukoApplication.monetColors = monetColors
+    }
+
     init {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
-            ProcessLifecycleOwner.get().lifecycleScope.launchWhenCreated {
-                // Prepare wallpaper colors
-                WallpaperManager.getInstance(this@ShoukoApplication).apply {
-                    addOnColorsChangedListener(wallpaperColorListener, Handler(Looper.getMainLooper()))
-                    wallpaperColors = getWallpaperColors(WallpaperManager.FLAG_SYSTEM)
-                }
+        // Setup MonetCompat
+        ProcessLifecycleOwner.get().lifecycleScope.launchWhenCreated {
+            MonetCompat.setup(this@ShoukoApplication).apply {
+                addMonetColorsChangedListener(this@ShoukoApplication)
+                updateMonetColors()
             }
         }
     }
 
     companion object {
-        var wallpaperColors: WallpaperColors? by mutableStateOf(null)
-            private set
+        var monetColors: ColorScheme? by mutableStateOf(null)
     }
 }
