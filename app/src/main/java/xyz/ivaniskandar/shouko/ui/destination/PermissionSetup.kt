@@ -1,4 +1,4 @@
-package xyz.ivaniskandar.shouko.ui
+package xyz.ivaniskandar.shouko.ui.destination
 
 import android.Manifest
 import android.content.pm.PackageManager

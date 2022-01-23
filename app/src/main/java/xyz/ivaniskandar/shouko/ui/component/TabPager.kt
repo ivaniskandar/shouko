@@ -1,4 +1,4 @@
-package xyz.ivaniskandar.shouko.ui
+package xyz.ivaniskandar.shouko.ui.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
