@@ -32,6 +32,7 @@ import xyz.ivaniskandar.shouko.feature.DoNothingAction
 import xyz.ivaniskandar.shouko.feature.FlashlightAction
 import xyz.ivaniskandar.shouko.feature.IntentAction
 import xyz.ivaniskandar.shouko.feature.MediaKeyAction
+import xyz.ivaniskandar.shouko.feature.MuteMicrophoneAction
 import xyz.ivaniskandar.shouko.feature.RingerModeAction
 import xyz.ivaniskandar.shouko.feature.ScreenshotAction
 import xyz.ivaniskandar.shouko.feature.StatusBarAction
@@ -41,6 +42,7 @@ import xyz.ivaniskandar.shouko.ui.component.CategoryHeader
 import xyz.ivaniskandar.shouko.ui.component.DoNothingRow
 import xyz.ivaniskandar.shouko.ui.component.FlashlightRow
 import xyz.ivaniskandar.shouko.ui.component.MediaKeyRow
+import xyz.ivaniskandar.shouko.ui.component.MuteMicrophoneRow
 import xyz.ivaniskandar.shouko.ui.component.Preference
 import xyz.ivaniskandar.shouko.ui.component.ReadLogsCard
 import xyz.ivaniskandar.shouko.ui.component.RingerModeRow
@@ -225,6 +227,12 @@ fun AssistantActionSelection(
                     item {
                         RingerModeRow {
                             prefs.assistButtonAction = RingerModeAction()
+                            navController.popBackStack()
+                        }
+                    }
+                    item {
+                        MuteMicrophoneRow {
+                            prefs.assistButtonAction = MuteMicrophoneAction()
                             navController.popBackStack()
                         }
                     }

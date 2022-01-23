@@ -2,9 +2,14 @@ package xyz.ivaniskandar.shouko.feature
 
 import android.accessibilityservice.AccessibilityService
 import android.app.KeyguardManager
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.StatusBarManager
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.database.ContentObserver
@@ -20,10 +25,13 @@ import android.os.Looper
 import android.provider.Settings
 import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
+import android.widget.Toast
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AdUnits
 import androidx.compose.material.icons.rounded.Aod
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.core.app.NotificationCompat
 import androidx.core.content.getSystemService
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
@@ -41,6 +49,7 @@ import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.activity.GAKeyOverriderKeyguardActivity
 import xyz.ivaniskandar.shouko.feature.GAKeyOverrider.Companion.GOOGLE_PACKAGE_NAME
 import xyz.ivaniskandar.shouko.feature.MediaKeyAction.Key
+import xyz.ivaniskandar.shouko.ui.theme.ShoukoAccent
 import xyz.ivaniskandar.shouko.util.DeviceModel
 import xyz.ivaniskandar.shouko.util.Prefs
 import xyz.ivaniskandar.shouko.util.canReadSystemLogs
@@ -579,6 +588,95 @@ class RingerModeAction : Action() {
 }
 
 /**
+ * Mutes microphone using [AudioManager.setMicrophoneMute].
+ *
+ * An optional notification will be shown when muted.
+ */
+class MuteMicrophoneAction : Action() {
+    private val notificationCancelReceiver by lazy { CancelActionReceiver() }
+
+    override fun runAction(context: Context) {
+        switchMuteMicrophone(context)
+    }
+
+    override fun getLabel(context: Context): String {
+        return context.getString(R.string.mute_microphone_action_label)
+    }
+
+    override fun toPlainString(): String {
+        return PLAIN_STRING
+    }
+
+    private fun switchMuteMicrophone(context: Context, mute: Boolean? = null) {
+        val am = context.getSystemService<AudioManager>() ?: return
+        am.isMicrophoneMute = mute ?: !am.isMicrophoneMute
+        showReminderNotification(context, am.isMicrophoneMute)
+        showToast(context, am.isMicrophoneMute)
+    }
+
+    private fun showReminderNotification(context: Context, show: Boolean) {
+        val nm = context.getSystemService<NotificationManager>() ?: return
+
+        if (!show) {
+            nm.cancel(NOTIFICATION_ID)
+            context.unregisterReceiver(notificationCancelReceiver)
+            return
+        }
+
+        context.registerReceiver(notificationCancelReceiver, IntentFilter(NOTIFICATION_CANCEL_ACTION))
+
+        val newChannel = NotificationChannel(
+            toPlainString(),
+            context.getString(R.string.mute_microphone_notif_channel_title),
+            NotificationManager.IMPORTANCE_DEFAULT
+        ).apply {
+            setSound(null, null)
+            enableVibration(false)
+            setShowBadge(false)
+            enableLights(false)
+        }
+        nm.createNotificationChannel(newChannel)
+
+        val notification = NotificationCompat.Builder(context, toPlainString())
+            .setShowWhen(false)
+            .setOngoing(true)
+            .setSmallIcon(R.drawable.ic_mic_off)
+            .setColor(ShoukoAccent.toArgb())
+            .setContentTitle(context.getString(R.string.mute_microphone_on))
+            .addAction(
+                R.drawable.ic_mic_off,
+                context.getString(R.string.mute_microphone_action_cancel),
+                PendingIntent.getBroadcast(
+                    context,
+                    NOTIFICATION_ID,
+                    Intent(NOTIFICATION_CANCEL_ACTION),
+                    PendingIntent.FLAG_IMMUTABLE
+                )
+            )
+            .build()
+        nm.notify(NOTIFICATION_ID, notification)
+    }
+
+    private fun showToast(context: Context, mute: Boolean) {
+        val id = if (mute) R.string.mute_microphone_on else R.string.mute_microphone_off
+        Toast.makeText(context, id, Toast.LENGTH_SHORT).show()
+    }
+
+    private inner class CancelActionReceiver : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            switchMuteMicrophone(context, false)
+        }
+    }
+
+    companion object {
+        private const val NOTIFICATION_ID = 93223
+        private const val NOTIFICATION_CANCEL_ACTION = "MuteMicrophoneAction.action.CANCEL"
+
+        const val PLAIN_STRING = "MuteMicrophoneAction"
+    }
+}
+
+/**
  * Launches nothing. Basically makes the Assistant button to be a wakeup button.
  */
 class DoNothingAction : Action() {
@@ -627,6 +725,9 @@ sealed class Action {
                 }
                 string == RingerModeAction.PLAIN_STRING -> {
                     RingerModeAction()
+                }
+                string == MuteMicrophoneAction.PLAIN_STRING -> {
+                    MuteMicrophoneAction()
                 }
                 string == DoNothingAction.PLAIN_STRING -> {
                     DoNothingAction()

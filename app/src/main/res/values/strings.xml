@@ -60,6 +60,7 @@
     <string name="flashlight_action_label">Flashlight</string>
     <string name="screenshot_action_label">Take screenshot</string>
     <string name="ringer_mode_action_label">Ringer Mode (Normal/Vibrate)</string>
+    <string name="mute_microphone_action_label">Mute Microphone</string>
 
     <string name="hide_assistant_cue_title">Hide Assistant sound cue</string>
     <string name="hide_assistant_cue_desc">Mutes media stream for a brief period of time after pressing the Assistant button</string>
@@ -87,4 +88,9 @@
     <string name="link_cleaner_label">Link Cleaner</string>
     <string name="link_cleaner_success">Link cleaned</string>
     <string name="link_cleaner_failed">Failed to clean link</string>
+
+    <string name="mute_microphone_notif_channel_title">Muted microphone reminder</string>
+    <string name="mute_microphone_on">Microphone muted</string>
+    <string name="mute_microphone_off">Microphone unmuted</string>
+    <string name="mute_microphone_action_cancel">Unmute</string>
 </resources>
