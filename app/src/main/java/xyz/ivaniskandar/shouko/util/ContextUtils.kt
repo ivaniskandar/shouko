@@ -1,12 +1,14 @@
 package xyz.ivaniskandar.shouko.util
 
 import android.Manifest
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 
 val Context.canReadSystemLogs
@@ -47,9 +49,19 @@ fun openDefaultAppsSettings(context: Context) {
 
 @RequiresApi(Build.VERSION_CODES.S)
 fun openOpenByDefaultSettings(context: Context, packageName: String) {
-    val i = Intent(
+    var i = Intent(
         Settings.ACTION_APP_OPEN_BY_DEFAULT_SETTINGS,
         Uri.parse("package:$packageName")
     )
-    context.startActivity(i)
+    if (context.packageManager.resolveActivity(i, 0) == null) {
+        // Back off to App Info
+        i = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName"))
+            .highlightSettingsTo("preferred_settings")
+    }
+    try {
+        context.startActivity(i)
+    } catch (e: ActivityNotFoundException) {
+        // Git gud
+        Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+    }
 }
