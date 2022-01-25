@@ -3,6 +3,7 @@ package xyz.ivaniskandar.shouko.ui.destination
 import android.app.NotificationManager
 import android.content.ComponentName
 import android.content.Intent
+import android.os.Build
 import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -135,12 +137,16 @@ fun Home(
                 navController.navigate(Screen.LockscreenShortcutSettings.route)
             }
         }
-        item {
-            Preference(
-                title = stringResource(R.string.android_app_link_title),
-                subtitle = stringResource(id = R.string.android_app_link_subtitle)
-            ) {
-                navController.navigate(Screen.AndroidAppLinkSettings.route)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            item {
+                Divider()
+                Preference(
+                    title = stringResource(R.string.android_app_link_title),
+                    subtitle = stringResource(id = R.string.android_app_link_subtitle)
+                ) {
+                    navController.navigate(Screen.AndroidAppLinkSettings.route)
+                }
             }
         }
     }
