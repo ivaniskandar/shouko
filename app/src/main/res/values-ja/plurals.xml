@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <plurals name="approved_link_list_title">
-        <item quantity="one">%d link to open in this app</item>
-        <item quantity="other">%d links to open in this app</item>
-    </plurals>
-</resources>
