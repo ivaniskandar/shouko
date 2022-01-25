@@ -37,14 +37,22 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
      *
      * @see ApplicationItem
      */
-    val appsList: LiveData<List<ApplicationItem>> = _appsList
+    val appsList: LiveData<List<ApplicationItem>>
+        get() {
+            if (_appsList.value == null) refreshAppsList()
+            return _appsList
+        }
 
     /**
      * LiveData of list containing available intents to create an app shortcut as [ShortcutCreatorItem]
      *
      * @see ShortcutCreatorItem
      */
-    val shortcutList: LiveData<List<ShortcutCreatorItem>> = _shortcutList
+    val shortcutList: LiveData<List<ShortcutCreatorItem>>
+        get() {
+            if (_shortcutList.value == null) refreshShortcutCreatorList()
+            return _shortcutList
+        }
 
     fun refreshAppsList() {
         viewModelScope.launch(Dispatchers.Default) {
@@ -97,15 +105,5 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
                 pm.getApplicationLabel(pm.getApplicationInfo(it.activityInfo.packageName, 0)).toString()
             )
         }.sortedBy { it.label }
-    }
-
-    init {
-        viewModelScope.launch(Dispatchers.Default) {
-            _appsList.postValue(getAppsList())
-            _isRefreshingAppsList.emit(false)
-
-            _shortcutList.postValue(getShortcutCreatorList())
-            _isRefreshingShortcutList.emit(false)
-        }
     }
 }
