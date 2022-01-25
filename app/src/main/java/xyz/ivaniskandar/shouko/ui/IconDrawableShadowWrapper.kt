@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.drawable.AdaptiveIconDrawable
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.DrawableWrapper
 import android.util.SparseArray
@@ -17,11 +18,17 @@ class IconDrawableShadowWrapper {
     private val mShadowCache = SparseArray<Bitmap>()
 
     fun run(drawable: Drawable): Drawable {
-        if (drawable !is AdaptiveIconDrawable) {
-            return drawable
+        val toDo = if (drawable !is AdaptiveIconDrawable) {
+            val bg = ColorDrawable(Color.WHITE)
+            val fg = AdaptiveForegroundDrawable().apply {
+                this.drawable = drawable
+            }
+            AdaptiveIconDrawable(bg, fg)
+        } else {
+            drawable
         }
-        val shadow = getShadowBitmap(drawable)
-        return ShadowDrawable(shadow, drawable)
+        val shadow = getShadowBitmap(toDo)
+        return ShadowDrawable(shadow, toDo)
     }
 
     private fun getShadowBitmap(d: AdaptiveIconDrawable): Bitmap {
