@@ -17,6 +17,7 @@ import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Assistant
 import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.FlashlightOn
 import androidx.compose.material.icons.rounded.MicOff
@@ -35,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import xyz.ivaniskandar.shouko.R
+import xyz.ivaniskandar.shouko.feature.DigitalAssistantAction
 import xyz.ivaniskandar.shouko.feature.FlashlightAction
 import xyz.ivaniskandar.shouko.feature.MediaKeyAction
 import xyz.ivaniskandar.shouko.feature.MuteMicrophoneAction
@@ -275,6 +277,36 @@ fun MuteMicrophoneRow(onClick: () -> Unit) {
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high) {
                 Text(
                     text = remember { MuteMicrophoneAction().getLabel(context) },
+                    style = MaterialTheme.typography.subtitle1
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun DigitalAssistantRow(onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .clickable(onClick = onClick)
+            .padding(horizontal = 12.dp, vertical = 16.dp)
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = Icons.Rounded.Assistant,
+            contentDescription = null,
+            modifier = Modifier.size(36.dp).padding(2.dp),
+            tint = MaterialTheme.colors.primary
+        )
+        Spacer(modifier = Modifier.width(24.dp))
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            val context = LocalContext.current
+            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high) {
+                Text(
+                    text = remember { DigitalAssistantAction().getLabel(context) },
                     style = MaterialTheme.typography.subtitle1
                 )
             }
