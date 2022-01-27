@@ -28,6 +28,7 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.activity.MainActivityViewModel
+import xyz.ivaniskandar.shouko.feature.DigitalAssistantAction
 import xyz.ivaniskandar.shouko.feature.DoNothingAction
 import xyz.ivaniskandar.shouko.feature.FlashlightAction
 import xyz.ivaniskandar.shouko.feature.IntentAction
@@ -39,6 +40,7 @@ import xyz.ivaniskandar.shouko.feature.StatusBarAction
 import xyz.ivaniskandar.shouko.ui.Screen
 import xyz.ivaniskandar.shouko.ui.component.ApplicationRow
 import xyz.ivaniskandar.shouko.ui.component.CategoryHeader
+import xyz.ivaniskandar.shouko.ui.component.DigitalAssistantRow
 import xyz.ivaniskandar.shouko.ui.component.DoNothingRow
 import xyz.ivaniskandar.shouko.ui.component.FlashlightRow
 import xyz.ivaniskandar.shouko.ui.component.MediaKeyRow
@@ -233,6 +235,12 @@ fun AssistantActionSelection(
                     item {
                         MuteMicrophoneRow {
                             prefs.assistButtonAction = MuteMicrophoneAction()
+                            navController.popBackStack()
+                        }
+                    }
+                    item {
+                        DigitalAssistantRow {
+                            prefs.assistButtonAction = DigitalAssistantAction()
                             navController.popBackStack()
                         }
                     }

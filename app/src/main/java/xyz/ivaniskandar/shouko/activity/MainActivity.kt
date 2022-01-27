@@ -1,6 +1,7 @@
 package xyz.ivaniskandar.shouko.activity
 
 import android.Manifest
+import android.app.role.RoleManager
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -38,6 +39,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
+import androidx.core.content.getSystemService
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
@@ -177,7 +179,14 @@ class MainActivity : AppCompatActivity() {
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                                     composable(Screen.AndroidAppLinkSettings.route) {
                                         AndroidAppLinkSettings(navController = navController) {
-                                            openDefaultAppsSettings(this@MainActivity)
+                                            val roleManager = getSystemService<RoleManager>()
+                                            if (roleManager?.isRoleHeld(RoleManager.ROLE_BROWSER) == true) {
+                                                openDefaultAppsSettings(this@MainActivity)
+                                            } else if (roleManager != null) {
+                                                val i = roleManager.createRequestRoleIntent(RoleManager.ROLE_BROWSER)
+                                                @Suppress("DEPRECATION") // we don't care about results here
+                                                startActivityForResult(i, 286444)
+                                            }
                                         }
                                     }
                                     composable(Screen.ApprovedLinkTargetList.route) {

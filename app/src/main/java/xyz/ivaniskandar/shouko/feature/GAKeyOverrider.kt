@@ -6,7 +6,9 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.StatusBarManager
+import android.content.ActivityNotFoundException
 import android.content.BroadcastReceiver
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -132,6 +134,10 @@ class GAKeyOverrider(
             val check = ASSIST_BUTTON_LOG_TRIGGER.find { e.contains(it) } != null
             if (check) {
                 logcat { "Assistant Button event detected" }
+                if (customAction is DigitalAssistantAction && DigitalAssistantAction.isAssistantGoogle(service)) {
+                    // Why even
+                    return
+                }
                 if (service.isPackageInstalled(GOOGLE_PACKAGE_NAME)) {
                     assistButtonPressHandled = false
                 } else {
@@ -250,7 +256,7 @@ class GAKeyOverrider(
             logcat { "Launching action $it withOpa=$withOpa" }
             if (withOpa) service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
             when (it) {
-                is IntentAction -> {
+                is IntentAction, is DigitalAssistantAction -> {
                     lifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
                         if (withOpa) delay(100)
                         it.runAction(service)
@@ -270,7 +276,7 @@ class GAKeyOverrider(
             lifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
                 if (withOpa) service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
                 when (it) {
-                    is IntentAction -> {
+                    is IntentAction, is DigitalAssistantAction -> {
                         if (withOpa) delay(500)
                         logcat { "Starting keyguard launch activity" }
                         val i = Intent(service, GAKeyOverriderKeyguardActivity::class.java).apply {
@@ -331,7 +337,7 @@ class GAKeyOverrider(
             "GAKeyEventHandler: launchAssistGuideActivity",
             "GAKeyEventHandler: launchDefaultAssistSettings",
         )
-        private const val GOOGLE_PACKAGE_NAME = "com.google.android.googlequicksearchbox"
+        const val GOOGLE_PACKAGE_NAME = "com.google.android.googlequicksearchbox"
 
         private const val GA_KEY_DISABLED_GLOBAL_SETTING_KEY = "somc.game_enhancer_gab_key_disabled"
 
@@ -676,6 +682,46 @@ class MuteMicrophoneAction : Action() {
     }
 }
 
+class DigitalAssistantAction : Action() {
+
+    override fun runAction(context: Context) {
+        val assistantComponent = getCurrentAssistantComponent(context)
+        val intent = Intent(Intent.ACTION_VOICE_COMMAND).apply {
+            component = assistantComponent
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+
+        try {
+            context.startActivity(intent)
+        } catch (ignored: ActivityNotFoundException) {
+        }
+    }
+
+    override fun getLabel(context: Context): String {
+        return context.getString(R.string.digital_assistant_action_label)
+    }
+
+    override fun toPlainString(): String {
+        return PLAIN_STRING
+    }
+
+    companion object {
+        const val PLAIN_STRING = "DigitalAssistantAction"
+
+        fun isAssistantGoogle(context: Context): Boolean {
+            return getCurrentAssistantComponent(context)?.packageName == GOOGLE_PACKAGE_NAME
+        }
+
+        private fun getCurrentAssistantComponent(context: Context): ComponentName? {
+            var setting = Settings.Secure.getString(context.contentResolver, "assistant")
+            if (setting.isNullOrEmpty()) {
+                setting = Settings.Secure.getString(context.contentResolver, "voice_interaction_service")
+            }
+            return if (!setting.isNullOrEmpty()) ComponentName.unflattenFromString(setting) else null
+        }
+    }
+}
+
 /**
  * Launches nothing. Basically makes the Assistant button to be a wakeup button.
  */
@@ -728,6 +774,9 @@ sealed class Action {
                 }
                 string == MuteMicrophoneAction.PLAIN_STRING -> {
                     MuteMicrophoneAction()
+                }
+                string == DigitalAssistantAction.PLAIN_STRING -> {
+                    DigitalAssistantAction()
                 }
                 string == DoNothingAction.PLAIN_STRING -> {
                     DoNothingAction()

@@ -61,6 +61,7 @@
     <string name="screenshot_action_label">Take screenshot</string>
     <string name="ringer_mode_action_label">Ringer Mode (Normal/Vibrate)</string>
     <string name="mute_microphone_action_label">Mute Microphone</string>
+    <string name="digital_assistant_action_label">Digital Assistant</string>
 
     <string name="hide_assistant_cue_title">Hide Assistant sound cue</string>
     <string name="hide_assistant_cue_desc">Mutes media stream for a brief period of time after pressing the Assistant button</string>
