@@ -61,6 +61,7 @@
     <string name="screenshot_action_label">スクリーンショット</string>
     <string name="ringer_mode_action_label">マナーモード（ノーマル / バイブあり）</string>
     <string name="mute_microphone_action_label">マイクをミュート</string>
+    <string name="digital_assistant_action_label">アシスタントを起動</string>
 
     <string name="hide_assistant_cue_title">Google アシスタント起動音をミュート</string>
     <string name="hide_assistant_cue_desc">Google アシスタントキーを押した際に一瞬流れる、Google アシスタントの起動音を無音化</string>
