@@ -23,7 +23,7 @@ android {
         targetSdkVersion 31
         versionCode 6
         versionName "0.6.1"
-        resConfigs 'en'
+        resConfigs 'en', 'ja'
     }
 
     buildTypes {
