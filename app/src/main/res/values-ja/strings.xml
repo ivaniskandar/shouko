@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_service_desc">Google アシスタントキーを押した際に予め設定した機能を実行し、Google アシスタントの実行を無効化します。</string>
+
+    <string name="assistant_button_title">Google アシスタントキー</string>
+    <string name="assistant_launch_selection_title">カスタム機能</string>
+    <string name="assistant_action_select_default_value">デフォルト</string>
+    <string name="assistant_action_reset_toast">カスタム機能はデフォルトの状態にリセットされました。</string>
+    <string name="assistant_action_save_failed_toast">セクションの保存に失敗しました。</string>
+
+    <string name="pocket_no_touchy_title">誤動作防止</string>
+    <string name="pocket_no_touchy_desc">ポケットやバッグに端末を入れた状態で、誤ってキーや画面に触れた際の誤動作を防止</string>
+
+    <string name="flip_to_shush_title">画面を伏せてサイレントモード</string>
+    <string name="flip_to_shush_desc">端末を平らなところに伏せた際に、サイレントモードを有効化</string>
+    <string name="flip_to_shush_desc_extra_screen_on">注）画面点灯時のみ動作します。</string>
+    <string name="allow_dnd_access_toast">XPERI+ のサイレントモードへのアクセスを許可してください。</string>
+
+    <string name="tab_title_apps">アプリ</string>
+    <string name="tab_title_shortcuts">ショートカット</string>
+    <string name="tab_title_other">その他</string>
+
+    <string name="category_title_media_key">メディアキー</string>
+
+    <string name="no_touchy_dialog_title">誤操作防止</string>
+    <string name="no_touchy_dialog_text">画面上部の近接センサーを正しく動作させるために、フィルムなどで覆わず、清潔に保つようにしてください。</string>
+    <string name="no_touchy_dialog_ignore_button">無視</string>
+    <string name="accessibility_service_prompt_title">「ユーザー補助機能」が無効</string>
+    <string name="accessibility_service_prompt_desc">「ユーザー補助機能」を有効にし、カスタム機能の実行を許可してください。</string>
+    <string name="button_open_settings">設定を開く</string>
+    <string name="logs_permission_prompt_title">「READ_LOGS」権限の不足</string>
+    <string name="logs_permission_prompt_desc">Google アシストキーへの機能割当には、「READ_LOGS」権限が必要です。</string>
+    <string name="write_secure_settings_permission_prompt_title">「WRITE_SECURE_SETTINGS」権限の不足</string>
+    <string name="write_secure_settings_permission_prompt_desc">Google アシスタントキーの無効化やロック画面へのカスタムアプリの配置には、「WRITE_SECURE_SETTINGS」権限が必要です。</string>
+    <string name="button_grant_permission">許可を付与</string>
+
+    <string name="read_logs_permission_setup_title">「READ_LOGS」権限の付与</string>
+    <string name="write_secure_settings_permission_setup_title">「WRITE_SECURE_SETTINGS」権限の付与</string>
+    <string name="shell_permission_setup_desc_root">root により上記の権限を付与することができます。</string>
+    <string name="shell_permission_setup_desc_noroot">上記の権限を付与するために、以下の操作を行ってください：\n\n1. PCと端末のそれぞれにおいてADBをセットアップ\n2. 端末をPCに接続す\n3. PCのターミナル、またはコマンドプロンプトで、下記のコマンドを実行：</string>
+    <string name="shell_permission_setup_desc_noroot_adb_link_label">PCと端末のそれぞれにおいてADBをセットアップ</string>  <!-- read_logs_permission_setup_desc_noroot 内の注釈付きリンクのラベル -->
+    <string name="shell_permission_setup_command_card_caption">カードをタップしてコマンドを共有</string>
+    <string name="shell_permission_setup_desc_extra">権限が付与されると、アプリが再起動します。</string>
+
+    <string name="tadano_tile_service_notif_channel_desc">強制的に通知を表示させるために使用します。非表示にすることができます。</string>
+    <string name="tadano_tile_service_notif_title">XPERI+ サービス</string>
+    <string name="tadano_tile_service_notif_text">意味のない通知：タップして通知設定を開くことができます。</string>
+    <string name="coffee_tile_label">Coffee</string>
+    <string name="tea_tile_label">Tea</string>
+
+    <string name="intent_action_label">%s を起動</string>
+    <string name="media_key_action_label">メディアキー %s</string>
+    <string name="media_key_play">再生</string>
+    <string name="media_key_pause">一時停止</string>
+    <string name="media_key_play_pause">再生 / 一時停止</string>
+    <string name="media_key_stop">停止</string>
+    <string name="media_key_previous">戻る</string>
+    <string name="media_key_next">送る</string>
+    <string name="flashlight_action_label">フラッシュライト</string>
+    <string name="screenshot_action_label">スクリーンショット</string>
+    <string name="ringer_mode_action_label">マナーモード（ノーマル / バイブあり）</string>
+    <string name="mute_microphone_action_label">マイクをミュート</string>
+    <string name="digital_assistant_action_label">アシスタントを起動</string>
+
+    <string name="hide_assistant_cue_title">Google アシスタント起動音をミュート</string>
+    <string name="hide_assistant_cue_desc">Google アシスタントキーを押した際に一瞬流れる、Google アシスタントの起動音を無音化</string>
+
+    <string name="coffee_boarding_title">Coffee でスマホの眠気覚まし</string>
+    <string name="tea_boarding_title">Tea でスマホの眠気覚まし（画面消灯）</string>
+    <string name="coffee_boarding_desc">画面に触れることなく、大切な人の写真を見ることができます。Coffee は、電源キーを押すと自動的に無効化されます。</string>
+    <string name="tea_boarding_desc">端末を消灯状態にしたまま、自由に音楽を聴くことができます。近接センサーを塞ぎ、魔法が起こる様子を見届けるだけです。</string>
+    <string name="button_boarding_acknowledgement">利用する</string>
+    <string name="button_continue">続ける</string>
+
+    <string name="check_for_update">アップデートを確認</string>
+    <string name="off">オフ</string>
+    <string name="reset_to_default">デフォルトに戻す</string>
+    <string name="do_nothing">何もしない</string>
+
+    <string name="lockscreen_shortcut_title">ロック画面のショートカット</string>
+    <string name="lockscreen_shortcut_desc">ロック画面下端の左右にあるショートカットをカスタマイズ</string>
+    <string name="lockscreen_shortcut_left">左下</string>
+    <string name="lockscreen_shortcut_right">右下</string>
+
+    <string name="statusbar_action_notifications">通知パネルを開く</string>
+    <string name="statusbar_action_qs">クイック設定パネルを開く</string>
+
+    <string name="link_cleaner_label">リンクを削除</string>
+    <string name="link_cleaner_success">リンクが削除されました。</string>
+    <string name="link_cleaner_failed">リンクの削除に失敗しました。</string>
+
+    <string name="mute_microphone_notif_channel_title">マイクのミュート</string>
+    <string name="mute_microphone_on">ミュート</string>
+    <string name="mute_microphone_off">ミュート解除</string>
+    <string name="mute_microphone_action_cancel">ミュートを解除しました。</string>
+
+    <string name="android_app_link_title">アプリへのリンク</string>
+    <string name="android_app_link_subtitle">リンク先アプリの管理</string>
+    <string name="link_chooser_dialog_title">以下で開く：</string>
+    <string name="link_chooser_toggle_label">カスタム選択肢を使用</string>
+    <string name="link_chooser_enable_dialog">カスタム選択肢を有効にするには、 %s を既定のブラウザに設定してください。</string>
+    <string name="link_chooser_info">開いたリンクに複数のターゲットがある場合、カスタム選択肢が表示されます。\n\n承認済みリンク先がある場合、そのリンク先の「デフォルトで開く」設定が無効になっている必要があります。</string>
+    <string name="approved_link_target_title">承認済みリンク先</string>
+    <string name="approved_link_target_subtitle">ドメインが確認された、または手動で承認されたアプリが対象</string>
+    <string name="unapproved_link_target_title">未承認リンク先</string>
+    <string name="unapproved_link_target_subtitle">未承認のドメインを持つアプリが対象</string>
+    <string name="approved_link_disabled_text">このアプリでは、サポートされているリンクを自動的に開くことはありません。</string>
+    <string name="disabled">無効</string>
+    <string name="open_settings">設定を開く</string>
+</resources>
