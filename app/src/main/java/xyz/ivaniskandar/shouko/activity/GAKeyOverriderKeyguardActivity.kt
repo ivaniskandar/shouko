@@ -20,8 +20,11 @@ import androidx.core.content.getSystemService
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import xyz.ivaniskandar.shouko.ShoukoApplication
 import xyz.ivaniskandar.shouko.ui.theme.ShoukoTheme
-import xyz.ivaniskandar.shouko.util.Prefs
 
 /**
  * Activity to be launched on top of keyguard.
@@ -60,15 +63,17 @@ class GAKeyOverriderKeyguardActivity : AppCompatActivity() {
         finish()
     }
 
+    @Suppress("BlockingMethodInNonBlockingContext")
     private fun dismissKeyguard() {
         getSystemService<KeyguardManager>()?.requestDismissKeyguard(
             this,
             object : KeyguardManager.KeyguardDismissCallback() {
                 override fun onDismissSucceeded() {
-                    super.onDismissSucceeded()
-                    Prefs(this@GAKeyOverriderKeyguardActivity).assistButtonAction
-                        ?.runAction(this@GAKeyOverriderKeyguardActivity)
-                    finish()
+                    lifecycleScope.launch {
+                        val action = runBlocking { ShoukoApplication.prefs.assistButtonFlow.first().action }
+                        action?.runAction(this@GAKeyOverriderKeyguardActivity)
+                        finish()
+                    }
                 }
             }
         )

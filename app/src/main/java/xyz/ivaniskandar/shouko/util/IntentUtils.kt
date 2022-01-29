@@ -24,7 +24,7 @@ const val EXTRA_SHOW_FRAGMENT_ARGUMENTS = ":settings:show_fragment_args"
  * @see xyz.ivaniskandar.shouko.feature.IntentAction
  */
 @Suppress("DEPRECATION")
-fun Intent.setAsAssistantAction(prefs: Prefs) {
+suspend fun Intent.setAsAssistantAction(prefs: PreferencesRepository) {
     if (!isValidExtraType(Intent.EXTRA_SHORTCUT_INTENT, Intent::class.java)) {
         logcat(LogPriority.ERROR) { "Returned intent doesn't have shortcut intent extra!" }
         return
@@ -35,7 +35,7 @@ fun Intent.setAsAssistantAction(prefs: Prefs) {
         // For UI
         putExtra(Intent.EXTRA_SHORTCUT_NAME, name)
     }
-    prefs.assistButtonAction = IntentAction(intent)
+    prefs.setAssistButtonAction(IntentAction(intent))
 }
 
 /**

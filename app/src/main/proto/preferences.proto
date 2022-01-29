@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+option java_package = "xyz.ivaniskandar.shouko";
+option java_multiple_files = true;
+
+message Preferences {
+  bool assist_button_enabled = 1;
+  string assist_button_action = 2;
+  bool hide_assistant_cue = 3;
+  bool prevent_pocket_touch_enabled = 4;
+  bool flip_to_shush_enabled = 5;
+  bool coffee_boarding_done = 6;
+  bool tea_boarding_done = 7;
+}

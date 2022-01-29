@@ -30,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -52,9 +53,11 @@ import com.google.accompanist.navigation.material.BottomSheetNavigator
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.navigation.material.bottomSheet
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
+import kotlinx.coroutines.launch
 import logcat.LogPriority
 import logcat.logcat
 import xyz.ivaniskandar.shouko.R
+import xyz.ivaniskandar.shouko.ShoukoApplication
 import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper
 import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper.Companion.LOCKSCREEN_LEFT_BUTTON
 import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper.Companion.LOCKSCREEN_RIGHT_BUTTON
@@ -70,7 +73,6 @@ import xyz.ivaniskandar.shouko.ui.destination.LockscreenShortcutSelection
 import xyz.ivaniskandar.shouko.ui.destination.LockscreenShortcutSettings
 import xyz.ivaniskandar.shouko.ui.destination.PermissionSetup
 import xyz.ivaniskandar.shouko.ui.theme.ShoukoTheme
-import xyz.ivaniskandar.shouko.util.Prefs
 import xyz.ivaniskandar.shouko.util.RELEASES_PAGE_INTENT
 import xyz.ivaniskandar.shouko.util.isRootAvailable
 import xyz.ivaniskandar.shouko.util.openDefaultAppsSettings
@@ -79,7 +81,6 @@ import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
     private val viewModel by viewModels<MainActivityViewModel>()
-    private val prefs by lazy { Prefs(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -122,7 +123,7 @@ class MainActivity : AppCompatActivity() {
                                             }
                                         }
                                     } else null,
-                                    actions = { MainActivityActions(prefs = prefs, navController = navController) },
+                                    actions = { MainActivityActions(navController = navController) },
                                     backgroundColor = MaterialTheme.colors.background,
                                     elevation = 0.dp
                                 )
@@ -130,7 +131,7 @@ class MainActivity : AppCompatActivity() {
                         ) {
                             val rootAvailable = remember { isRootAvailable }
                             NavHost(navController = navController, startDestination = Screen.Home.route) {
-                                composable(Screen.Home.route) { Home(prefs, navController) }
+                                composable(Screen.Home.route) { Home(navController) }
                                 composable(Screen.ReadLogsSetup.route) {
                                     PermissionSetup(
                                         title = stringResource(id = R.string.read_logs_permission_setup_title),
@@ -154,10 +155,10 @@ class MainActivity : AppCompatActivity() {
                                     }
                                 }
                                 composable(Screen.AssistantButtonSettings.route) {
-                                    AssistantButtonSettings(prefs, navController)
+                                    AssistantButtonSettings(navController)
                                 }
                                 composable(Screen.AssistantLaunchSelection.route) {
-                                    AssistantActionSelection(viewModel, prefs, navController)
+                                    AssistantActionSelection(viewModel, navController)
                                 }
                                 composable(Screen.LockscreenShortcutSettings.route) {
                                     LockscreenShortcutSettings(navController)
@@ -253,10 +254,10 @@ fun getAppBarTitle(navController: NavController, navBackStackEntry: NavBackStack
 
 @Composable
 fun MainActivityActions(
-    prefs: Prefs,
     navController: NavController
 ) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     var showPopup by remember { mutableStateOf(false) }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
 
@@ -298,14 +299,16 @@ fun MainActivityActions(
             menuItems += {
                 DropdownMenuItem(
                     onClick = {
-                        prefs.assistButtonAction = null
-                        Toast.makeText(
-                            context,
-                            context.getString(R.string.assistant_action_reset_toast),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        showPopup = false
-                        navController.popBackStack()
+                        scope.launch {
+                            ShoukoApplication.prefs.setAssistButtonAction(null)
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.assistant_action_reset_toast),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            showPopup = false
+                            navController.popBackStack()
+                        }
                     }
                 ) {
                     Text(

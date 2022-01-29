@@ -6,7 +6,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.SharedPreferences
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -27,8 +26,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import logcat.logcat
+import xyz.ivaniskandar.shouko.ShoukoApplication
 import xyz.ivaniskandar.shouko.util.DeviceModel
-import xyz.ivaniskandar.shouko.util.Prefs
 import java.math.BigDecimal
 import java.math.RoundingMode
 import kotlin.math.acos
@@ -50,8 +49,8 @@ import kotlin.math.sqrt
 class FlipToShush(
     private val lifecycleOwner: LifecycleOwner,
     private val service: AccessibilityService,
-) : DefaultLifecycleObserver, SharedPreferences.OnSharedPreferenceChangeListener {
-    private val prefs = Prefs(service)
+) : DefaultLifecycleObserver {
+
     private val sensorManager: SensorManager = service.getSystemService()!!
     private val notificationManager: NotificationManager = service.getSystemService()!!
     private val vibrator: Vibrator = service.getSystemService()!!
@@ -134,16 +133,6 @@ class FlipToShush(
 
     private var shushCheckerJob: Job? = null
     private var unshushCheckerJob: Job? = null
-
-    @Synchronized
-    override fun onStart(owner: LifecycleOwner) {
-        val shouldEnable = prefs.flipToShushEnabled && notificationManager.isNotificationPolicyAccessGranted
-        updateFlipToShush(shouldEnable)
-        updateScreenReceiverState(shouldEnable && !isFullTimeListening)
-        if (!shouldEnable) {
-            switchDndState(false)
-        }
-    }
 
     override fun onDestroy(owner: LifecycleOwner) {
         updateFlipToShush(false)
@@ -296,16 +285,19 @@ class FlipToShush(
         }
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        if (key == Prefs.FLIP_TO_SHUSH) {
-            logcat { "${Prefs.FLIP_TO_SHUSH} changed to ${prefs.flipToShushEnabled}" }
-            onStart(lifecycleOwner)
-        }
-    }
-
     init {
+        lifecycleOwner.lifecycleScope.launchWhenStarted {
+            ShoukoApplication.prefs.flipToShushEnabledFlow.collect {
+                val shouldEnable = it && notificationManager.isNotificationPolicyAccessGranted
+                updateFlipToShush(shouldEnable)
+                updateScreenReceiverState(shouldEnable && !isFullTimeListening)
+                if (!shouldEnable) {
+                    switchDndState(false)
+                }
+                logcat { "Flip2Shush enabled=$it" }
+            }
+        }
         lifecycleOwner.lifecycle.addObserver(this)
-        prefs.registerListener(this)
     }
 
     companion object {
