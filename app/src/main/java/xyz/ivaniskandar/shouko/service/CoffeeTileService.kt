@@ -6,12 +6,18 @@ import android.os.IBinder
 import android.service.quicksettings.Tile.STATE_ACTIVE
 import android.service.quicksettings.Tile.STATE_INACTIVE
 import android.service.quicksettings.TileService
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import xyz.ivaniskandar.shouko.ShoukoApplication
 import xyz.ivaniskandar.shouko.activity.TileBoardingActivity
 import xyz.ivaniskandar.shouko.service.TadanoTileParentService.Companion.ACTION_START_SERVICE
 import xyz.ivaniskandar.shouko.service.TadanoTileParentService.Companion.ACTION_STOP_SERVICE
 import xyz.ivaniskandar.shouko.service.TadanoTileParentService.Companion.EXTRA_SERVICE_TYPE
-import xyz.ivaniskandar.shouko.util.Prefs
 
+@DelicateCoroutinesApi
 class CoffeeTileService : TileService() {
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -49,25 +55,29 @@ class CoffeeTileService : TileService() {
         }
     }
 
+    @Suppress("BlockingMethodInNonBlockingContext")
     private fun switchService(start: Boolean) {
         val serviceIntent = Intent(this, TadanoTileParentService::class.java)
         if (start) {
-            val prefs = Prefs(this)
-            if (!prefs.coffeeBoardingDone) {
-                startActivityAndCollapse(
-                    Intent(this, TileBoardingActivity::class.java).apply {
+            GlobalScope.launch {
+                val prefs = ShoukoApplication.prefs
+                val boardingDone = runBlocking { prefs.coffeeBoardingDone.first() }
+                if (!boardingDone) {
+                    startActivityAndCollapse(
+                        Intent(this@CoffeeTileService, TileBoardingActivity::class.java).apply {
+                            putExtra(EXTRA_SERVICE_TYPE, TadanoTileParentService.Type.COFFEE)
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        }
+                    )
+                    prefs.setCoffeeBoardingDone()
+                }
+                startForegroundService(
+                    serviceIntent.apply {
+                        action = ACTION_START_SERVICE
                         putExtra(EXTRA_SERVICE_TYPE, TadanoTileParentService.Type.COFFEE)
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     }
                 )
-                prefs.coffeeBoardingDone = true
             }
-            startForegroundService(
-                serviceIntent.apply {
-                    action = ACTION_START_SERVICE
-                    putExtra(EXTRA_SERVICE_TYPE, TadanoTileParentService.Type.COFFEE)
-                }
-            )
         } else {
             startService(
                 serviceIntent.apply {

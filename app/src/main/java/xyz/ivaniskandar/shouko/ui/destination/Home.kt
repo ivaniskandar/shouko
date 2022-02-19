@@ -16,10 +16,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -30,7 +30,9 @@ import androidx.core.content.getSystemService
 import androidx.navigation.NavController
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.rememberInsetsPaddingValues
+import kotlinx.coroutines.launch
 import xyz.ivaniskandar.shouko.R
+import xyz.ivaniskandar.shouko.ShoukoApplication
 import xyz.ivaniskandar.shouko.feature.FlipToShush
 import xyz.ivaniskandar.shouko.feature.GAKeyOverrider
 import xyz.ivaniskandar.shouko.service.TadanoAccessibilityService
@@ -38,15 +40,17 @@ import xyz.ivaniskandar.shouko.ui.Screen
 import xyz.ivaniskandar.shouko.ui.component.AccessibilityServiceCard
 import xyz.ivaniskandar.shouko.ui.component.Preference
 import xyz.ivaniskandar.shouko.ui.component.SwitchPreference
-import xyz.ivaniskandar.shouko.util.Prefs
+import xyz.ivaniskandar.shouko.util.AssistButtonPrefs
 import xyz.ivaniskandar.shouko.util.highlightSettingsTo
 
 @Composable
 fun Home(
-    prefs: Prefs,
     navController: NavController
 ) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val prefs = ShoukoApplication.prefs
+    val buttonPrefs by prefs.assistButtonFlow.collectAsState(initial = AssistButtonPrefs())
     LazyColumn(contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.navigationBars)) {
         item {
             AccessibilityServiceCard(visible = !TadanoAccessibilityService.isActive) {
@@ -59,11 +63,13 @@ fun Home(
             item {
                 Preference(
                     title = stringResource(id = R.string.assistant_button_title),
-                    subtitle = if (!prefs.assistButtonEnabled) {
-                        stringResource(R.string.off)
-                    } else {
-                        prefs.assistButtonAction?.getLabel(context)
-                            ?: stringResource(id = R.string.assistant_action_select_default_value)
+                    subtitle = buttonPrefs.let { (enabled, action, _) ->
+                        if (!enabled) {
+                            stringResource(R.string.off)
+                        } else {
+                            action?.getLabel(context)
+                                ?: stringResource(id = R.string.assistant_action_select_default_value)
+                        }
                     },
                     enabled = TadanoAccessibilityService.isActive
                 ) {
@@ -72,7 +78,7 @@ fun Home(
             }
         }
         item {
-            var flipToShush by remember { mutableStateOf(prefs.flipToShushEnabled) }
+            val flipToShushEnabled by prefs.flipToShushEnabledFlow.collectAsState(initial = false)
             val fullTimeFlipToShush = remember { FlipToShush.supportFullTimeListening(context) }
             val subtitle = remember {
                 context.getString(R.string.flip_to_shush_desc) +
@@ -87,14 +93,13 @@ fun Home(
                     .isNotificationPolicyAccessGranted
                 if (isGrantedDndAccess) {
                     // Always true becos
-                    prefs.flipToShushEnabled = true
-                    flipToShush = true
+                    scope.launch { prefs.setFlipToShushEnabled(true) }
                 }
             }
             SwitchPreference(
                 title = stringResource(R.string.flip_to_shush_title),
                 subtitle = subtitle,
-                checked = flipToShush,
+                checked = flipToShushEnabled,
                 enabled = TadanoAccessibilityService.isActive
             ) {
                 if (it) {
@@ -112,20 +117,18 @@ fun Home(
                         return@SwitchPreference
                     }
                 }
-                prefs.flipToShushEnabled = it
-                flipToShush = it
+                scope.launch { prefs.setFlipToShushEnabled(it) }
             }
         }
         item {
-            var preventPocketTouch by remember { mutableStateOf(prefs.preventPocketTouchEnabled) }
+            val preventPocketTouch by prefs.preventPocketTouchEnabledFlow.collectAsState(initial = false)
             SwitchPreference(
                 title = stringResource(R.string.pocket_no_touchy_title),
                 subtitle = stringResource(R.string.pocket_no_touchy_desc),
                 checked = preventPocketTouch,
                 enabled = TadanoAccessibilityService.isActive
             ) {
-                prefs.preventPocketTouchEnabled = it
-                preventPocketTouch = it
+                scope.launch { prefs.setPreventPocketTouchEnabled(it) }
             }
         }
         item {

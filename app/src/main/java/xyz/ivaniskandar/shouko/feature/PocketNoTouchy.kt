@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.SharedPreferences
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -20,9 +19,9 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import logcat.logcat
+import xyz.ivaniskandar.shouko.ShoukoApplication
 import xyz.ivaniskandar.shouko.activity.PocketNoTouchyActivity
 import xyz.ivaniskandar.shouko.feature.PocketNoTouchy.Companion.PROXIMITY_LISTEN_DURATION
-import xyz.ivaniskandar.shouko.util.Prefs
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -42,10 +41,10 @@ import java.util.concurrent.atomic.AtomicBoolean
  * @see PocketNoTouchyActivity
  */
 class PocketNoTouchy(
-    private val lifecycleOwner: LifecycleOwner,
+    lifecycleOwner: LifecycleOwner,
     private val service: AccessibilityService,
-) : DefaultLifecycleObserver, SharedPreferences.OnSharedPreferenceChangeListener {
-    private val prefs = Prefs(service)
+) : DefaultLifecycleObserver {
+
     private val sensorManager: SensorManager = service.getSystemService()!!
     private val audioManager: AudioManager = service.getSystemService()!!
 
@@ -125,10 +124,6 @@ class PocketNoTouchy(
             else -> false
         }
 
-    override fun onStart(owner: LifecycleOwner) {
-        updatePocketNoTouchy(prefs.preventPocketTouchEnabled)
-    }
-
     override fun onDestroy(owner: LifecycleOwner) {
         updatePocketNoTouchy(false)
     }
@@ -161,16 +156,14 @@ class PocketNoTouchy(
         }
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        if (key == Prefs.PREVENT_POCKET_TOUCH) {
-            logcat { "${Prefs.PREVENT_POCKET_TOUCH} changed to ${prefs.preventPocketTouchEnabled}" }
-            onStart(lifecycleOwner)
-        }
-    }
-
     init {
+        lifecycleOwner.lifecycleScope.launchWhenStarted {
+            ShoukoApplication.prefs.preventPocketTouchEnabledFlow.collect {
+                updatePocketNoTouchy(it)
+                logcat { "PocketNoTouchy enabled=$it" }
+            }
+        }
         lifecycleOwner.lifecycle.addObserver(this)
-        prefs.registerListener(this)
 
         // Ignore button listener
         lifecycleOwner.lifecycleScope.launch {

@@ -12,7 +12,6 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.database.ContentObserver
 import android.hardware.camera2.CameraAccessException
@@ -48,12 +47,12 @@ import logcat.LogPriority
 import logcat.asLog
 import logcat.logcat
 import xyz.ivaniskandar.shouko.R
+import xyz.ivaniskandar.shouko.ShoukoApplication
 import xyz.ivaniskandar.shouko.activity.GAKeyOverriderKeyguardActivity
 import xyz.ivaniskandar.shouko.feature.GAKeyOverrider.Companion.GOOGLE_PACKAGE_NAME
 import xyz.ivaniskandar.shouko.feature.MediaKeyAction.Key
 import xyz.ivaniskandar.shouko.ui.theme.ShoukoAccent
 import xyz.ivaniskandar.shouko.util.DeviceModel
-import xyz.ivaniskandar.shouko.util.Prefs
 import xyz.ivaniskandar.shouko.util.canReadSystemLogs
 import xyz.ivaniskandar.shouko.util.isPackageInstalled
 import xyz.ivaniskandar.shouko.util.loadLabel
@@ -98,18 +97,16 @@ import java.net.URISyntaxException
 class GAKeyOverrider(
     private val lifecycleOwner: LifecycleOwner,
     private val service: AccessibilityService,
-) : DefaultLifecycleObserver, SharedPreferences.OnSharedPreferenceChangeListener {
-    private val prefs = Prefs(service)
+) : DefaultLifecycleObserver {
+
     private val keyguardManager: KeyguardManager = service.getSystemService()!!
     private val audioManager: AudioManager = service.getSystemService()!!
 
-    private var customAction = prefs.assistButtonAction
-    private var hideAssistantCue = prefs.hideAssistantCue
-    private var buttonEnabled = prefs.assistButtonEnabled
-
+    private var customAction: Action? = null
+    private var hideAssistantCue = false
     private var isActive = false
     private val isReady: Boolean
-        get() = buttonEnabled && customAction != null && service.canReadSystemLogs
+        get() = customAction != null && service.canReadSystemLogs
 
     // When this observer is registered, the assistant button will always be disabled.
     private val gaKeyDisabler = object : ContentObserver(Handler(Looper.getMainLooper())) {
@@ -164,12 +161,6 @@ class GAKeyOverrider(
                 }
             }
         }
-    }
-
-    @Synchronized
-    override fun onStart(owner: LifecycleOwner) {
-        updateGAKeyDisabler(!buttonEnabled)
-        updateOpaOverrider(isReady)
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
@@ -313,22 +304,17 @@ class GAKeyOverrider(
         }
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        when (key) {
-            Prefs.ASSIST_BUTTON_ACTION, Prefs.HIDE_ASSISTANT_CUE, Prefs.ASSIST_BUTTON_ENABLED -> {
-                lifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
-                    customAction = prefs.assistButtonAction
-                    hideAssistantCue = prefs.hideAssistantCue
-                    buttonEnabled = prefs.assistButtonEnabled
-                    onStart(lifecycleOwner)
-                }
+    init {
+        lifecycleOwner.lifecycleScope.launchWhenStarted {
+            ShoukoApplication.prefs.assistButtonFlow.collect {
+                customAction = it.action
+                hideAssistantCue = it.hideAssistantCue
+                updateGAKeyDisabler(it.action != null)
+                updateOpaOverrider(isReady)
+                logcat { "GAKeyOverrider enabled=${it.action != null} hideCue=${it.hideAssistantCue}" }
             }
         }
-    }
-
-    init {
         lifecycleOwner.lifecycle.addObserver(this)
-        prefs.registerListener(this)
     }
 
     companion object {
