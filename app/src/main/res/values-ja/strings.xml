@@ -8,7 +8,7 @@
     <string name="assistant_action_reset_toast">カスタム機能はデフォルトの状態にリセットされました。</string>
     <string name="assistant_action_save_failed_toast">セクションの保存に失敗しました。</string>
 
-    <string name="pocket_no_touchy_title">誤動作防止</string>
+    <string name="pocket_no_touchy_title">誤作動を防止</string>
     <string name="pocket_no_touchy_desc">ポケットやバッグに端末を入れた状態で、誤ってキーや画面に触れた際の誤動作を防止</string>
 
     <string name="flip_to_shush_title">画面を伏せてサイレントモード</string>
@@ -22,7 +22,7 @@
 
     <string name="category_title_media_key">メディアキー</string>
 
-    <string name="no_touchy_dialog_title">誤操作防止</string>
+    <string name="no_touchy_dialog_title">誤作動を防止</string>
     <string name="no_touchy_dialog_text">画面上部の近接センサーを正しく動作させるために、フィルムなどで覆わず、清潔に保つようにしてください。</string>
     <string name="no_touchy_dialog_ignore_button">無視</string>
     <string name="accessibility_service_prompt_title">「ユーザー補助機能」が無効</string>
@@ -37,7 +37,7 @@
     <string name="read_logs_permission_setup_title">「READ_LOGS」権限の付与</string>
     <string name="write_secure_settings_permission_setup_title">「WRITE_SECURE_SETTINGS」権限の付与</string>
     <string name="shell_permission_setup_desc_root">root により上記の権限を付与することができます。</string>
-    <string name="shell_permission_setup_desc_noroot">上記の権限を付与するために、以下の操作を行ってください：\n\n1. PCと端末のそれぞれにおいてADBをセットアップ\n2. 端末をPCに接続す\n3. PCのターミナル、またはコマンドプロンプトで、下記のコマンドを実行：</string>
+    <string name="shell_permission_setup_desc_noroot">上記の権限を付与するために、以下の操作を行ってください：\n\n1. PCと端末のそれぞれにおいてADBをセットアップ\n2. 端末をPCに接続\n3. PCのターミナル、またはコマンドプロンプトで、下記のコマンドを実行：</string>
     <string name="shell_permission_setup_desc_noroot_adb_link_label">PCと端末のそれぞれにおいてADBをセットアップ</string>  <!-- read_logs_permission_setup_desc_noroot 内の注釈付きリンクのラベル -->
     <string name="shell_permission_setup_command_card_caption">カードをタップしてコマンドを共有</string>
     <string name="shell_permission_setup_desc_extra">権限が付与されると、アプリが再起動します。</string>
@@ -49,7 +49,7 @@
     <string name="tea_tile_label">Tea</string>
 
     <string name="intent_action_label">%s を起動</string>
-    <string name="media_key_action_label">メディアキー %s</string>
+    <string name="media_key_action_label">メディアキー： %s</string>
     <string name="media_key_play">再生</string>
     <string name="media_key_pause">一時停止</string>
     <string name="media_key_play_pause">再生 / 一時停止</string>
