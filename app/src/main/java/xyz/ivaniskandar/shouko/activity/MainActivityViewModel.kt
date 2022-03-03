@@ -148,13 +148,13 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
             .map { Pair(manager.getDomainVerificationUserState(it.packageName), it) }
             .filter { !it.first?.hostToStateMap.isNullOrEmpty() }
             .map { (userState, ai) ->
-                val verified = userState!!.hostToStateMap
+                val verified = userState?.hostToStateMap
                     ?.filterValues { it == DomainVerificationUserState.DOMAIN_STATE_VERIFIED }
                     ?.keys
-                val selected = userState!!.hostToStateMap
+                val selected = userState?.hostToStateMap
                     ?.filterValues { it == DomainVerificationUserState.DOMAIN_STATE_SELECTED }
                     ?.keys
-                val unapproved = userState!!.hostToStateMap
+                val unapproved = userState?.hostToStateMap
                     ?.filterValues { it == DomainVerificationUserState.DOMAIN_STATE_NONE }
                     ?.keys
 
@@ -162,7 +162,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
                     userState!!.packageName,
                     ai.loadLabel(pm).toString(),
                     shadowWrapper.run(ai.loadIcon(pm)).toBitmap().asImageBitmap(),
-                    userState!!.isLinkHandlingAllowed,
+                    userState.isLinkHandlingAllowed,
                     verified ?: emptySet(),
                     selected ?: emptySet(),
                     unapproved ?: emptySet()

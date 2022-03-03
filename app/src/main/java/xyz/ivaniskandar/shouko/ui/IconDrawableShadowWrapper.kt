@@ -81,7 +81,7 @@ class IconDrawableShadowWrapper {
             mState = state
         }
 
-        override fun getConstantState(): ConstantState? {
+        override fun getConstantState(): ConstantState {
             return mState
         }
 
