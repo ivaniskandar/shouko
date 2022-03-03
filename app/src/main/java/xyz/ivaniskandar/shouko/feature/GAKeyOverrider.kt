@@ -202,8 +202,8 @@ class GAKeyOverrider(
         if (state) {
             if (!isActive) {
                 logcat { "Enabling logcat observer" }
-                Shell.sh("logcat -c").exec()
-                Shell.sh("logcat").to(logcatCallback).submit {
+                Shell.cmd("logcat -c").exec()
+                Shell.cmd("logcat").to(logcatCallback).submit {
                     logcat { "Logcat observer stopped" }
                     isActive = false
                     if (lifecycleOwner.lifecycle.currentState == Lifecycle.State.STARTED) {
