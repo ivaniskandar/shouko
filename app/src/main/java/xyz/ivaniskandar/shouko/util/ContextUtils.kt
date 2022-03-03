@@ -53,7 +53,7 @@ fun openOpenByDefaultSettings(context: Context, packageName: String) {
         Settings.ACTION_APP_OPEN_BY_DEFAULT_SETTINGS,
         Uri.parse("package:$packageName")
     )
-    if (context.packageManager.resolveActivity(i, 0) == null) {
+    if (Build.MANUFACTURER == "samsung" || context.packageManager.resolveActivity(i, 0) == null) {
         // Back off to App Info
         i = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName"))
             .highlightSettingsTo("preferred_settings")
