@@ -24,15 +24,15 @@
 
     <string name="no_touchy_dialog_title">Preventing accidental operations</string>
     <string name="no_touchy_dialog_text">Keep the sensor placed on top of the front panel clean and not covered to make it work properly.</string>
-    <string name="no_touchy_dialog_ignore_button">IGNORE</string>
+    <string name="no_touchy_dialog_ignore_button">Ignore</string>
     <string name="accessibility_service_prompt_title">Accessibility service disabled</string>
     <string name="accessibility_service_prompt_desc">Enable accessibility service to get the features ready.</string>
-    <string name="button_open_settings">OPEN SETTINGS</string>
+    <string name="button_open_settings">Open settings</string>
     <string name="logs_permission_prompt_title">Missing READ_LOGS permission</string>
     <string name="logs_permission_prompt_desc">READ_LOGS permission is needed to detect Assistant button triggers.</string>
     <string name="write_secure_settings_permission_prompt_title">Missing WRITE_SECURE_SETTINGS permission</string>
     <string name="write_secure_settings_permission_prompt_desc">WRITE_SECURE_SETTINGS permission is used to disable Assistant Button when needed and set custom lockscreen shortcut.</string>
-    <string name="button_grant_permission">GRANT PERMISSION</string>
+    <string name="button_grant_permission">Grant permission</string>
 
     <string name="read_logs_permission_setup_title">READ_LOGS Permission Needed</string>
     <string name="write_secure_settings_permission_setup_title">WRITE_SECURE_SETTINGS Permission Needed</string>
@@ -70,8 +70,8 @@
     <string name="tea_boarding_title">Turn your phone\'s screen off while keeping it awake with Tea</string>
     <string name="coffee_boarding_desc">Look at the photo of your loved one without keeping your finger on the screen. Coffee will be disabled automatically when the screen is turned off.</string>
     <string name="tea_boarding_desc">Listen to music on The Tube with your phone screen locked for free. Just block the proximity sensor and see the magic happens.</string>
-    <string name="button_boarding_acknowledgement">GOT IT</string>
-    <string name="button_continue">CONTINUE</string>
+    <string name="button_boarding_acknowledgement">Got it</string>
+    <string name="button_continue">Continue</string>
 
     <string name="check_for_update">Check for updates</string>
     <string name="off">Off</string>

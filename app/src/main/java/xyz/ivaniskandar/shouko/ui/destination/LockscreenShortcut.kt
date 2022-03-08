@@ -29,6 +29,7 @@ import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper.Companion.LOCKSC
 import xyz.ivaniskandar.shouko.ui.Screen
 import xyz.ivaniskandar.shouko.ui.component.ApplicationRow
 import xyz.ivaniskandar.shouko.ui.component.DoNothingRow
+import xyz.ivaniskandar.shouko.ui.component.M3SwipeRefreshIndicator
 import xyz.ivaniskandar.shouko.ui.component.Preference
 import xyz.ivaniskandar.shouko.ui.component.TabPager
 import xyz.ivaniskandar.shouko.ui.component.WriteSettingsCard
@@ -92,7 +93,10 @@ fun LockscreenShortcutSelection(
                 SwipeRefresh(
                     state = rememberSwipeRefreshState(isRefreshing),
                     onRefresh = { mainViewModel.refreshAppsList() },
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
+                    indicator = { s, trigger ->
+                        M3SwipeRefreshIndicator(state = s, refreshTriggerDistance = trigger)
+                    }
                 ) {
                     if (items != null) {
                         LazyColumn(

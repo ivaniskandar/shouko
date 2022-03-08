@@ -6,22 +6,19 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Card
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import xyz.ivaniskandar.shouko.R
-import xyz.ivaniskandar.shouko.ui.theme.ShoukoTheme
+import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3PreviewTheme
 
 @Composable
 fun BasePreferenceCard(
@@ -31,25 +28,27 @@ fun BasePreferenceCard(
     onButtonClicked: () -> Unit
 ) {
     Card(
-        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-        elevation = 4.dp
+        modifier = Modifier.padding(16.dp)
     ) {
         Column(
             modifier = Modifier
-                .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp)
+                .padding(16.dp)
                 .fillMaxWidth()
         ) {
-            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high) {
-                Text(text = title, style = MaterialTheme.typography.subtitle1)
-            }
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium
+            )
             Spacer(modifier = Modifier.height(16.dp))
-            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                Text(text = description, style = MaterialTheme.typography.body2)
-            }
+            Text(
+                text = description,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium
+            )
             Spacer(modifier = Modifier.height(24.dp))
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
                 TextButton(onClick = onButtonClicked) {
-                    Text(text = buttonLabel, style = MaterialTheme.typography.button)
+                    Text(text = buttonLabel)
                 }
             }
         }
@@ -95,8 +94,8 @@ fun WriteSettingsCard(visible: Boolean = true, onButtonClicked: () -> Unit) {
 @Preview
 @Composable
 fun PreferenceCardsPreview() {
-    ShoukoTheme {
-        Surface(color = MaterialTheme.colors.background) {
+    ShoukoM3PreviewTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
             Column {
                 AccessibilityServiceCard {}
                 ReadLogsCard {}

@@ -7,22 +7,15 @@ import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorManager
 import android.os.Build
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.core.content.getSystemService
 import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
 import androidx.datastore.migrations.SharedPreferencesMigration
 import androidx.datastore.migrations.SharedPreferencesView
 import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.ProcessLifecycleOwner
-import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import com.kieronquinn.monetcompat.core.MonetCompat
-import com.kieronquinn.monetcompat.interfaces.MonetColorsChangedListener
 import com.topjohnwu.superuser.Shell
-import dev.kdrag0n.monet.theme.ColorScheme
 import logcat.AndroidLogcatLogger
 import logcat.LogPriority
 import xyz.ivaniskandar.shouko.activity.LinkTargetChooserActivity
@@ -67,11 +60,16 @@ private val Context.preferencesStore: DataStore<Preferences> by dataStore(
     }
 )
 
-class ShoukoApplication : Application(), LifecycleObserver, MonetColorsChangedListener {
+class ShoukoApplication : Application(), LifecycleObserver {
 
     override fun onCreate() {
         super.onCreate()
         AndroidLogcatLogger.installOnDebuggableApp(this, minPriority = LogPriority.VERBOSE)
+
+        // Setup monet
+        MonetCompat.setup(this).apply {
+            updateMonetColors()
+        }
 
         // Prepare Shell builder
         Shell.setDefaultBuilder(
@@ -105,23 +103,7 @@ class ShoukoApplication : Application(), LifecycleObserver, MonetColorsChangedLi
         prefs = PreferencesRepository(preferencesStore)
     }
 
-    override fun onMonetColorsChanged(monet: MonetCompat, monetColors: ColorScheme, isInitialChange: Boolean) {
-        ShoukoApplication.monetColors = monetColors
-    }
-
-    init {
-        // Setup MonetCompat
-        ProcessLifecycleOwner.get().lifecycleScope.launchWhenCreated {
-            MonetCompat.setup(this@ShoukoApplication).apply {
-                addMonetColorsChangedListener(this@ShoukoApplication)
-                updateMonetColors()
-            }
-        }
-    }
-
     companion object {
-        var monetColors: ColorScheme? by mutableStateOf(null)
-
         lateinit var prefs: PreferencesRepository
             private set
     }

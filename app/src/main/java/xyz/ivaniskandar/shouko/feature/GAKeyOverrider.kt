@@ -30,7 +30,6 @@ import android.widget.Toast
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AdUnits
 import androidx.compose.material.icons.rounded.Aod
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.core.app.NotificationCompat
 import androidx.core.content.getSystemService
@@ -38,6 +37,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import com.kieronquinn.monetcompat.core.MonetCompat
 import com.topjohnwu.superuser.CallbackList
 import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.Dispatchers
@@ -49,9 +49,10 @@ import logcat.logcat
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.ShoukoApplication
 import xyz.ivaniskandar.shouko.activity.GAKeyOverriderKeyguardActivity
+import xyz.ivaniskandar.shouko.feature.GAKeyOverrider.Companion.ASSIST_BUTTON_LOG_TRIGGER
 import xyz.ivaniskandar.shouko.feature.GAKeyOverrider.Companion.GOOGLE_PACKAGE_NAME
+import xyz.ivaniskandar.shouko.feature.GAKeyOverrider.Companion.isSupported
 import xyz.ivaniskandar.shouko.feature.MediaKeyAction.Key
-import xyz.ivaniskandar.shouko.ui.theme.ShoukoAccent
 import xyz.ivaniskandar.shouko.util.DeviceModel
 import xyz.ivaniskandar.shouko.util.canReadSystemLogs
 import xyz.ivaniskandar.shouko.util.isPackageInstalled
@@ -633,7 +634,7 @@ class MuteMicrophoneAction : Action() {
             .setShowWhen(false)
             .setOngoing(true)
             .setSmallIcon(R.drawable.ic_mic_off)
-            .setColor(ShoukoAccent.toArgb())
+            .setColor(MonetCompat.getInstance().getAccentColor(context))
             .setContentTitle(context.getString(R.string.mute_microphone_on))
             .addAction(
                 R.drawable.ic_mic_off,

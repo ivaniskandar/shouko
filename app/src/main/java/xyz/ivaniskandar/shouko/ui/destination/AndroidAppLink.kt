@@ -5,6 +5,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -16,24 +17,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Card
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.Icon
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ListItem
-import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.ProvideTextStyle
-import androidx.compose.material.Switch
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Launch
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -59,8 +56,11 @@ import xyz.ivaniskandar.shouko.activity.MainActivityViewModel
 import xyz.ivaniskandar.shouko.item.LinkHandlerAppItem
 import xyz.ivaniskandar.shouko.ui.ComposeLifecycleCallback
 import xyz.ivaniskandar.shouko.ui.Screen
+import xyz.ivaniskandar.shouko.ui.component.M3SwipeRefreshIndicator
+import xyz.ivaniskandar.shouko.ui.component.M3Switch
 import xyz.ivaniskandar.shouko.ui.component.Preference
-import xyz.ivaniskandar.shouko.ui.theme.ShoukoTheme
+import xyz.ivaniskandar.shouko.ui.component.m3SwitchColors
+import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3PreviewTheme
 import xyz.ivaniskandar.shouko.util.checkDefaultBrowser
 import xyz.ivaniskandar.shouko.util.getPackageLabel
 
@@ -97,18 +97,18 @@ fun AndroidAppLinkSettings(
             onPreferenceClick = { navController.navigate(Screen.UnapprovedLinkTargetList.route) }
         )
 
-        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-            Icon(
-                imageVector = Icons.Outlined.Info,
-                contentDescription = null,
-                modifier = Modifier.padding(start = 16.dp, top = 16.dp)
-            )
-            Text(
-                text = stringResource(id = R.string.link_chooser_info),
-                modifier = Modifier.padding(16.dp),
-                style = MaterialTheme.typography.body2
-            )
-        }
+        Icon(
+            imageVector = Icons.Outlined.Info,
+            contentDescription = null,
+            modifier = Modifier.padding(start = 16.dp, top = 16.dp),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Text(
+            text = stringResource(id = R.string.link_chooser_info),
+            modifier = Modifier.padding(16.dp),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyMedium
+        )
     }
 
     if (showEnableInfoDialog) {
@@ -142,10 +142,16 @@ fun AndroidAppLinkSettings(
 
 @Composable
 fun CustomChooserToggle(checked: Boolean, onClick: () -> Unit) {
+    val interactionSource = remember { MutableInteractionSource() }
     Card(
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 12.dp)
-            .clickable(onClick = onClick)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = onClick
+            ),
+        shape = RoundedCornerShape(28.dp)
     ) {
         Row(
             modifier = Modifier
@@ -153,14 +159,17 @@ fun CustomChooserToggle(checked: Boolean, onClick: () -> Unit) {
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high) {
-                Text(
-                    text = stringResource(R.string.link_chooser_toggle_label),
-                    modifier = Modifier.weight(1F),
-                    style = MaterialTheme.typography.h6
-                )
-            }
-            Switch(checked = checked, onCheckedChange = null)
+            Text(
+                text = stringResource(R.string.link_chooser_toggle_label),
+                modifier = Modifier.weight(1F),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.titleLarge
+            )
+            M3Switch(
+                checked = checked,
+                onCheckedChange = null,
+                colors = m3SwitchColors(uncheckedThumbColor = MaterialTheme.colorScheme.surface)
+            )
         }
     }
 }
@@ -168,7 +177,7 @@ fun CustomChooserToggle(checked: Boolean, onClick: () -> Unit) {
 @Preview
 @Composable
 fun CustomChooserTogglePreview() {
-    ShoukoTheme {
+    ShoukoM3PreviewTheme {
         CustomChooserToggle(checked = true) {}
     }
 }
@@ -185,7 +194,10 @@ fun LinkTargetList(
     SwipeRefresh(
         state = rememberSwipeRefreshState(isRefreshing),
         onRefresh = { mainViewModel.refreshLinkHandlerList() },
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        indicator = { s, trigger ->
+            M3SwipeRefreshIndicator(state = s, refreshTriggerDistance = trigger)
+        }
     ) {
         val filteredItems = items?.filter { if (approved) it.linkHandlingAllowed && it.isApproved else it.isUnapproved }
         val disabledItems = if (approved) items?.filter { !it.linkHandlingAllowed && it.isApproved } else null
@@ -204,8 +216,8 @@ fun LinkTargetList(
                     Text(
                         text = stringResource(R.string.disabled),
                         modifier = Modifier.padding(16.dp),
-                        color = MaterialTheme.colors.primary,
-                        style = MaterialTheme.typography.subtitle2
+                        color = MaterialTheme.colorScheme.primary,
+                        style = MaterialTheme.typography.labelSmall
                     )
                 }
 
@@ -251,7 +263,7 @@ fun LinkTargetInfoSheet(
         modifier = Modifier
             .fillMaxWidth()
             .navigationBarsPadding()
-            .padding(start = 16.dp, top = 24.dp, end = 16.dp)
+            .padding(start = 20.dp, top = 24.dp, end = 20.dp)
     ) {
         Image(
             bitmap = item.icon,
@@ -264,9 +276,9 @@ fun LinkTargetInfoSheet(
         Text(
             text = item.label,
             modifier = Modifier.align(Alignment.CenterHorizontally),
-            style = MaterialTheme.typography.h6
+            style = MaterialTheme.typography.titleLarge
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         if (item.linkHandlingAllowed && (item.verifiedDomains.isNotEmpty() || item.userSelectedDomains.isNotEmpty())) {
             val domains = (item.verifiedDomains + item.userSelectedDomains).toList()
@@ -277,9 +289,9 @@ fun LinkTargetInfoSheet(
                     domainsCount,
                     domainsCount
                 ),
-                modifier = Modifier.padding(vertical = 16.dp),
-                color = MaterialTheme.colors.primary,
-                style = MaterialTheme.typography.subtitle2
+                modifier = Modifier.padding(top = 8.dp, bottom = 16.dp),
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.titleSmall
             )
             LazyColumn(
                 modifier = Modifier
@@ -288,31 +300,31 @@ fun LinkTargetInfoSheet(
                 contentPadding = PaddingValues(bottom = 8.dp)
             ) {
                 items(domains) { domain ->
-                    CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                        ProvideTextStyle(MaterialTheme.typography.subtitle1) {
-                            Text(text = domain, modifier = Modifier.padding(vertical = 2.dp))
-                        }
-                    }
+                    Text(
+                        text = domain,
+                        modifier = Modifier.padding(vertical = 2.dp),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                 }
             }
         } else {
-            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                Text(
-                    text = stringResource(R.string.approved_link_disabled_text),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp),
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.body2
-                )
-            }
+            Text(
+                text = stringResource(R.string.approved_link_disabled_text),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
 
-        Button(
+        FilledTonalButton(
             onClick = { onOpenSettings(packageName) },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 8.dp)
+                .padding(top = 16.dp, bottom = 8.dp)
         ) {
             Icon(
                 Icons.Default.Launch,

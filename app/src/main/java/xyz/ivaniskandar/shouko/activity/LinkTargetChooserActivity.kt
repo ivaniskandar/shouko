@@ -19,17 +19,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.Divider
 import androidx.compose.material.ListItem
-import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.material.Text
 import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -52,7 +49,7 @@ import com.google.accompanist.insets.rememberInsetsPaddingValues
 import kotlinx.coroutines.launch
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.ui.IconDrawableShadowWrapper
-import xyz.ivaniskandar.shouko.ui.theme.ShoukoTheme
+import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3Theme
 import xyz.ivaniskandar.shouko.util.loadIcon
 import xyz.ivaniskandar.shouko.util.loadLabel
 
@@ -86,7 +83,7 @@ class LinkTargetChooserActivity : AppCompatActivity() {
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
-            ShoukoTheme {
+            ShoukoM3Theme {
                 ProvideWindowInsets {
                     AppLinkChooserSheet(
                         resolverIntent = resolverIntent,
@@ -135,16 +132,14 @@ fun AppLinkChooserSheet(
         sheetState = state,
         sheetShape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
         sheetContent = {
-            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high) {
-                Text(
-                    text = stringResource(R.string.link_chooser_dialog_title),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp),
-                    style = MaterialTheme.typography.h6,
-                    textAlign = TextAlign.Center
-                )
-            }
+            Text(
+                text = stringResource(R.string.link_chooser_dialog_title),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp),
+                style = MaterialTheme.typography.displaySmall,
+                textAlign = TextAlign.Center
+            )
             Divider()
             LazyColumn(
                 contentPadding = rememberInsetsPaddingValues(

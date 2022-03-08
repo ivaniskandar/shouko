@@ -10,19 +10,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material.Card
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.Icon
-import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.PermDeviceInformation
+import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,7 +41,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import logcat.logcat
 import xyz.ivaniskandar.shouko.R
-import xyz.ivaniskandar.shouko.ui.theme.ShoukoTheme
+import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3PreviewTheme
 import xyz.ivaniskandar.shouko.util.createShareTextIntent
 
 @Composable
@@ -68,12 +65,10 @@ fun PermissionSetup(
             modifier = Modifier
                 .size(48.dp)
                 .padding(bottom = 12.dp),
-            tint = MaterialTheme.colors.primary
+            tint = MaterialTheme.colorScheme.primary
         )
 
-        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high) {
-            Text(text = title, style = MaterialTheme.typography.h6, textAlign = TextAlign.Center)
-        }
+        Text(text = title, style = MaterialTheme.typography.titleLarge, textAlign = TextAlign.Center)
 
         val command = "pm grant ${context.packageName} $permissionName"
         if (isRootAvailable) {
@@ -101,24 +96,24 @@ fun PermissionSetup(
 
 @Composable
 fun PermissionSetupRoot(command: String) {
-    CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-        Text(
-            text = stringResource(R.string.shell_permission_setup_desc_root),
-            modifier = Modifier
-                .padding(vertical = 16.dp)
-                .fillMaxWidth(),
-            style = MaterialTheme.typography.body1
-        )
-        Text(
-            text = stringResource(R.string.shell_permission_setup_desc_extra),
-            modifier = Modifier
-                .padding(bottom = 24.dp)
-                .fillMaxWidth(),
-            style = MaterialTheme.typography.body1
-        )
-    }
+    Text(
+        text = stringResource(R.string.shell_permission_setup_desc_root),
+        modifier = Modifier
+            .padding(vertical = 16.dp)
+            .fillMaxWidth(),
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = MaterialTheme.typography.bodyLarge
+    )
+    Text(
+        text = stringResource(R.string.shell_permission_setup_desc_extra),
+        modifier = Modifier
+            .padding(bottom = 24.dp)
+            .fillMaxWidth(),
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = MaterialTheme.typography.bodyLarge
+    )
 
-    OutlinedButton(onClick = { Shell.su(command).submit() }) {
+    FilledTonalButton(onClick = { Shell.su(command).submit() }) {
         Text(text = stringResource(R.string.button_continue))
     }
 }
@@ -126,7 +121,7 @@ fun PermissionSetupRoot(command: String) {
 @Composable
 fun PermissionSetupNoRoot(command: String) {
     val annotatedString = buildAnnotatedString {
-        pushStyle(SpanStyle(color = MaterialTheme.colors.onBackground.copy(alpha = ContentAlpha.medium)))
+        pushStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurfaceVariant))
         val str = stringResource(id = R.string.shell_permission_setup_desc_noroot)
         val txtToBeAnnotated = stringResource(R.string.shell_permission_setup_desc_noroot_adb_link_label)
         val startAnnotationIndex = str.indexOf(txtToBeAnnotated)
@@ -134,7 +129,7 @@ fun PermissionSetupNoRoot(command: String) {
         append(str)
         addStyle(
             style = SpanStyle(
-                color = MaterialTheme.colors.primary,
+                color = MaterialTheme.colorScheme.primary,
                 textDecoration = TextDecoration.Underline
             ),
             start = startAnnotationIndex,
@@ -151,7 +146,7 @@ fun PermissionSetupNoRoot(command: String) {
     ClickableText(
         text = annotatedString,
         modifier = Modifier.padding(vertical = 24.dp),
-        style = MaterialTheme.typography.body1
+        style = MaterialTheme.typography.bodyLarge
     ) {
         annotatedString
             .getStringAnnotations("URL", it, it)
@@ -166,9 +161,8 @@ fun PermissionSetupNoRoot(command: String) {
         modifier = Modifier
             .clickable { context.startActivity(createShareTextIntent(adbCommand)) }
             .fillMaxWidth(),
-        backgroundColor = Color.Black,
-        contentColor = Color.White,
-        elevation = 0.dp
+        containerColor = Color.Black,
+        contentColor = Color.White
     ) {
         Text(
             text = adbCommand,
@@ -178,21 +172,19 @@ fun PermissionSetupNoRoot(command: String) {
         )
     }
 
-    CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-        Text(
-            modifier = Modifier.padding(top = 2.dp),
-            text = stringResource(R.string.shell_permission_setup_command_card_caption),
-            style = MaterialTheme.typography.caption
-        )
-    }
+    Text(
+        modifier = Modifier.padding(top = 2.dp),
+        text = stringResource(R.string.shell_permission_setup_command_card_caption),
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = MaterialTheme.typography.bodySmall
+    )
 
-    CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-        Text(
-            text = stringResource(R.string.shell_permission_setup_desc_extra),
-            modifier = Modifier.padding(vertical = 24.dp),
-            style = MaterialTheme.typography.body1
-        )
-    }
+    Text(
+        text = stringResource(R.string.shell_permission_setup_desc_extra),
+        modifier = Modifier.padding(vertical = 24.dp),
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = MaterialTheme.typography.bodyLarge
+    )
 
     CircularProgressIndicator(modifier = Modifier.padding(24.dp))
 }
@@ -200,8 +192,8 @@ fun PermissionSetupNoRoot(command: String) {
 @Preview
 @Composable
 fun ReadLogsPermissionSetupRootPreview() {
-    ShoukoTheme {
-        Surface(color = MaterialTheme.colors.background) {
+    ShoukoM3PreviewTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
             PermissionSetup(
                 title = stringResource(id = R.string.read_logs_permission_setup_title),
                 permissionName = Manifest.permission.READ_LOGS,
@@ -215,8 +207,8 @@ fun ReadLogsPermissionSetupRootPreview() {
 @Preview
 @Composable
 fun ReadLogsPermissionSetupNoRootPreview() {
-    ShoukoTheme {
-        Surface(color = MaterialTheme.colors.background) {
+    ShoukoM3PreviewTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
             PermissionSetup(
                 title = stringResource(id = R.string.read_logs_permission_setup_title),
                 permissionName = Manifest.permission.READ_LOGS,
@@ -230,8 +222,8 @@ fun ReadLogsPermissionSetupNoRootPreview() {
 @Preview
 @Composable
 fun WriteSettingsPermissionSetupNoRootPreview() {
-    ShoukoTheme {
-        Surface(color = MaterialTheme.colors.background) {
+    ShoukoM3PreviewTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
             PermissionSetup(
                 title = stringResource(id = R.string.write_secure_settings_permission_setup_title),
                 permissionName = Manifest.permission.WRITE_SECURE_SETTINGS,

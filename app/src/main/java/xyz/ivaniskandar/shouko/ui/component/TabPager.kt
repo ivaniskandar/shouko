@@ -3,12 +3,10 @@ package xyz.ivaniskandar.shouko.ui.component
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Tab
-import androidx.compose.material.TabRow
-import androidx.compose.material.TabRowDefaults
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -16,10 +14,8 @@ import androidx.compose.ui.Modifier
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
-import java.util.Locale
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -33,12 +29,7 @@ fun TabPager(
     Column(Modifier.fillMaxSize()) {
         TabRow(
             selectedTabIndex = pagerState.currentPage,
-            modifier = Modifier.navigationBarsPadding(bottom = false),
-            backgroundColor = MaterialTheme.colors.background,
-            contentColor = MaterialTheme.colors.primary,
-            indicator = { tabPositions ->
-                TabRowDefaults.Indicator(Modifier.pagerTabIndicatorOffset(pagerState, tabPositions))
-            }
+            modifier = Modifier.navigationBarsPadding(bottom = false)
         ) {
             pageTitles.forEachIndexed { index, title ->
                 Tab(
@@ -49,8 +40,8 @@ fun TabPager(
                             pagerState.animateScrollToPage(index)
                         }
                     },
-                    text = { Text(text = title.uppercase(Locale.getDefault())) },
-                    unselectedContentColor = MaterialTheme.colors.onBackground.copy(alpha = ContentAlpha.medium)
+                    text = { Text(text = title) },
+                    unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }

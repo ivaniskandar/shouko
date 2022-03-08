@@ -7,6 +7,7 @@ import android.view.View
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -14,15 +15,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Card
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,7 +33,8 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.feature.PocketNoTouchy
-import xyz.ivaniskandar.shouko.ui.theme.ShoukoTheme
+import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3PreviewTheme
+import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3Theme
 
 /**
  * A full-screen dialog activity to block accidental touches.
@@ -58,15 +56,15 @@ class PocketNoTouchyActivity : AppCompatActivity() {
             window.decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
 
         setContent {
-            ShoukoTheme(darkTheme = true) {
-                Surface(color = Color.Black) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        DialogCard {
-                            lifecycleScope.launch { PocketNoTouchy.ignoreCheckFlow.emit(Unit) }
-                        }
+            ShoukoM3Theme(darkTheme = true) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black),
+                    contentAlignment = Alignment.Center
+                ) {
+                    DialogCard {
+                        lifecycleScope.launch { PocketNoTouchy.ignoreCheckFlow.emit(Unit) }
                     }
                 }
             }
@@ -80,27 +78,21 @@ class PocketNoTouchyActivity : AppCompatActivity() {
 
     @Composable
     fun DialogCard(onButtonClicked: () -> Unit = {}) {
-        Card(
+        OutlinedCard(
             modifier = Modifier.padding(24.dp),
-            backgroundColor = Color.Black,
-            contentColor = Color.White,
-            border = BorderStroke(width = 1.dp, color = Color(0x1FFFFFFF)),
-            elevation = 0.dp
+            border = BorderStroke(width = 1.dp, color = Color(0x1FFFFFFF))
         ) {
-            Column(modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp)) {
-                CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high) {
-                    Text(
-                        text = stringResource(R.string.no_touchy_dialog_title),
-                        style = MaterialTheme.typography.subtitle1
-                    )
-                }
+            Column(modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 16.dp)) {
+                Text(
+                    text = stringResource(R.string.no_touchy_dialog_title),
+                    style = MaterialTheme.typography.titleMedium
+                )
                 Spacer(modifier = Modifier.height(16.dp))
-                CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                    Text(
-                        text = stringResource(R.string.no_touchy_dialog_text),
-                        style = MaterialTheme.typography.body2
-                    )
-                }
+                Text(
+                    text = stringResource(R.string.no_touchy_dialog_text),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium
+                )
                 Spacer(modifier = Modifier.height(24.dp))
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
                     TextButton(onClick = onButtonClicked) {
@@ -114,8 +106,10 @@ class PocketNoTouchyActivity : AppCompatActivity() {
     @Preview
     @Composable
     fun DialogCardPreview() {
-        ShoukoTheme(darkTheme = true) {
-            DialogCard()
+        ShoukoM3PreviewTheme(darkTheme = true) {
+            Box(modifier = Modifier.background(Color.Black)) {
+                DialogCard()
+            }
         }
     }
 

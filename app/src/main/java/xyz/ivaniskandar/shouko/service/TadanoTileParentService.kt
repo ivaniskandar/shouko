@@ -26,11 +26,10 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.provider.Settings
 import android.service.quicksettings.TileService
-import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
 import androidx.core.content.getSystemService
+import com.kieronquinn.monetcompat.core.MonetCompat
 import xyz.ivaniskandar.shouko.R
-import xyz.ivaniskandar.shouko.ui.theme.ShoukoAccent
 
 /**
  * Foreground service for running Tile features.
@@ -124,7 +123,7 @@ class TadanoTileParentService : Service() {
                     NotificationCompat.Builder(this, CHANNEL_GENERAL)
                         .setShowWhen(false)
                         .setSmallIcon(icon)
-                        .setColor(ShoukoAccent.toArgb())
+                        .setColor(MonetCompat.getInstance().getAccentColor(this))
                         .setContentTitle(getString(R.string.tadano_tile_service_notif_title))
                         .setContentText(getString(R.string.tadano_tile_service_notif_text))
                         .setContentIntent(clickPendingIntent)

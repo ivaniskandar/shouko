@@ -10,22 +10,22 @@ import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.sizeIn
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,9 +33,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -62,7 +62,7 @@ import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper
 import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper.Companion.LOCKSCREEN_LEFT_BUTTON
 import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper.Companion.LOCKSCREEN_RIGHT_BUTTON
 import xyz.ivaniskandar.shouko.ui.Screen
-import xyz.ivaniskandar.shouko.ui.component.InsetAwareTopAppBar
+import xyz.ivaniskandar.shouko.ui.component.InsetAwareCenterAlignedTopAppBar
 import xyz.ivaniskandar.shouko.ui.destination.AndroidAppLinkSettings
 import xyz.ivaniskandar.shouko.ui.destination.AssistantActionSelection
 import xyz.ivaniskandar.shouko.ui.destination.AssistantButtonSettings
@@ -72,7 +72,7 @@ import xyz.ivaniskandar.shouko.ui.destination.LinkTargetList
 import xyz.ivaniskandar.shouko.ui.destination.LockscreenShortcutSelection
 import xyz.ivaniskandar.shouko.ui.destination.LockscreenShortcutSettings
 import xyz.ivaniskandar.shouko.ui.destination.PermissionSetup
-import xyz.ivaniskandar.shouko.ui.theme.ShoukoTheme
+import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3Theme
 import xyz.ivaniskandar.shouko.util.RELEASES_PAGE_INTENT
 import xyz.ivaniskandar.shouko.util.isRootAvailable
 import xyz.ivaniskandar.shouko.util.openDefaultAppsSettings
@@ -92,29 +92,34 @@ class MainActivity : AppCompatActivity() {
             )
             val bottomSheetNavigator = remember(sheetState) { BottomSheetNavigator(sheetState = sheetState) }
             val navController = rememberNavController(bottomSheetNavigator)
-            ShoukoTheme {
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val scrollBehavior = remember(navBackStackEntry) {
+                when (navBackStackEntry?.destination?.route) {
+                    // Disable scroll effect because tabs
+                    Screen.AssistantLaunchSelection.route, Screen.LockscreenShortcutSelection.route -> null
+                    else -> TopAppBarDefaults.pinnedScrollBehavior()
+                }
+            }
+            ShoukoM3Theme {
                 ProvideWindowInsets {
                     ModalBottomSheetLayout(bottomSheetNavigator) {
+                        val scaffoldModifier = if (scrollBehavior != null) {
+                            Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+                        } else {
+                            Modifier
+                        }
                         Scaffold(
+                            modifier = scaffoldModifier,
                             topBar = {
-                                val navBackStackEntry by navController.currentBackStackEntryAsState()
                                 val currentRoute = navBackStackEntry?.destination?.route
-                                InsetAwareTopAppBar(
+                                InsetAwareCenterAlignedTopAppBar(
                                     title = {
-                                        Crossfade(
-                                            targetState = getAppBarTitle(
+                                        Text(
+                                            text = getAppBarTitle(
                                                 navController = navController,
                                                 navBackStackEntry = navBackStackEntry
                                             )
-                                        ) {
-                                            Text(
-                                                text = it,
-                                                modifier = Modifier.fillMaxWidth(),
-                                                color = MaterialTheme.colors.onBackground,
-                                                textAlign = TextAlign.Center,
-                                                maxLines = 1
-                                            )
-                                        }
+                                        )
                                     },
                                     navigationIcon = if (currentRoute != null && currentRoute != Screen.Home.route) {
                                         {
@@ -124,8 +129,7 @@ class MainActivity : AppCompatActivity() {
                                         }
                                     } else null,
                                     actions = { MainActivityActions(navController = navController) },
-                                    backgroundColor = MaterialTheme.colors.background,
-                                    elevation = 0.dp
+                                    scrollBehavior = scrollBehavior
                                 )
                             },
                         ) {
@@ -205,13 +209,16 @@ class MainActivity : AppCompatActivity() {
                                         )
                                     }
                                     bottomSheet(Screen.LinkTargetInfoSheet.route) {
-                                        val packageName = Screen.LinkTargetInfoSheet.getPackageName(it)
-                                        LinkTargetInfoSheet(
-                                            packageName = packageName,
-                                            mainViewModel = viewModel
-                                        ) {
-                                            openOpenByDefaultSettings(this@MainActivity, packageName)
-                                            navController.popBackStack()
+                                        // TODO: Remove surface when bottom sheet uses M3 colors
+                                        Surface(color = MaterialTheme.colorScheme.surface) {
+                                            val packageName = Screen.LinkTargetInfoSheet.getPackageName(it)
+                                            LinkTargetInfoSheet(
+                                                packageName = packageName,
+                                                mainViewModel = viewModel
+                                            ) {
+                                                openOpenByDefaultSettings(this@MainActivity, packageName)
+                                                navController.popBackStack()
+                                            }
                                         }
                                     }
                                 }
@@ -266,38 +273,45 @@ fun MainActivityActions(
         Screen.Home.route -> {
             menuItems += {
                 DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = stringResource(R.string.check_for_update),
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
+                        )
+                    },
                     onClick = {
                         context.startActivity(RELEASES_PAGE_INTENT)
                         showPopup = false
                     }
-                ) {
-                    Text(
-                        text = stringResource(R.string.check_for_update),
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1,
-                        style = MaterialTheme.typography.body1
-                    )
-                }
+                )
             }
             menuItems += {
                 DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = stringResource(R.string.oss_license_title),
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
+                        )
+                    },
                     onClick = {
                         context.startActivity(Intent(context, OssLicensesMenuActivity::class.java))
                         showPopup = false
                     }
-                ) {
-                    Text(
-                        text = stringResource(R.string.oss_license_title),
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1,
-                        style = MaterialTheme.typography.body1
-                    )
-                }
+                )
             }
         }
         Screen.AssistantLaunchSelection.route -> {
             menuItems += {
                 DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = stringResource(id = R.string.reset_to_default),
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
+                        )
+                    },
                     onClick = {
                         scope.launch {
                             ShoukoApplication.prefs.setAssistButtonAction(null)
@@ -310,19 +324,19 @@ fun MainActivityActions(
                             navController.popBackStack()
                         }
                     }
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.reset_to_default),
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1,
-                        style = MaterialTheme.typography.body1
-                    )
-                }
+                )
             }
         }
         Screen.LockscreenShortcutSelection.route -> {
             menuItems += {
                 DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = stringResource(id = R.string.reset_to_default),
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
+                        )
+                    },
                     onClick = {
                         val key = navBackStackEntry?.arguments?.getString("key")
                         LockscreenShortcutHelper.getPreferences(context).edit {
@@ -332,14 +346,7 @@ fun MainActivityActions(
                         showPopup = false
                         navController.popBackStack()
                     }
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.reset_to_default),
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1,
-                        style = MaterialTheme.typography.body1
-                    )
-                }
+                )
             }
         }
     }

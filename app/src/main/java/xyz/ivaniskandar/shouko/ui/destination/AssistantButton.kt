@@ -43,6 +43,7 @@ import xyz.ivaniskandar.shouko.ui.component.CategoryHeader
 import xyz.ivaniskandar.shouko.ui.component.DigitalAssistantRow
 import xyz.ivaniskandar.shouko.ui.component.DoNothingRow
 import xyz.ivaniskandar.shouko.ui.component.FlashlightRow
+import xyz.ivaniskandar.shouko.ui.component.M3SwipeRefreshIndicator
 import xyz.ivaniskandar.shouko.ui.component.MediaKeyRow
 import xyz.ivaniskandar.shouko.ui.component.MuteMicrophoneRow
 import xyz.ivaniskandar.shouko.ui.component.Preference
@@ -132,7 +133,10 @@ fun AssistantActionSelection(
                 SwipeRefresh(
                     state = rememberSwipeRefreshState(isRefreshing),
                     onRefresh = { mainViewModel.refreshAppsList() },
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
+                    indicator = { s, trigger ->
+                        M3SwipeRefreshIndicator(state = s, refreshTriggerDistance = trigger)
+                    }
                 ) {
                     if (items != null) {
                         LazyColumn(
@@ -178,7 +182,10 @@ fun AssistantActionSelection(
                 SwipeRefresh(
                     state = rememberSwipeRefreshState(isRefreshing),
                     onRefresh = { mainViewModel.refreshShortcutCreatorList() },
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
+                    indicator = { s, trigger ->
+                        M3SwipeRefreshIndicator(state = s, refreshTriggerDistance = trigger)
+                    }
                 ) {
                     if (items != null) {
                         LazyColumn(
