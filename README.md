@@ -24,6 +24,20 @@ Features
   Shows a full-screen dialog and locks the screen when the phone screen is turned on with the proximity sensor blocked.
 
   Unlike the system feature, this one works even when your phone gets unlocked, so accidentally touching the fingerprint sensor when pocketing your phone will be less *disastrous*.
+  
+- **Android App Link Manager for Android 12+**
+
+  See list of apps that can handle a link split into two categories of approved and unapproved apps.
+  
+  Approved apps will handle the approved link by default and will skip the selection dialog, while unapproved apps will not handle the opened link by default and instead will be opened in the web browser.
+  
+  Also includes a custom selection dialog to bring back the "Open with" dialog that used to be shown by default on older Android version.
+  
+- **Link Cleaner**
+
+  Removes the unnecesary bits of a link such as tracking ID.
+  
+  To clean a link, share the original link to the Link Cleaner activity and the cleaned link will be reshared. You can also copy the original link to clipboard and open the Link Cleaner shortcut, the cleaned link will replace the original link in the clipboard.
 
 - **Coffee**
 
@@ -44,12 +58,12 @@ Features
 Accessibility Service
 ----------
 
-All features except the Quick Settings tiles need accessibility service to run. Features using the accessibility service is defined [here](app/src/main/java/xyz/ivaniskandar/shouko/feature).
+Some feature in this app requires accessibility service to run. Features using the accessibility service is defined [here](app/src/main/java/xyz/ivaniskandar/shouko/feature).
 
 Device Compatibility
 ----------
 
-This app is mainly tested on the **Xperia 5 II** running **stock Android 11** firmware. Some features need specific hardware features to work, but other than that it should work properly on other devices.
+This app is mainly tested on the **Xperia 5 II** running **stock Android 11** firmware. Some features require specific hardware features to work, but other than that it should work properly on other devices.
 
 Download
 ----------
