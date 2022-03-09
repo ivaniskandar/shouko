@@ -4,6 +4,7 @@ import androidx.annotation.IntRange
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
@@ -12,8 +13,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.kieronquinn.monetcompat.core.MonetCompat
 import com.kieronquinn.monetcompat.extensions.toArgb
 import kotlin.math.ln
@@ -151,6 +156,16 @@ fun MonetCompat.darkMonetCompatScheme(
         outline = outline,
     )
 
+val ShoukoTypography = Typography(
+    titleLarge = TextStyle(
+        fontFamily = FontFamily.SansSerif,
+        fontWeight = FontWeight.Normal,
+        fontSize = 20.sp,
+        lineHeight = 28.0.sp,
+        letterSpacing = 0.0.sp,
+    )
+)
+
 @Composable
 fun ShoukoM3Theme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -158,7 +173,7 @@ fun ShoukoM3Theme(
 ) {
     val monet = remember(LocalConfiguration.current) { MonetCompat.getInstance() }
     val colorScheme = if (darkTheme) monet.darkMonetCompatScheme() else monet.lightMonetCompatScheme()
-    MaterialTheme(colorScheme = colorScheme, content = content)
+    MaterialTheme(colorScheme = colorScheme, typography = ShoukoTypography, content = content)
 }
 
 @Composable
