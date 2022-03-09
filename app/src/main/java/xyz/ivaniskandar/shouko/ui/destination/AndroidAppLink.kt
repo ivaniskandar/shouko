@@ -217,7 +217,7 @@ fun LinkTargetList(
                         text = stringResource(R.string.disabled),
                         modifier = Modifier.padding(16.dp),
                         color = MaterialTheme.colorScheme.primary,
-                        style = MaterialTheme.typography.labelSmall
+                        style = MaterialTheme.typography.titleSmall
                     )
                 }
 
@@ -236,16 +236,20 @@ fun LinkTargetList(
 @Composable
 fun LinkTargetListItem(item: LinkHandlerAppItem, onClick: () -> Unit) {
     ListItem(
-        modifier = Modifier.clickable(onClick = onClick),
+        modifier = Modifier.clickable(onClick = onClick).padding(6.dp),
         icon = {
             Image(
                 bitmap = item.icon,
                 contentDescription = null,
-                modifier = Modifier.size(36.dp)
+                modifier = Modifier.size(32.dp)
             )
         },
         text = {
-            Text(text = item.label)
+            Text(
+                text = item.label,
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.titleLarge
+            )
         }
     )
 }

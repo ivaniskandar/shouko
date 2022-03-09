@@ -210,7 +210,10 @@ class MainActivity : AppCompatActivity() {
                                     }
                                     bottomSheet(Screen.LinkTargetInfoSheet.route) {
                                         // TODO: Remove surface when bottom sheet uses M3 colors
-                                        Surface(color = MaterialTheme.colorScheme.surface) {
+                                        Surface(
+                                            color = MaterialTheme.colorScheme.surface,
+                                            tonalElevation = 4.dp
+                                        ) {
                                             val packageName = Screen.LinkTargetInfoSheet.getPackageName(it)
                                             LinkTargetInfoSheet(
                                                 packageName = packageName,
