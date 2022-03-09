@@ -35,20 +35,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
 import androidx.core.content.getSystemService
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.ProvideWindowInsets
+import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.composable
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.navigation.material.BottomSheetNavigator
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.navigation.material.bottomSheet
@@ -56,6 +59,7 @@ import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import kotlinx.coroutines.launch
 import logcat.LogPriority
 import logcat.logcat
+import soup.compose.material.motion.materialSharedAxisX
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.ShoukoApplication
 import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper
@@ -91,7 +95,7 @@ class MainActivity : AppCompatActivity() {
                 skipHalfExpanded = true
             )
             val bottomSheetNavigator = remember(sheetState) { BottomSheetNavigator(sheetState = sheetState) }
-            val navController = rememberNavController(bottomSheetNavigator)
+            val navController = rememberAnimatedNavController(bottomSheetNavigator)
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val scrollBehavior = remember(navBackStackEntry) {
                 when (navBackStackEntry?.destination?.route) {
@@ -100,6 +104,9 @@ class MainActivity : AppCompatActivity() {
                     else -> TopAppBarDefaults.pinnedScrollBehavior()
                 }
             }
+            val sharedAxisMotion = materialSharedAxisX()
+            val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+            val density = LocalDensity.current
             ShoukoM3Theme {
                 ProvideWindowInsets {
                     ModalBottomSheetLayout(bottomSheetNavigator) {
@@ -134,8 +141,15 @@ class MainActivity : AppCompatActivity() {
                             },
                         ) {
                             val rootAvailable = remember { isRootAvailable }
-                            NavHost(navController = navController, startDestination = Screen.Home.route) {
-                                composable(Screen.Home.route) { Home(navController) }
+                            AnimatedNavHost(
+                                navController = navController,
+                                startDestination = Screen.Home.route,
+                                enterTransition = { sharedAxisMotion.enter.transition(!isRtl, density) },
+                                exitTransition = { sharedAxisMotion.exit.transition(!isRtl, density) },
+                                popEnterTransition = { sharedAxisMotion.enter.transition(isRtl, density) },
+                                popExitTransition = { sharedAxisMotion.exit.transition(isRtl, density) }
+                            ) {
+                                composable(route = Screen.Home.route) { Home(navController) }
                                 composable(Screen.ReadLogsSetup.route) {
                                     PermissionSetup(
                                         title = stringResource(id = R.string.read_logs_permission_setup_title),

@@ -69,7 +69,10 @@ fun AssistantButtonSettings(
     val prefs = ShoukoApplication.prefs
     val buttonPrefs by prefs.assistButtonFlow.collectAsState(initial = AssistButtonPrefs())
 
-    LazyColumn(contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.navigationBars)) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.navigationBars)
+    ) {
         item {
             ReadLogsCard(visible = !context.canReadSystemLogs) {
                 navController.navigate(Screen.ReadLogsSetup.route)

@@ -43,7 +43,10 @@ fun LockscreenShortcutSettings(
 ) {
     val context = LocalContext.current
     ComponentName.unflattenFromString("")
-    LazyColumn(contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.navigationBars)) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.navigationBars)
+    ) {
         item {
             WriteSettingsCard(visible = !context.canWriteSecureSettings) {
                 navController.navigate(Screen.SecureSettingsSetup.route)

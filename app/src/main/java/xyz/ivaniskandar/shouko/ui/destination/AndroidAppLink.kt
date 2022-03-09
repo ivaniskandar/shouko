@@ -73,41 +73,54 @@ fun AndroidAppLinkSettings(
     var isDefaultBrowser by remember { mutableStateOf(checkDefaultBrowser(context)) }
     var showEnableInfoDialog by remember { mutableStateOf(false) }
 
-    Column {
-        CustomChooserToggle(
-            checked = isDefaultBrowser,
-            onClick = {
-                if (!isDefaultBrowser) {
-                    showEnableInfoDialog = true
-                } else {
-                    onOpenSettings()
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.navigationBars)
+    ) {
+        item {
+            CustomChooserToggle(
+                checked = isDefaultBrowser,
+                onClick = {
+                    if (!isDefaultBrowser) {
+                        showEnableInfoDialog = true
+                    } else {
+                        onOpenSettings()
+                    }
                 }
-            }
-        )
+            )
+        }
 
-        Preference(
-            title = stringResource(R.string.approved_link_target_title),
-            subtitle = stringResource(R.string.approved_link_target_subtitle),
-            onPreferenceClick = { navController.navigate(Screen.ApprovedLinkTargetList.route) }
-        )
-        Preference(
-            title = stringResource(R.string.unapproved_link_target_title),
-            subtitle = stringResource(R.string.unapproved_link_target_subtitle),
-            onPreferenceClick = { navController.navigate(Screen.UnapprovedLinkTargetList.route) }
-        )
+        item {
+            Preference(
+                title = stringResource(R.string.approved_link_target_title),
+                subtitle = stringResource(R.string.approved_link_target_subtitle),
+                onPreferenceClick = { navController.navigate(Screen.ApprovedLinkTargetList.route) }
+            )
+        }
+        item {
+            Preference(
+                title = stringResource(R.string.unapproved_link_target_title),
+                subtitle = stringResource(R.string.unapproved_link_target_subtitle),
+                onPreferenceClick = { navController.navigate(Screen.UnapprovedLinkTargetList.route) }
+            )
+        }
 
-        Icon(
-            imageVector = Icons.Outlined.Info,
-            contentDescription = null,
-            modifier = Modifier.padding(start = 20.dp, top = 16.dp),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Text(
-            text = stringResource(id = R.string.link_chooser_info),
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium
-        )
+        item {
+            Icon(
+                imageVector = Icons.Outlined.Info,
+                contentDescription = null,
+                modifier = Modifier.padding(start = 20.dp, top = 16.dp),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        item {
+            Text(
+                text = stringResource(id = R.string.link_chooser_info),
+                modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
     }
 
     if (showEnableInfoDialog) {
