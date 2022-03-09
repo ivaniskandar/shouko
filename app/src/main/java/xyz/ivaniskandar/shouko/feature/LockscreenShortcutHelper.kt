@@ -5,16 +5,17 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.SharedPreferences
 import android.provider.Settings
 import androidx.core.content.getSystemService
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import logcat.logcat
-import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper.Companion.getPreferences
+import xyz.ivaniskandar.shouko.ShoukoApplication
 import xyz.ivaniskandar.shouko.util.canWriteSecureSettings
 
 /**
@@ -25,9 +26,9 @@ import xyz.ivaniskandar.shouko.util.canWriteSecureSettings
  * keep the values default when the keyguard is locked. This module
  * does all the heavy lifting.
  *
- * Custom values inside local preferences ([getPreferences]) will
- * be applied when the keyguard is shown to user. Otherwise, those
- * will be set to system default a.k.a null.
+ * Custom values from preferences will be applied when the keyguard
+ * is shown to user. Otherwise, those will be set to system default
+ * a.k.a null.
  *
  * The caveat is the power button double tap gesture will be
  * "broken" if it's triggered when the keyguard is showing and
@@ -37,7 +38,7 @@ import xyz.ivaniskandar.shouko.util.canWriteSecureSettings
 class LockscreenShortcutHelper(
     private val lifecycleOwner: LifecycleOwner,
     private val context: Context,
-) : DefaultLifecycleObserver, SharedPreferences.OnSharedPreferenceChangeListener {
+) : DefaultLifecycleObserver {
     private var receiverRegistered = false
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -51,16 +52,16 @@ class LockscreenShortcutHelper(
                     delay(75) // 5 II camera button action fix
                     logcat { "Set camera lockscreen shortcuts to custom ${intent.action}" }
                     // Keyguard is showing
-                    val localSettings = getPreferences(context)
+                    val prefs = ShoukoApplication.prefs
                     Settings.Secure.putString(
                         context.contentResolver,
                         LOCKSCREEN_LEFT_BUTTON,
-                        localSettings.getString(LOCKSCREEN_LEFT_BUTTON, null)
+                        prefs.lockscreenLeftAction.first()
                     )
                     Settings.Secure.putString(
                         context.contentResolver,
                         LOCKSCREEN_RIGHT_BUTTON,
-                        localSettings.getString(LOCKSCREEN_RIGHT_BUTTON, null)
+                        prefs.lockscreenRightAction.first()
                     )
                 }
             } else {
@@ -69,13 +70,6 @@ class LockscreenShortcutHelper(
                 Settings.Secure.putString(context.contentResolver, LOCKSCREEN_RIGHT_BUTTON, null)
             }
         }
-    }
-
-    override fun onStart(owner: LifecycleOwner) {
-        val localSettings = getPreferences(context)
-        val ready = localSettings.getString(LOCKSCREEN_LEFT_BUTTON, null) != null ||
-            localSettings.getString(LOCKSCREEN_RIGHT_BUTTON, null) != null
-        updateReceiverState(ready)
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
@@ -101,13 +95,14 @@ class LockscreenShortcutHelper(
         }
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        onStart(lifecycleOwner)
-    }
-
     init {
         lifecycleOwner.lifecycle.addObserver(this)
-        getPreferences(context).registerOnSharedPreferenceChangeListener(this)
+        lifecycleOwner.lifecycleScope.launchWhenStarted {
+            val prefs = ShoukoApplication.prefs
+            prefs.lockscreenLeftAction
+                .combine(prefs.lockscreenRightAction) { a, b -> a != null || b != null }
+                .collect { updateReceiverState(it) }
+        }
     }
 
     companion object {
@@ -116,9 +111,5 @@ class LockscreenShortcutHelper(
          */
         const val LOCKSCREEN_LEFT_BUTTON = "sysui_keyguard_left"
         const val LOCKSCREEN_RIGHT_BUTTON = "sysui_keyguard_right"
-
-        fun getPreferences(context: Context): SharedPreferences {
-            return context.getSharedPreferences("secure_settings", Context.MODE_PRIVATE)
-        }
     }
 }

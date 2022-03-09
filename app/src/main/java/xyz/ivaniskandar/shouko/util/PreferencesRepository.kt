@@ -8,6 +8,7 @@ import logcat.LogPriority
 import logcat.logcat
 import xyz.ivaniskandar.shouko.Preferences
 import xyz.ivaniskandar.shouko.feature.Action
+import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper
 import java.io.IOException
 
 class PreferencesRepository(private val preferencesStore: DataStore<Preferences>) {
@@ -35,6 +36,25 @@ class PreferencesRepository(private val preferencesStore: DataStore<Preferences>
 
     val coffeeBoardingDone: Flow<Boolean> = preferencesFlow.map { it.coffeeBoardingDone }
     val teaBoardingDone: Flow<Boolean> = preferencesFlow.map { it.teaBoardingDone }
+
+    val lockscreenLeftAction: Flow<String?> = preferencesFlow.map {
+        it.lockscreenLeftAction.takeIf { action -> action.isNotEmpty() }
+    }
+    val lockscreenRightAction: Flow<String?> = preferencesFlow.map {
+        it.lockscreenRightAction.takeIf { action -> action.isNotEmpty() }
+    }
+
+    suspend fun setLockscreenAction(key: String, value: String?) {
+        val newValue = value ?: ""
+        preferencesStore.updateDataSilently {
+            it.toBuilder().apply {
+                when (key) {
+                    LockscreenShortcutHelper.LOCKSCREEN_LEFT_BUTTON -> lockscreenLeftAction = newValue
+                    LockscreenShortcutHelper.LOCKSCREEN_RIGHT_BUTTON -> lockscreenRightAction = newValue
+                }
+            }.build()
+        }
+    }
 
     /**
      * App reference for Assistant button main switch. If false the listener will make

@@ -42,7 +42,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.core.content.edit
 import androidx.core.content.getSystemService
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavBackStackEntry
@@ -62,7 +61,6 @@ import logcat.logcat
 import soup.compose.material.motion.materialSharedAxisX
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.ShoukoApplication
-import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper
 import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper.Companion.LOCKSCREEN_LEFT_BUTTON
 import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper.Companion.LOCKSCREEN_RIGHT_BUTTON
 import xyz.ivaniskandar.shouko.ui.Screen
@@ -356,10 +354,12 @@ fun MainActivityActions(
                     },
                     onClick = {
                         val key = navBackStackEntry?.arguments?.getString("key")
-                        LockscreenShortcutHelper.getPreferences(context).edit {
-                            remove(key)
+                        if (key != null) {
+                            scope.launch {
+                                ShoukoApplication.prefs.setLockscreenAction(key, null)
+                                Settings.Secure.putString(context.contentResolver, key, null)
+                            }
                         }
-                        Settings.Secure.putString(context.contentResolver, key, null)
                         showPopup = false
                         navController.popBackStack()
                     }

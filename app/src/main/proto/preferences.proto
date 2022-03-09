@@ -11,4 +11,6 @@ message Preferences {
   bool flip_to_shush_enabled = 5;
   bool coffee_boarding_done = 6;
   bool tea_boarding_done = 7;
+  string lockscreen_left_action = 8;
+  string lockscreen_right_action = 9;
 }

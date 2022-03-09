@@ -12,7 +12,6 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
 import androidx.datastore.migrations.SharedPreferencesMigration
 import androidx.datastore.migrations.SharedPreferencesView
-import androidx.preference.PreferenceManager
 import com.kieronquinn.monetcompat.core.MonetCompat
 import com.topjohnwu.superuser.Shell
 import logcat.AndroidLogcatLogger
@@ -29,7 +28,9 @@ private val Context.preferencesStore: DataStore<Preferences> by dataStore(
     produceMigrations = { context ->
         listOf(
             SharedPreferencesMigration(
-                produceSharedPreferences = { PreferenceManager.getDefaultSharedPreferences(context) }
+                produceSharedPreferences = {
+                    context.getSharedPreferences("${context.packageName}_preferences", Context.MODE_PRIVATE)
+                }
             ) { sharedPrefs: SharedPreferencesView, currentData: Preferences ->
                 val builder = currentData.toBuilder()
                 if (sharedPrefs.contains("assist_button_enabled")) {
@@ -52,6 +53,18 @@ private val Context.preferencesStore: DataStore<Preferences> by dataStore(
                 }
                 if (sharedPrefs.contains("tea_boarding_done")) {
                     builder.teaBoardingDone = sharedPrefs.getBoolean("tea_boarding_done", false)
+                }
+                builder.build()
+            },
+            SharedPreferencesMigration(
+                produceSharedPreferences = { context.getSharedPreferences("secure_settings", Context.MODE_PRIVATE) }
+            ) { sharedPrefs: SharedPreferencesView, currentData: Preferences ->
+                val builder = currentData.toBuilder()
+                if (sharedPrefs.contains("sysui_keyguard_left")) {
+                    builder.lockscreenLeftAction = sharedPrefs.getString("sysui_keyguard_left", "")
+                }
+                if (sharedPrefs.contains("sysui_keyguard_right")) {
+                    builder.lockscreenRightAction = sharedPrefs.getString("sysui_keyguard_right", "")
                 }
                 builder.build()
             }

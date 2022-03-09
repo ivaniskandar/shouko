@@ -9,10 +9,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.core.content.edit
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.accompanist.insets.LocalWindowInsets
@@ -20,10 +20,11 @@ import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import kotlinx.coroutines.launch
 import xyz.ivaniskandar.shouko.R
+import xyz.ivaniskandar.shouko.ShoukoApplication
 import xyz.ivaniskandar.shouko.activity.EmptyShortcutActivity
 import xyz.ivaniskandar.shouko.activity.MainActivityViewModel
-import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper
 import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper.Companion.LOCKSCREEN_LEFT_BUTTON
 import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper.Companion.LOCKSCREEN_RIGHT_BUTTON
 import xyz.ivaniskandar.shouko.ui.Screen
@@ -53,9 +54,10 @@ fun LockscreenShortcutSettings(
             }
         }
         item {
+
             Preference(
                 title = stringResource(R.string.lockscreen_shortcut_left),
-                subtitle = LockscreenShortcutHelper.getPreferences(context).getString(LOCKSCREEN_LEFT_BUTTON, null)
+                subtitle = ShoukoApplication.prefs.lockscreenLeftAction.collectAsState(initial = null).value
                     ?.toComponentName()?.loadLabel(context)
                     ?: stringResource(id = R.string.assistant_action_select_default_value),
                 enabled = context.canWriteSecureSettings
@@ -66,7 +68,7 @@ fun LockscreenShortcutSettings(
         item {
             Preference(
                 title = stringResource(R.string.lockscreen_shortcut_right),
-                subtitle = LockscreenShortcutHelper.getPreferences(context).getString(LOCKSCREEN_RIGHT_BUTTON, null)
+                subtitle = ShoukoApplication.prefs.lockscreenRightAction.collectAsState(initial = null).value
                     ?.toComponentName()?.loadLabel(context)
                     ?: stringResource(id = R.string.assistant_action_select_default_value),
                 enabled = context.canWriteSecureSettings
@@ -83,6 +85,7 @@ fun LockscreenShortcutSelection(
     navController: NavController,
     settingsKey: String
 ) {
+    val scope = rememberCoroutineScope()
     val titles = listOf(
         stringResource(R.string.tab_title_apps),
         stringResource(R.string.tab_title_other)
@@ -107,10 +110,10 @@ fun LockscreenShortcutSelection(
                         ) {
                             items(items!!) { item ->
                                 ApplicationRow(item = item) {
-                                    LockscreenShortcutHelper.getPreferences(context).edit {
-                                        putString(settingsKey, it.flattenToString())
+                                    scope.launch {
+                                        ShoukoApplication.prefs.setLockscreenAction(settingsKey, it.flattenToString())
+                                        navController.popBackStack()
                                     }
-                                    navController.popBackStack()
                                 }
                             }
                         }
@@ -123,10 +126,10 @@ fun LockscreenShortcutSelection(
                     item {
                         DoNothingRow {
                             val emptyCn = ComponentName(context, EmptyShortcutActivity::class.java)
-                            LockscreenShortcutHelper.getPreferences(context).edit {
-                                putString(settingsKey, emptyCn.flattenToString())
+                            scope.launch {
+                                ShoukoApplication.prefs.setLockscreenAction(settingsKey, emptyCn.flattenToString())
+                                navController.popBackStack()
                             }
-                            navController.popBackStack()
                         }
                     }
                 }
