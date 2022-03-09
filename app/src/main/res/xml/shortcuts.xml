@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="linkcleaner"
+        android:enabled="true"
+        android:icon="@mipmap/ic_link_cleaner_shortcut"
+        android:shortcutShortLabel="@string/link_cleaner_label">
+        <intent
+            android:action="shouko.action.CLEAN_CLIPBOARD"
+            android:targetPackage="xyz.ivaniskandar.shouko"
+            android:targetClass="xyz.ivaniskandar.shouko.activity.LinkCleanerTargetActivity" />
+    </shortcut>
+</shortcuts>

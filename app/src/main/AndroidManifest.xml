@@ -46,16 +46,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+            <meta-data android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
         </activity>
         <activity android:name=".activity.LinkCleanerTargetActivity"
             android:exported="true"
             android:excludeFromRecents="true"
             android:label="@string/link_cleaner_label"
+            android:icon="@mipmap/ic_link_cleaner_shortcut"
             android:theme="@style/Theme.Shouko.Transparent">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="text/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="shouko.action.CLEAN_CLIPBOARD" />
             </intent-filter>
         </activity>
         <activity android:name=".activity.LinkTargetChooserActivity"

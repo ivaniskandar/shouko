@@ -88,7 +88,9 @@
 
     <string name="link_cleaner_label">Link Cleaner</string>
     <string name="link_cleaner_success">Link cleaned</string>
+    <string name="link_cleaner_success_clipboard">Cleaned link copied to clipboard</string>
     <string name="link_cleaner_failed">Failed to clean link</string>
+    <string name="link_cleaner_failed_clipboard">Newest clipboard item is not a valid link</string>
 
     <string name="mute_microphone_notif_channel_title">Muted microphone reminder</string>
     <string name="mute_microphone_on">Microphone muted</string>
