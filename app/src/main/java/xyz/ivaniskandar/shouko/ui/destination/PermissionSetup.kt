@@ -113,7 +113,7 @@ fun PermissionSetupRoot(command: String) {
         style = MaterialTheme.typography.bodyLarge
     )
 
-    FilledTonalButton(onClick = { Shell.su(command).submit() }) {
+    FilledTonalButton(onClick = { Shell.cmd(command).submit() }) {
         Text(text = stringResource(R.string.button_continue))
     }
 }

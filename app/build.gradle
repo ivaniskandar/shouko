@@ -101,6 +101,7 @@ dependencies {
     implementation "com.google.accompanist:accompanist-swiperefresh:$accompanist_version"
     implementation "com.google.accompanist:accompanist-navigation-material:$accompanist_version"
     implementation "com.google.accompanist:accompanist-navigation-animation:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-systemuicontroller:$accompanist_version"
 
     def coroutines_version = "1.6.0"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"

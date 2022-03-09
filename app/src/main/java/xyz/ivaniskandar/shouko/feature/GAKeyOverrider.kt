@@ -261,7 +261,6 @@ class GAKeyOverrider(
         }
     }
 
-    @Suppress("DEPRECATION")
     private fun runGAKeyActionAboveKeyguard(withOpa: Boolean) {
         customAction?.let {
             logcat { "With Keyguard running action $it withOpa=$withOpa" }

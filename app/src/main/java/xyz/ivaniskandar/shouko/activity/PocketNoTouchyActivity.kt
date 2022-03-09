@@ -3,7 +3,6 @@ package xyz.ivaniskandar.shouko.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.BorderStroke
@@ -20,6 +19,7 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,9 +27,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.feature.PocketNoTouchy
@@ -49,11 +48,6 @@ class PocketNoTouchyActivity : AppCompatActivity() {
 
         // Set full screen
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        val wicc = WindowInsetsControllerCompat(window, window.decorView)
-        wicc.hide(WindowInsetsCompat.Type.systemBars())
-        @Suppress("DEPRECATION")
-        window.decorView.systemUiVisibility =
-            window.decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
 
         setContent {
             ShoukoM3Theme(darkTheme = true) {
@@ -67,6 +61,10 @@ class PocketNoTouchyActivity : AppCompatActivity() {
                         lifecycleScope.launch { PocketNoTouchy.ignoreCheckFlow.emit(Unit) }
                     }
                 }
+            }
+            val systemUiController = rememberSystemUiController()
+            SideEffect {
+                systemUiController.isSystemBarsVisible = false
             }
         }
     }
