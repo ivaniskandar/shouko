@@ -57,9 +57,8 @@ import xyz.ivaniskandar.shouko.item.LinkHandlerAppItem
 import xyz.ivaniskandar.shouko.ui.ComposeLifecycleCallback
 import xyz.ivaniskandar.shouko.ui.Screen
 import xyz.ivaniskandar.shouko.ui.component.M3SwipeRefreshIndicator
-import xyz.ivaniskandar.shouko.ui.component.M3Switch
 import xyz.ivaniskandar.shouko.ui.component.Preference
-import xyz.ivaniskandar.shouko.ui.component.m3SwitchColors
+import xyz.ivaniskandar.shouko.ui.component.Switch
 import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3PreviewTheme
 import xyz.ivaniskandar.shouko.util.checkDefaultBrowser
 import xyz.ivaniskandar.shouko.util.getPackageLabel
@@ -165,10 +164,9 @@ fun CustomChooserToggle(checked: Boolean, onClick: () -> Unit) {
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.titleLarge
             )
-            M3Switch(
+            Switch(
                 checked = checked,
-                onCheckedChange = null,
-                colors = m3SwitchColors(uncheckedThumbColor = MaterialTheme.colorScheme.surface)
+                onCheckedChange = null
             )
         }
     }

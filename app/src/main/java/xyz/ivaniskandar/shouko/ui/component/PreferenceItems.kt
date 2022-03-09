@@ -85,10 +85,10 @@ fun SwitchPreference(
         subtitle = subtitle,
         enabled = enabled
     ) {
-        M3Switch(
+        Switch(
             checked = checked,
             onCheckedChange = onCheckedChanged,
-            modifier = Modifier.padding(start = 6.dp),
+            modifier = Modifier.padding(start = 8.dp),
             enabled = enabled
         )
     }
