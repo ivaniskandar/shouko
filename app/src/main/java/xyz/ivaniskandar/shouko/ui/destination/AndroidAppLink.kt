@@ -25,9 +25,9 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -99,12 +99,12 @@ fun AndroidAppLinkSettings(
         Icon(
             imageVector = Icons.Outlined.Info,
             contentDescription = null,
-            modifier = Modifier.padding(start = 16.dp, top = 16.dp),
+            modifier = Modifier.padding(start = 20.dp, top = 16.dp),
             tint = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Text(
             text = stringResource(id = R.string.link_chooser_info),
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyMedium
         )
@@ -144,7 +144,7 @@ fun CustomChooserToggle(checked: Boolean, onClick: () -> Unit) {
     val interactionSource = remember { MutableInteractionSource() }
     Card(
         modifier = Modifier
-            .padding(horizontal = 16.dp, vertical = 12.dp)
+            .padding(horizontal = 20.dp, vertical = 12.dp)
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
@@ -322,11 +322,11 @@ fun LinkTargetInfoSheet(
             )
         }
 
-        FilledTonalButton(
+        OutlinedButton(
             onClick = { onOpenSettings(packageName) },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp, bottom = 8.dp)
+                .padding(top = 24.dp, bottom = 8.dp)
         ) {
             Icon(
                 Icons.Default.Launch,

@@ -28,7 +28,7 @@ fun BasePreferenceCard(
     onButtonClicked: () -> Unit
 ) {
     Card(
-        modifier = Modifier.padding(16.dp)
+        modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp)
     ) {
         Column(
             modifier = Modifier
