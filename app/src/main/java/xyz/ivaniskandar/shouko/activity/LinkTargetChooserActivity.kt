@@ -50,6 +50,7 @@ import kotlinx.coroutines.launch
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.ui.IconDrawableShadowWrapper
 import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3Theme
+import xyz.ivaniskandar.shouko.ui.theme.surfaceColorAtElevation
 import xyz.ivaniskandar.shouko.util.loadIcon
 import xyz.ivaniskandar.shouko.util.loadLabel
 
@@ -130,17 +131,21 @@ fun AppLinkChooserSheet(
 
     ModalBottomSheetLayout(
         sheetState = state,
-        sheetShape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
+        sheetShape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
+        sheetElevation = 0.dp,
+        sheetBackgroundColor = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp),
+        sheetContentColor = MaterialTheme.colorScheme.onSurface,
         sheetContent = {
             Text(
                 text = stringResource(R.string.link_chooser_dialog_title),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 16.dp),
-                style = MaterialTheme.typography.displaySmall,
-                textAlign = TextAlign.Center
+                color = MaterialTheme.colorScheme.onSurface,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleLarge
             )
-            Divider()
+            Divider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12F))
             LazyColumn(
                 contentPadding = rememberInsetsPaddingValues(
                     insets = LocalWindowInsets.current.navigationBars,
@@ -160,7 +165,8 @@ fun AppLinkChooserSheet(
                                     scope.launch { state.hide() }
                                     onItemClick(item)
                                 }
-                            ),
+                            )
+                            .padding(vertical = 2.dp),
                         icon = {
                             Image(
                                 bitmap = shadowWrapper.run(item.loadIcon(context)!!)
@@ -170,7 +176,13 @@ fun AppLinkChooserSheet(
                                 modifier = Modifier.size(36.dp)
                             )
                         },
-                        text = { Text(item.loadLabel(context)!!) }
+                        text = {
+                            Text(
+                                text = item.loadLabel(context)!!,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
                     )
                 }
             }
