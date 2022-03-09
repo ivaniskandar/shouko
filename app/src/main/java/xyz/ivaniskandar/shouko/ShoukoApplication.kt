@@ -12,7 +12,6 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
 import androidx.datastore.migrations.SharedPreferencesMigration
 import androidx.datastore.migrations.SharedPreferencesView
-import androidx.lifecycle.LifecycleObserver
 import androidx.preference.PreferenceManager
 import com.kieronquinn.monetcompat.core.MonetCompat
 import com.topjohnwu.superuser.Shell
@@ -60,7 +59,7 @@ private val Context.preferencesStore: DataStore<Preferences> by dataStore(
     }
 )
 
-class ShoukoApplication : Application(), LifecycleObserver {
+class ShoukoApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
