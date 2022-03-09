@@ -9,7 +9,7 @@ on:
   pull_request:
 
 concurrency:
-  group: build-${{ github.event.pull_request.number || github.ref }}
+  group: build-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: true
 
 jobs:
@@ -27,7 +27,6 @@ jobs:
   build:
     name: Build project
     needs: check_wrapper
-    if: "!contains(github.event.head_commit.message, 'skip ci')"
     runs-on: ubuntu-latest
 
     steps:
