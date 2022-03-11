@@ -47,7 +47,6 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -106,134 +105,132 @@ class MainActivity : AppCompatActivity() {
             val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
             val density = LocalDensity.current
             ShoukoM3Theme {
-                ProvideWindowInsets {
-                    ModalBottomSheetLayout(bottomSheetNavigator) {
-                        val scaffoldModifier = if (scrollBehavior != null) {
-                            Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
-                        } else {
-                            Modifier
-                        }
-                        Scaffold(
-                            modifier = scaffoldModifier,
-                            topBar = {
-                                val currentRoute = navBackStackEntry?.destination?.route
-                                InsetAwareCenterAlignedTopAppBar(
-                                    title = {
-                                        Text(
-                                            text = getAppBarTitle(
-                                                navController = navController,
-                                                navBackStackEntry = navBackStackEntry
-                                            )
-                                        )
-                                    },
-                                    navigationIcon = if (currentRoute != null && currentRoute != Screen.Home.route) {
-                                        {
-                                            IconButton(onClick = { navController.popBackStack() }) {
-                                                Icon(imageVector = Icons.Rounded.ArrowBack, contentDescription = null)
-                                            }
-                                        }
-                                    } else null,
-                                    actions = { MainActivityActions(navController = navController) },
-                                    scrollBehavior = scrollBehavior
-                                )
-                            },
-                        ) {
-                            val rootAvailable = remember { isRootAvailable }
-                            AnimatedNavHost(
-                                navController = navController,
-                                startDestination = Screen.Home.route,
-                                enterTransition = { sharedAxisMotion.enter.transition(!isRtl, density) },
-                                exitTransition = { sharedAxisMotion.exit.transition(!isRtl, density) },
-                                popEnterTransition = { sharedAxisMotion.enter.transition(isRtl, density) },
-                                popExitTransition = { sharedAxisMotion.exit.transition(isRtl, density) }
-                            ) {
-                                composable(route = Screen.Home.route) { Home(navController) }
-                                composable(Screen.ReadLogsSetup.route) {
-                                    PermissionSetup(
-                                        title = stringResource(id = R.string.read_logs_permission_setup_title),
-                                        permissionName = Manifest.permission.READ_LOGS,
-                                        isRootAvailable = rootAvailable
-                                    ) {
-                                        finishAffinity()
-                                        startActivity(intent)
-                                        exitProcess(0)
-                                    }
-                                }
-                                composable(Screen.SecureSettingsSetup.route) {
-                                    PermissionSetup(
-                                        title = stringResource(id = R.string.write_secure_settings_permission_setup_title),
-                                        permissionName = Manifest.permission.WRITE_SECURE_SETTINGS,
-                                        isRootAvailable = rootAvailable
-                                    ) {
-                                        finishAffinity()
-                                        startActivity(intent)
-                                        exitProcess(0)
-                                    }
-                                }
-                                composable(Screen.AssistantButtonSettings.route) {
-                                    AssistantButtonSettings(navController)
-                                }
-                                composable(Screen.AssistantLaunchSelection.route) {
-                                    AssistantActionSelection(viewModel, navController)
-                                }
-                                composable(Screen.LockscreenShortcutSettings.route) {
-                                    LockscreenShortcutSettings(navController)
-                                }
-                                composable(Screen.LockscreenShortcutSelection.route) {
-                                    val key = it.arguments?.getString("key")
-                                    if (key != null) {
-                                        LockscreenShortcutSelection(
-                                            mainViewModel = viewModel,
+                ModalBottomSheetLayout(bottomSheetNavigator) {
+                    val scaffoldModifier = if (scrollBehavior != null) {
+                        Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+                    } else {
+                        Modifier
+                    }
+                    Scaffold(
+                        modifier = scaffoldModifier,
+                        topBar = {
+                            val currentRoute = navBackStackEntry?.destination?.route
+                            InsetAwareCenterAlignedTopAppBar(
+                                title = {
+                                    Text(
+                                        text = getAppBarTitle(
                                             navController = navController,
-                                            settingsKey = key
+                                            navBackStackEntry = navBackStackEntry
                                         )
-                                    } else {
-                                        logcat(LogPriority.ERROR) { "Lockscreen shortcut settings key is not specified." }
-                                        navController.popBackStack()
-                                    }
-                                }
-
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                                    composable(Screen.AndroidAppLinkSettings.route) {
-                                        AndroidAppLinkSettings(navController = navController) {
-                                            val roleManager = getSystemService<RoleManager>()
-                                            if (roleManager?.isRoleHeld(RoleManager.ROLE_BROWSER) == true) {
-                                                openDefaultAppsSettings(this@MainActivity)
-                                            } else if (roleManager != null) {
-                                                val i = roleManager.createRequestRoleIntent(RoleManager.ROLE_BROWSER)
-                                                @Suppress("DEPRECATION") // we don't care about results here
-                                                startActivityForResult(i, 286444)
-                                            }
+                                    )
+                                },
+                                navigationIcon = if (currentRoute != null && currentRoute != Screen.Home.route) {
+                                    {
+                                        IconButton(onClick = { navController.popBackStack() }) {
+                                            Icon(imageVector = Icons.Rounded.ArrowBack, contentDescription = null)
                                         }
                                     }
-                                    composable(Screen.ApprovedLinkTargetList.route) {
-                                        LinkTargetList(
-                                            approved = true,
-                                            mainViewModel = viewModel,
-                                            navController = navController
-                                        )
+                                } else null,
+                                actions = { MainActivityActions(navController = navController) },
+                                scrollBehavior = scrollBehavior
+                            )
+                        },
+                    ) {
+                        val rootAvailable = remember { isRootAvailable }
+                        AnimatedNavHost(
+                            navController = navController,
+                            startDestination = Screen.Home.route,
+                            enterTransition = { sharedAxisMotion.enter.transition(!isRtl, density) },
+                            exitTransition = { sharedAxisMotion.exit.transition(!isRtl, density) },
+                            popEnterTransition = { sharedAxisMotion.enter.transition(isRtl, density) },
+                            popExitTransition = { sharedAxisMotion.exit.transition(isRtl, density) }
+                        ) {
+                            composable(route = Screen.Home.route) { Home(navController) }
+                            composable(Screen.ReadLogsSetup.route) {
+                                PermissionSetup(
+                                    title = stringResource(id = R.string.read_logs_permission_setup_title),
+                                    permissionName = Manifest.permission.READ_LOGS,
+                                    isRootAvailable = rootAvailable
+                                ) {
+                                    finishAffinity()
+                                    startActivity(intent)
+                                    exitProcess(0)
+                                }
+                            }
+                            composable(Screen.SecureSettingsSetup.route) {
+                                PermissionSetup(
+                                    title = stringResource(id = R.string.write_secure_settings_permission_setup_title),
+                                    permissionName = Manifest.permission.WRITE_SECURE_SETTINGS,
+                                    isRootAvailable = rootAvailable
+                                ) {
+                                    finishAffinity()
+                                    startActivity(intent)
+                                    exitProcess(0)
+                                }
+                            }
+                            composable(Screen.AssistantButtonSettings.route) {
+                                AssistantButtonSettings(navController)
+                            }
+                            composable(Screen.AssistantLaunchSelection.route) {
+                                AssistantActionSelection(viewModel, navController)
+                            }
+                            composable(Screen.LockscreenShortcutSettings.route) {
+                                LockscreenShortcutSettings(navController)
+                            }
+                            composable(Screen.LockscreenShortcutSelection.route) {
+                                val key = it.arguments?.getString("key")
+                                if (key != null) {
+                                    LockscreenShortcutSelection(
+                                        mainViewModel = viewModel,
+                                        navController = navController,
+                                        settingsKey = key
+                                    )
+                                } else {
+                                    logcat(LogPriority.ERROR) { "Lockscreen shortcut settings key is not specified." }
+                                    navController.popBackStack()
+                                }
+                            }
+
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                composable(Screen.AndroidAppLinkSettings.route) {
+                                    AndroidAppLinkSettings(navController = navController) {
+                                        val roleManager = getSystemService<RoleManager>()
+                                        if (roleManager?.isRoleHeld(RoleManager.ROLE_BROWSER) == true) {
+                                            openDefaultAppsSettings(this@MainActivity)
+                                        } else if (roleManager != null) {
+                                            val i = roleManager.createRequestRoleIntent(RoleManager.ROLE_BROWSER)
+                                            @Suppress("DEPRECATION") // we don't care about results here
+                                            startActivityForResult(i, 286444)
+                                        }
                                     }
-                                    composable(Screen.UnapprovedLinkTargetList.route) {
-                                        LinkTargetList(
-                                            approved = false,
-                                            mainViewModel = viewModel,
-                                            navController = navController
-                                        )
-                                    }
-                                    bottomSheet(Screen.LinkTargetInfoSheet.route) {
-                                        // TODO: Remove surface when bottom sheet uses M3 colors
-                                        Surface(
-                                            color = MaterialTheme.colorScheme.surface,
-                                            tonalElevation = 4.dp
+                                }
+                                composable(Screen.ApprovedLinkTargetList.route) {
+                                    LinkTargetList(
+                                        approved = true,
+                                        mainViewModel = viewModel,
+                                        navController = navController
+                                    )
+                                }
+                                composable(Screen.UnapprovedLinkTargetList.route) {
+                                    LinkTargetList(
+                                        approved = false,
+                                        mainViewModel = viewModel,
+                                        navController = navController
+                                    )
+                                }
+                                bottomSheet(Screen.LinkTargetInfoSheet.route) {
+                                    // TODO: Remove surface when bottom sheet uses M3 colors
+                                    Surface(
+                                        color = MaterialTheme.colorScheme.surface,
+                                        tonalElevation = 4.dp
+                                    ) {
+                                        val packageName = Screen.LinkTargetInfoSheet.getPackageName(it)
+                                        LinkTargetInfoSheet(
+                                            packageName = packageName,
+                                            mainViewModel = viewModel
                                         ) {
-                                            val packageName = Screen.LinkTargetInfoSheet.getPackageName(it)
-                                            LinkTargetInfoSheet(
-                                                packageName = packageName,
-                                                mainViewModel = viewModel
-                                            ) {
-                                                openOpenByDefaultSettings(this@MainActivity, packageName)
-                                                navController.popBackStack()
-                                            }
+                                            openOpenByDefaultSettings(this@MainActivity, packageName)
+                                            navController.popBackStack()
                                         }
                                     }
                                 }

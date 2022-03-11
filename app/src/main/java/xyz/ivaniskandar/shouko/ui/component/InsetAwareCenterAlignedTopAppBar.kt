@@ -3,17 +3,20 @@ package xyz.ivaniskandar.shouko.ui.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.google.accompanist.insets.navigationBarsPadding
-import com.google.accompanist.insets.statusBarsPadding
 
 /**
- * A wrapper around [CenterAlignedTopAppBar] which uses [Modifier.statusBarsPadding] to shift the app bar's
+ * A wrapper around [CenterAlignedTopAppBar] which uses status bar padding to shift the app bar's
  * contents down, but still draws the background behind the status bar too.
  */
 @Composable
@@ -36,8 +39,9 @@ fun InsetAwareCenterAlignedTopAppBar(
         CenterAlignedTopAppBar(
             title = title,
             modifier = modifier
-                .statusBarsPadding()
-                .navigationBarsPadding(bottom = false),
+                .windowInsetsPadding(
+                    WindowInsets.systemBars.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
+                ),
             navigationIcon = { navigationIcon?.invoke() },
             actions = actions,
             colors = foregroundColors,

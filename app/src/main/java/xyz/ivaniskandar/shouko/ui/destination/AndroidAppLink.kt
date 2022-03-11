@@ -9,9 +9,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -45,9 +49,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.google.accompanist.insets.LocalWindowInsets
-import com.google.accompanist.insets.navigationBarsPadding
-import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import xyz.ivaniskandar.shouko.R
@@ -74,7 +75,7 @@ fun AndroidAppLinkSettings(
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.navigationBars)
+        contentPadding = WindowInsets.navigationBars.asPaddingValues()
     ) {
         item {
             CustomChooserToggle(
@@ -206,7 +207,7 @@ fun LinkTargetList(
         val filteredItems = items?.filter { if (approved) it.linkHandlingAllowed && it.isApproved else it.isUnapproved }
         val disabledItems = if (approved) items?.filter { !it.linkHandlingAllowed && it.isApproved } else null
 
-        LazyColumn(contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.navigationBars)) {
+        LazyColumn(contentPadding = WindowInsets.navigationBars.asPaddingValues()) {
             if (filteredItems != null) {
                 items(items = filteredItems, key = { it.packageName }) { item ->
                     LinkTargetListItem(item = item) {

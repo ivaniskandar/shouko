@@ -10,7 +10,10 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -28,8 +31,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.getSystemService
 import androidx.navigation.NavController
-import com.google.accompanist.insets.LocalWindowInsets
-import com.google.accompanist.insets.rememberInsetsPaddingValues
 import kotlinx.coroutines.launch
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.ShoukoApplication
@@ -51,7 +52,7 @@ fun Home(
     val scope = rememberCoroutineScope()
     val prefs = ShoukoApplication.prefs
     val buttonPrefs by prefs.assistButtonFlow.collectAsState(initial = AssistButtonPrefs())
-    LazyColumn(contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.navigationBars)) {
+    LazyColumn(contentPadding = WindowInsets.navigationBars.asPaddingValues()) {
         item {
             AccessibilityServiceCard(visible = !TadanoAccessibilityService.isActive) {
                 val serviceCn = ComponentName(context, TadanoAccessibilityService::class.java).flattenToString()

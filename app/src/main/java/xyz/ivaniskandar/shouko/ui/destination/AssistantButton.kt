@@ -6,7 +6,11 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -19,9 +23,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.google.accompanist.insets.LocalWindowInsets
-import com.google.accompanist.insets.navigationBarsPadding
-import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.launch
@@ -71,7 +72,7 @@ fun AssistantButtonSettings(
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.navigationBars)
+        contentPadding = WindowInsets.navigationBars.asPaddingValues()
     ) {
         item {
             ReadLogsCard(visible = !context.canReadSystemLogs) {
@@ -143,7 +144,7 @@ fun AssistantActionSelection(
                 ) {
                     if (items != null) {
                         LazyColumn(
-                            contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.navigationBars)
+                            contentPadding = WindowInsets.navigationBars.asPaddingValues()
                         ) {
                             items(items!!) { item ->
                                 ApplicationRow(item = item) {
@@ -192,7 +193,7 @@ fun AssistantActionSelection(
                 ) {
                     if (items != null) {
                         LazyColumn(
-                            contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.navigationBars)
+                            contentPadding = WindowInsets.navigationBars.asPaddingValues()
                         ) {
                             items(items!!) { item ->
                                 ShortcutCreatorRow(item = item) {
@@ -208,7 +209,7 @@ fun AssistantActionSelection(
             }
             2 -> {
                 val context = LocalContext.current
-                LazyColumn(contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.navigationBars)) {
+                LazyColumn(contentPadding = WindowInsets.navigationBars.asPaddingValues()) {
                     item { CategoryHeader(title = stringResource(id = R.string.category_title_media_key)) }
                     items(MediaKeyAction.Key.values()) { item ->
                         MediaKeyRow(key = item) {

@@ -12,8 +12,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -43,9 +48,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.WindowCompat
-import com.google.accompanist.insets.LocalWindowInsets
-import com.google.accompanist.insets.ProvideWindowInsets
-import com.google.accompanist.insets.rememberInsetsPaddingValues
 import kotlinx.coroutines.launch
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.ui.IconDrawableShadowWrapper
@@ -85,14 +87,12 @@ class LinkTargetChooserActivity : AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             ShoukoM3Theme {
-                ProvideWindowInsets {
-                    AppLinkChooserSheet(
-                        resolverIntent = resolverIntent,
-                        onItemClick = { start(it) },
-                        onItemLongClick = { startAppInfo(it) },
-                        onSheetHidden = { finish() }
-                    )
-                }
+                AppLinkChooserSheet(
+                    resolverIntent = resolverIntent,
+                    onItemClick = { start(it) },
+                    onItemLongClick = { startAppInfo(it) },
+                    onSheetHidden = { finish() }
+                )
             }
         }
     }
@@ -147,10 +147,7 @@ fun AppLinkChooserSheet(
             )
             Divider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12F))
             LazyColumn(
-                contentPadding = rememberInsetsPaddingValues(
-                    insets = LocalWindowInsets.current.navigationBars,
-                    applyBottom = true
-                )
+                contentPadding = WindowInsets.navigationBars.only(WindowInsetsSides.Bottom).asPaddingValues()
             ) {
                 items(resolverIntent) { item ->
                     ListItem(
