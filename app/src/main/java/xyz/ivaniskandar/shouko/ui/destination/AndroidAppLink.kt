@@ -5,7 +5,6 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -154,15 +153,9 @@ fun AndroidAppLinkSettings(
 
 @Composable
 fun CustomChooserToggle(checked: Boolean, onClick: () -> Unit) {
-    val interactionSource = remember { MutableInteractionSource() }
     Card(
-        modifier = Modifier
-            .padding(horizontal = 20.dp, vertical = 12.dp)
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null,
-                onClick = onClick
-            ),
+        onClick = onClick,
+        modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
         shape = RoundedCornerShape(28.dp)
     ) {
         Row(
