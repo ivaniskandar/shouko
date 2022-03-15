@@ -22,8 +22,8 @@ android {
         applicationId "xyz.ivaniskandar.shouko"
         minSdkVersion 29
         targetSdkVersion 32
-        versionCode 7
-        versionName "0.7.0"
+        versionCode 8
+        versionName "0.7.1"
         resConfigs 'en', 'ja'
     }
 
