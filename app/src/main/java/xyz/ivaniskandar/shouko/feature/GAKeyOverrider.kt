@@ -309,7 +309,7 @@ class GAKeyOverrider(
             ShoukoApplication.prefs.assistButtonFlow.collect {
                 customAction = it.action
                 hideAssistantCue = it.hideAssistantCue
-                updateGAKeyDisabler(it.action != null)
+                updateGAKeyDisabler(!it.enabled)
                 updateOpaOverrider(isReady)
                 logcat { "GAKeyOverrider enabled=${it.action != null} hideCue=${it.hideAssistantCue}" }
             }
