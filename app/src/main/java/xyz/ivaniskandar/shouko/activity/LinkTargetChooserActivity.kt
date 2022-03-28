@@ -35,7 +35,6 @@ import androidx.compose.material.ListItem
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
-import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -64,6 +63,7 @@ import androidx.core.view.WindowCompat
 import kotlinx.coroutines.launch
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.ui.IconDrawableShadowWrapper
+import xyz.ivaniskandar.shouko.ui.component.SoftDivider
 import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3Theme
 import xyz.ivaniskandar.shouko.ui.theme.surfaceColorAtElevation
 import xyz.ivaniskandar.shouko.util.loadIcon
@@ -171,7 +171,7 @@ fun AppLinkChooserSheet(
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.titleLarge
                 )
-                Divider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12F))
+                SoftDivider()
                 LazyColumn(
                     contentPadding = WindowInsets.navigationBars.only(WindowInsetsSides.Bottom).asPaddingValues()
                 ) {

@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -40,6 +39,7 @@ import xyz.ivaniskandar.shouko.service.TadanoAccessibilityService
 import xyz.ivaniskandar.shouko.ui.Screen
 import xyz.ivaniskandar.shouko.ui.component.AccessibilityServiceCard
 import xyz.ivaniskandar.shouko.ui.component.Preference
+import xyz.ivaniskandar.shouko.ui.component.SoftDivider
 import xyz.ivaniskandar.shouko.ui.component.SwitchPreference
 import xyz.ivaniskandar.shouko.util.AssistButtonPrefs
 import xyz.ivaniskandar.shouko.util.highlightSettingsTo
@@ -144,7 +144,7 @@ fun Home(
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             item {
-                Divider()
+                SoftDivider()
                 Preference(
                     title = stringResource(R.string.android_app_link_title),
                     subtitle = stringResource(id = R.string.android_app_link_subtitle)

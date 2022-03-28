@@ -17,7 +17,6 @@ import androidx.compose.material.icons.rounded.FlashlightOn
 import androidx.compose.material.icons.rounded.MicOff
 import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material.icons.rounded.Screenshot
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -45,7 +44,7 @@ private val RowIconModifier = Modifier.size(36.dp)
 
 @Composable
 fun CategoryHeader(title: String, divider: Boolean = false) {
-    if (divider) Divider()
+    if (divider) SoftDivider()
     Text(
         text = title.uppercase(Locale.getDefault()),
         modifier = Modifier.padding(start = 72.dp, top = 20.dp, end = 16.dp, bottom = 8.dp),
