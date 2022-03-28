@@ -87,14 +87,14 @@ dependencies {
     implementation "com.github.fornewid.material-motion-compose:core:0.9.0-alpha04"
 
     implementation "androidx.compose.ui:ui:$compose_version"
-    implementation "androidx.compose.material3:material3:1.0.0-alpha07"
+    implementation "androidx.compose.material3:material3:1.0.0-alpha08"
     implementation "androidx.compose.material:material:$compose_version"
     implementation "androidx.compose.material:material-icons-extended:$compose_version"
     implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
 
-    def accompanist_version = "0.24.4-alpha"
+    def accompanist_version = "0.24.5-alpha"
     implementation "com.google.accompanist:accompanist-pager:$accompanist_version"
     implementation "com.google.accompanist:accompanist-swiperefresh:$accompanist_version"
     implementation "com.google.accompanist:accompanist-navigation-material:$accompanist_version"
