@@ -38,6 +38,7 @@ object DeviceModel {
         "A103SO",
         "SOG05",
         "SO-53B",
+        "XQ-BQ42",
         "XQ-BQ52",
         "XQ-BQ62",
         "XQ-BQ72"
