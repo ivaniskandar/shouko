@@ -6,7 +6,7 @@ spotless {
         targetExclude("$buildDir/**/*.kt")
         targetExclude('bin/**/*.kt')
 
-        ktlint("0.41.0")
+        ktlint()
         trimTrailingWhitespace()
         indentWithSpaces()
         endWithNewline()

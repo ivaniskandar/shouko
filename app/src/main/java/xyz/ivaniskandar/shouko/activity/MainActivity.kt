@@ -26,6 +26,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -94,11 +95,12 @@ class MainActivity : AppCompatActivity() {
             val bottomSheetNavigator = remember(sheetState) { BottomSheetNavigator(sheetState = sheetState) }
             val navController = rememberAnimatedNavController(bottomSheetNavigator)
             val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val scrollState = rememberTopAppBarScrollState()
             val scrollBehavior = remember(navBackStackEntry) {
                 when (navBackStackEntry?.destination?.route) {
                     // Disable scroll effect because tabs
                     Screen.AssistantLaunchSelection.route, Screen.LockscreenShortcutSelection.route -> null
-                    else -> TopAppBarDefaults.pinnedScrollBehavior()
+                    else -> TopAppBarDefaults.pinnedScrollBehavior(scrollState)
                 }
             }
             val sharedAxisMotion = materialSharedAxisX()
@@ -135,7 +137,7 @@ class MainActivity : AppCompatActivity() {
                                 scrollBehavior = scrollBehavior
                             )
                         },
-                    ) {
+                    ) { innerPadding ->
                         val rootAvailable = remember { isRootAvailable }
                         AnimatedNavHost(
                             navController = navController,
@@ -145,9 +147,10 @@ class MainActivity : AppCompatActivity() {
                             popEnterTransition = { sharedAxisMotion.enter.transition(isRtl, density) },
                             popExitTransition = { sharedAxisMotion.exit.transition(isRtl, density) }
                         ) {
-                            composable(route = Screen.Home.route) { Home(navController) }
+                            composable(route = Screen.Home.route) { Home(navController, innerPadding) }
                             composable(Screen.ReadLogsSetup.route) {
                                 PermissionSetup(
+                                    contentPadding = innerPadding,
                                     title = stringResource(id = R.string.read_logs_permission_setup_title),
                                     permissionName = Manifest.permission.READ_LOGS,
                                     isRootAvailable = rootAvailable
@@ -159,6 +162,7 @@ class MainActivity : AppCompatActivity() {
                             }
                             composable(Screen.SecureSettingsSetup.route) {
                                 PermissionSetup(
+                                    contentPadding = innerPadding,
                                     title = stringResource(id = R.string.write_secure_settings_permission_setup_title),
                                     permissionName = Manifest.permission.WRITE_SECURE_SETTINGS,
                                     isRootAvailable = rootAvailable
@@ -169,13 +173,13 @@ class MainActivity : AppCompatActivity() {
                                 }
                             }
                             composable(Screen.AssistantButtonSettings.route) {
-                                AssistantButtonSettings(navController)
+                                AssistantButtonSettings(navController, innerPadding)
                             }
                             composable(Screen.AssistantLaunchSelection.route) {
-                                AssistantActionSelection(viewModel, navController)
+                                AssistantActionSelection(viewModel, navController, innerPadding)
                             }
                             composable(Screen.LockscreenShortcutSettings.route) {
-                                LockscreenShortcutSettings(navController)
+                                LockscreenShortcutSettings(navController, innerPadding)
                             }
                             composable(Screen.LockscreenShortcutSelection.route) {
                                 val key = it.arguments?.getString("key")
@@ -183,7 +187,8 @@ class MainActivity : AppCompatActivity() {
                                     LockscreenShortcutSelection(
                                         mainViewModel = viewModel,
                                         navController = navController,
-                                        settingsKey = key
+                                        settingsKey = key,
+                                        contentPadding = innerPadding,
                                     )
                                 } else {
                                     logcat(LogPriority.ERROR) { "Lockscreen shortcut settings key is not specified." }
@@ -193,7 +198,10 @@ class MainActivity : AppCompatActivity() {
 
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                                 composable(Screen.AndroidAppLinkSettings.route) {
-                                    AndroidAppLinkSettings(navController = navController) {
+                                    AndroidAppLinkSettings(
+                                        navController = navController,
+                                        contentPadding = innerPadding
+                                    ) {
                                         val roleManager = getSystemService<RoleManager>()
                                         if (roleManager?.isRoleHeld(RoleManager.ROLE_BROWSER) == true) {
                                             openDefaultAppsSettings(this@MainActivity)
@@ -208,14 +216,16 @@ class MainActivity : AppCompatActivity() {
                                     LinkTargetList(
                                         approved = true,
                                         mainViewModel = viewModel,
-                                        navController = navController
+                                        navController = navController,
+                                        contentPadding = innerPadding,
                                     )
                                 }
                                 composable(Screen.UnapprovedLinkTargetList.route) {
                                     LinkTargetList(
                                         approved = false,
                                         mainViewModel = viewModel,
-                                        navController = navController
+                                        navController = navController,
+                                        contentPadding = innerPadding,
                                     )
                                 }
                                 bottomSheet(Screen.LinkTargetInfoSheet.route) {

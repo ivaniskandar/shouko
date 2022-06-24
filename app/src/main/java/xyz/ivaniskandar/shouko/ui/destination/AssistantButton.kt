@@ -5,11 +5,9 @@ import android.content.Intent
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -63,7 +61,8 @@ import xyz.ivaniskandar.shouko.util.setAsAssistantAction
 
 @Composable
 fun AssistantButtonSettings(
-    navController: NavController
+    navController: NavController,
+    contentPadding: PaddingValues,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -72,7 +71,7 @@ fun AssistantButtonSettings(
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = WindowInsets.navigationBars.asPaddingValues()
+        contentPadding = contentPadding,
     ) {
         item {
             ReadLogsCard(visible = !context.canReadSystemLogs) {
@@ -120,7 +119,8 @@ fun AssistantButtonSettings(
 @Composable
 fun AssistantActionSelection(
     mainViewModel: MainActivityViewModel = viewModel(),
-    navController: NavController
+    navController: NavController,
+    contentPadding: PaddingValues,
 ) {
     val scope = rememberCoroutineScope()
     val prefs = ShoukoApplication.prefs
@@ -138,13 +138,14 @@ fun AssistantActionSelection(
                     state = rememberSwipeRefreshState(isRefreshing),
                     onRefresh = { mainViewModel.refreshAppsList() },
                     modifier = Modifier.fillMaxSize(),
+                    indicatorPadding = contentPadding,
                     indicator = { s, trigger ->
                         M3SwipeRefreshIndicator(state = s, refreshTriggerDistance = trigger)
                     }
                 ) {
                     if (items != null) {
                         LazyColumn(
-                            contentPadding = WindowInsets.navigationBars.asPaddingValues()
+                            contentPadding = contentPadding,
                         ) {
                             items(items!!) { item ->
                                 ApplicationRow(item = item) {
@@ -187,13 +188,14 @@ fun AssistantActionSelection(
                     state = rememberSwipeRefreshState(isRefreshing),
                     onRefresh = { mainViewModel.refreshShortcutCreatorList() },
                     modifier = Modifier.fillMaxSize(),
+                    indicatorPadding = contentPadding,
                     indicator = { s, trigger ->
                         M3SwipeRefreshIndicator(state = s, refreshTriggerDistance = trigger)
                     }
                 ) {
                     if (items != null) {
                         LazyColumn(
-                            contentPadding = WindowInsets.navigationBars.asPaddingValues()
+                            contentPadding = contentPadding,
                         ) {
                             items(items!!) { item ->
                                 ShortcutCreatorRow(item = item) {
@@ -209,7 +211,9 @@ fun AssistantActionSelection(
             }
             2 -> {
                 val context = LocalContext.current
-                LazyColumn(contentPadding = WindowInsets.navigationBars.asPaddingValues()) {
+                LazyColumn(
+                    contentPadding = contentPadding,
+                ) {
                     item { CategoryHeader(title = stringResource(id = R.string.category_title_media_key)) }
                     items(MediaKeyAction.Key.values()) { item ->
                         MediaKeyRow(key = item) {

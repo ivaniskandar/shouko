@@ -9,12 +9,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -67,6 +64,7 @@ import xyz.ivaniskandar.shouko.util.getPackageLabel
 @Composable
 fun AndroidAppLinkSettings(
     context: Context = LocalContext.current,
+    contentPadding: PaddingValues,
     navController: NavController,
     onOpenSettings: () -> Unit
 ) {
@@ -75,7 +73,7 @@ fun AndroidAppLinkSettings(
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = WindowInsets.navigationBars.asPaddingValues()
+        contentPadding = contentPadding,
     ) {
         item {
             CustomChooserToggle(
@@ -192,7 +190,8 @@ fun CustomChooserTogglePreview() {
 fun LinkTargetList(
     approved: Boolean, // if true, show approved else unapproved
     mainViewModel: MainActivityViewModel = viewModel(),
-    navController: NavController
+    navController: NavController,
+    contentPadding: PaddingValues,
 ) {
     val items by mainViewModel.linkHandlerList.observeAsState()
     val isRefreshing by mainViewModel.isRefreshingLinkHandlerList.collectAsState()
@@ -200,14 +199,17 @@ fun LinkTargetList(
         state = rememberSwipeRefreshState(isRefreshing),
         onRefresh = { mainViewModel.refreshLinkHandlerList() },
         modifier = Modifier.fillMaxSize(),
+        indicatorPadding = contentPadding,
         indicator = { s, trigger ->
             M3SwipeRefreshIndicator(state = s, refreshTriggerDistance = trigger)
-        }
+        },
     ) {
         val filteredItems = items?.filter { if (approved) it.linkHandlingAllowed && it.isApproved else it.isUnapproved }
         val disabledItems = if (approved) items?.filter { !it.linkHandlingAllowed && it.isApproved } else null
 
-        LazyColumn(contentPadding = WindowInsets.navigationBars.asPaddingValues()) {
+        LazyColumn(
+            contentPadding = contentPadding,
+        ) {
             if (filteredItems != null) {
                 items(items = filteredItems, key = { it.packageName }) { item ->
                     LinkTargetListItem(item = item) {

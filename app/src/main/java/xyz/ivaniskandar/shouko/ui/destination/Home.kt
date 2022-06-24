@@ -10,10 +10,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -46,13 +44,14 @@ import xyz.ivaniskandar.shouko.util.highlightSettingsTo
 
 @Composable
 fun Home(
-    navController: NavController
+    navController: NavController,
+    contentPadding: PaddingValues,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val prefs = ShoukoApplication.prefs
     val buttonPrefs by prefs.assistButtonFlow.collectAsState(initial = AssistButtonPrefs())
-    LazyColumn(contentPadding = WindowInsets.navigationBars.asPaddingValues()) {
+    LazyColumn(contentPadding = contentPadding) {
         item {
             AccessibilityServiceCard(visible = !TadanoAccessibilityService.isActive) {
                 val serviceCn = ComponentName(context, TadanoAccessibilityService::class.java).flattenToString()

@@ -1,11 +1,9 @@
 package xyz.ivaniskandar.shouko.ui.destination
 
 import android.content.ComponentName
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -41,13 +39,14 @@ import xyz.ivaniskandar.shouko.util.toComponentName
 
 @Composable
 fun LockscreenShortcutSettings(
-    navController: NavController
+    navController: NavController,
+    contentPadding: PaddingValues,
 ) {
     val context = LocalContext.current
     ComponentName.unflattenFromString("")
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = WindowInsets.navigationBars.asPaddingValues()
+        contentPadding = contentPadding,
     ) {
         item {
             WriteSettingsCard(visible = !context.canWriteSecureSettings) {
@@ -84,7 +83,8 @@ fun LockscreenShortcutSettings(
 fun LockscreenShortcutSelection(
     mainViewModel: MainActivityViewModel = viewModel(),
     navController: NavController,
-    settingsKey: String
+    settingsKey: String,
+    contentPadding: PaddingValues,
 ) {
     val scope = rememberCoroutineScope()
     val titles = listOf(
@@ -101,13 +101,14 @@ fun LockscreenShortcutSelection(
                     state = rememberSwipeRefreshState(isRefreshing),
                     onRefresh = { mainViewModel.refreshAppsList() },
                     modifier = Modifier.fillMaxSize(),
+                    indicatorPadding = contentPadding,
                     indicator = { s, trigger ->
                         M3SwipeRefreshIndicator(state = s, refreshTriggerDistance = trigger)
                     }
                 ) {
                     if (items != null) {
                         LazyColumn(
-                            contentPadding = WindowInsets.navigationBars.asPaddingValues()
+                            contentPadding = contentPadding,
                         ) {
                             items(items!!) { item ->
                                 ApplicationRow(item = item) {
@@ -123,7 +124,9 @@ fun LockscreenShortcutSelection(
                 Spacer(modifier = Modifier.navigationBarsPadding())
             }
             1 -> {
-                LazyColumn(contentPadding = WindowInsets.navigationBars.asPaddingValues()) {
+                LazyColumn(
+                    contentPadding = contentPadding,
+                ) {
                     item {
                         DoNothingRow {
                             val emptyCn = ComponentName(context, EmptyShortcutActivity::class.java)

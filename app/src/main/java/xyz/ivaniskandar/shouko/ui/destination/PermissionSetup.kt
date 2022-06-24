@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,6 +14,7 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.PermDeviceInformation
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -46,6 +48,7 @@ import xyz.ivaniskandar.shouko.util.createShareTextIntent
 
 @Composable
 fun PermissionSetup(
+    contentPadding: PaddingValues,
     title: String,
     permissionName: String,
     isRootAvailable: Boolean,
@@ -54,6 +57,7 @@ fun PermissionSetup(
     val context = LocalContext.current
     Column(
         modifier = Modifier
+            .padding(contentPadding)
             .padding(16.dp)
             .fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -161,8 +165,7 @@ fun PermissionSetupNoRoot(command: String) {
         modifier = Modifier
             .clickable { context.startActivity(createShareTextIntent(adbCommand)) }
             .fillMaxWidth(),
-        containerColor = Color.Black,
-        contentColor = Color.White
+        colors = CardDefaults.cardColors(containerColor = Color.Black, contentColor = Color.White),
     ) {
         Text(
             text = adbCommand,
@@ -195,6 +198,7 @@ fun ReadLogsPermissionSetupRootPreview() {
     ShoukoM3PreviewTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             PermissionSetup(
+                contentPadding = PaddingValues(),
                 title = stringResource(id = R.string.read_logs_permission_setup_title),
                 permissionName = Manifest.permission.READ_LOGS,
                 isRootAvailable = true,
@@ -210,6 +214,7 @@ fun ReadLogsPermissionSetupNoRootPreview() {
     ShoukoM3PreviewTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             PermissionSetup(
+                contentPadding = PaddingValues(),
                 title = stringResource(id = R.string.read_logs_permission_setup_title),
                 permissionName = Manifest.permission.READ_LOGS,
                 isRootAvailable = false,
@@ -225,6 +230,7 @@ fun WriteSettingsPermissionSetupNoRootPreview() {
     ShoukoM3PreviewTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             PermissionSetup(
+                contentPadding = PaddingValues(),
                 title = stringResource(id = R.string.write_secure_settings_permission_setup_title),
                 permissionName = Manifest.permission.WRITE_SECURE_SETTINGS,
                 isRootAvailable = false,
