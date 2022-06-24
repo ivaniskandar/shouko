@@ -17,6 +17,7 @@ final def gitCommitHash = { ->
 
 android {
     compileSdkVersion 32
+    namespace 'xyz.ivaniskandar.shouko'
 
     defaultConfig {
         applicationId "xyz.ivaniskandar.shouko"
