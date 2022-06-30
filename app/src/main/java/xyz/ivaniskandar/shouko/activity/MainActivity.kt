@@ -11,6 +11,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
@@ -22,7 +25,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -65,6 +67,7 @@ import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper.Companion.LOCKSC
 import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper.Companion.LOCKSCREEN_RIGHT_BUTTON
 import xyz.ivaniskandar.shouko.ui.Screen
 import xyz.ivaniskandar.shouko.ui.component.InsetAwareCenterAlignedTopAppBar
+import xyz.ivaniskandar.shouko.ui.component.Scaffold
 import xyz.ivaniskandar.shouko.ui.destination.AndroidAppLinkSettings
 import xyz.ivaniskandar.shouko.ui.destination.AssistantActionSelection
 import xyz.ivaniskandar.shouko.ui.destination.AssistantButtonSettings
@@ -137,6 +140,7 @@ class MainActivity : AppCompatActivity() {
                                 scrollBehavior = scrollBehavior
                             )
                         },
+                        contentPadding = WindowInsets.navigationBars.asPaddingValues(),
                     ) { innerPadding ->
                         val rootAvailable = remember { isRootAvailable }
                         AnimatedNavHost(
