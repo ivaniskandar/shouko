@@ -93,7 +93,10 @@ fun LockscreenShortcutSelection(
         stringResource(R.string.tab_title_apps),
         stringResource(R.string.tab_title_other)
     )
-    TabPager(pageTitles = titles) { page ->
+    TabPager(
+        pageTitles = titles,
+        contentPadding = contentPadding,
+    ) { page ->
         val context = LocalContext.current
         when (page) {
             0 -> {
@@ -103,14 +106,13 @@ fun LockscreenShortcutSelection(
                     state = rememberSwipeRefreshState(isRefreshing),
                     onRefresh = { mainViewModel.refreshAppsList() },
                     modifier = Modifier.fillMaxSize(),
-                    indicatorPadding = contentPadding,
                     indicator = { s, trigger ->
                         M3SwipeRefreshIndicator(state = s, refreshTriggerDistance = trigger)
                     }
                 ) {
                     if (items != null) {
                         LazyColumn(
-                            contentPadding = contentPadding,
+                            contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding()),
                         ) {
                             items(items!!) { item ->
                                 ApplicationRow(item = item) {
@@ -127,7 +129,7 @@ fun LockscreenShortcutSelection(
             }
             1 -> {
                 LazyColumn(
-                    contentPadding = contentPadding,
+                    contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding()),
                 ) {
                     item {
                         CommonActionRow(

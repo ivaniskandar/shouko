@@ -130,7 +130,10 @@ fun AssistantActionSelection(
         stringResource(R.string.tab_title_shortcuts),
         stringResource(R.string.tab_title_other)
     )
-    TabPager(pageTitles = titles) { page ->
+    TabPager(
+        pageTitles = titles,
+        contentPadding = contentPadding,
+    ) { page ->
         when (page) {
             0 -> {
                 val items by mainViewModel.appsList.observeAsState()
@@ -139,14 +142,13 @@ fun AssistantActionSelection(
                     state = rememberSwipeRefreshState(isRefreshing),
                     onRefresh = { mainViewModel.refreshAppsList() },
                     modifier = Modifier.fillMaxSize(),
-                    indicatorPadding = contentPadding,
                     indicator = { s, trigger ->
                         M3SwipeRefreshIndicator(state = s, refreshTriggerDistance = trigger)
                     }
                 ) {
                     if (items != null) {
                         LazyColumn(
-                            contentPadding = contentPadding,
+                            contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding()),
                         ) {
                             items(items!!) { item ->
                                 ApplicationRow(item = item) {
@@ -196,7 +198,7 @@ fun AssistantActionSelection(
                 ) {
                     if (items != null) {
                         LazyColumn(
-                            contentPadding = contentPadding,
+                            contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding()),
                         ) {
                             items(items!!) { item ->
                                 ShortcutCreatorRow(item = item) {
@@ -213,7 +215,7 @@ fun AssistantActionSelection(
             2 -> {
                 val context = LocalContext.current
                 LazyColumn(
-                    contentPadding = contentPadding,
+                    contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding()),
                 ) {
                     item { CategoryHeader(title = stringResource(id = R.string.category_title_media_key)) }
                     items(MediaKeyAction.Key.values()) { item ->
