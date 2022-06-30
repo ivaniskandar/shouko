@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ListItem
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Launch
 import androidx.compose.material.icons.outlined.Info
@@ -26,6 +25,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Switch
@@ -41,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -243,20 +244,40 @@ fun LinkTargetList(
 @Composable
 fun LinkTargetListItem(item: LinkHandlerAppItem, onClick: () -> Unit) {
     ListItem(
-        modifier = Modifier.clickable(onClick = onClick).padding(6.dp),
-        icon = {
+        modifier = Modifier.clickable(onClick = onClick),
+        leadingContent = {
             Image(
                 bitmap = item.icon,
                 contentDescription = null,
                 modifier = Modifier.size(32.dp)
             )
         },
-        text = {
+        headlineText = {
             Text(
                 text = item.label,
-                color = MaterialTheme.colorScheme.onSurface,
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleLarge,
             )
+        },
+        supportingText = {
+            if (item.isApproved) {
+                val count = remember { item.verifiedDomains.size + item.userSelectedDomains.size }
+                Text(
+                    text = pluralStringResource(
+                        id = R.plurals.approved_link_list_item_subtitle,
+                        count = count,
+                        count,
+                    )
+                )
+            } else {
+                val count = remember { item.unapprovedDomains.size }
+                Text(
+                    text = pluralStringResource(
+                        id = R.plurals.unapproved_link_list_item_subtitle,
+                        count = count,
+                        count,
+                    )
+                )
+            }
         }
     )
 }

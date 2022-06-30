@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -24,12 +26,13 @@ import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.ShoukoApplication
 import xyz.ivaniskandar.shouko.activity.EmptyShortcutActivity
 import xyz.ivaniskandar.shouko.activity.MainActivityViewModel
+import xyz.ivaniskandar.shouko.feature.DoNothingAction
 import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper.Companion.LOCKSCREEN_LEFT_BUTTON
 import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper.Companion.LOCKSCREEN_RIGHT_BUTTON
 import xyz.ivaniskandar.shouko.ui.Screen
 import xyz.ivaniskandar.shouko.ui.component.ApplicationRow
-import xyz.ivaniskandar.shouko.ui.component.DoNothingRow
 import xyz.ivaniskandar.shouko.ui.component.M3SwipeRefreshIndicator
+import xyz.ivaniskandar.shouko.ui.component.CommonActionRow
 import xyz.ivaniskandar.shouko.ui.component.Preference
 import xyz.ivaniskandar.shouko.ui.component.TabPager
 import xyz.ivaniskandar.shouko.ui.component.WriteSettingsCard
@@ -54,7 +57,6 @@ fun LockscreenShortcutSettings(
             }
         }
         item {
-
             Preference(
                 title = stringResource(R.string.lockscreen_shortcut_left),
                 subtitle = ShoukoApplication.prefs.lockscreenLeftAction.collectAsState(initial = null).value
@@ -128,13 +130,17 @@ fun LockscreenShortcutSelection(
                     contentPadding = contentPadding,
                 ) {
                     item {
-                        DoNothingRow {
-                            val emptyCn = ComponentName(context, EmptyShortcutActivity::class.java)
-                            scope.launch {
-                                ShoukoApplication.prefs.setLockscreenAction(settingsKey, emptyCn.flattenToString())
-                                navController.popBackStack()
+                        CommonActionRow(
+                            iconVector = Icons.Rounded.Clear,
+                            label = DoNothingAction().getLabel(context),
+                            onClick = {
+                                scope.launch {
+                                    val emptyCn = ComponentName(context, EmptyShortcutActivity::class.java)
+                                    ShoukoApplication.prefs.setLockscreenAction(settingsKey, emptyCn.flattenToString())
+                                    navController.popBackStack()
+                                }
                             }
-                        }
+                        )
                     }
                 }
             }

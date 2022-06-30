@@ -4,4 +4,12 @@
         <item quantity="one">%d link to open in this app</item>
         <item quantity="other">%d links to open in this app</item>
     </plurals>
+    <plurals name="approved_link_list_item_subtitle">
+        <item quantity="one">%d link</item>
+        <item quantity="other">%d links</item>
+    </plurals>
+    <plurals name="unapproved_link_list_item_subtitle">
+        <item quantity="one">%d link available</item>
+        <item quantity="other">%d links available</item>
+    </plurals>
 </resources>

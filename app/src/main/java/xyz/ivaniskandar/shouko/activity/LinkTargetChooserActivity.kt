@@ -15,14 +15,13 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
@@ -31,10 +30,11 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ListItem
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -65,7 +65,6 @@ import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.ui.IconDrawableShadowWrapper
 import xyz.ivaniskandar.shouko.ui.component.SoftDivider
 import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3Theme
-import xyz.ivaniskandar.shouko.ui.theme.surfaceColorAtElevation
 import xyz.ivaniskandar.shouko.util.loadIcon
 import xyz.ivaniskandar.shouko.util.loadLabel
 import androidx.compose.material.MaterialTheme as M2Theme
@@ -159,7 +158,7 @@ fun AppLinkChooserSheet(
             sheetState = state,
             sheetShape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
             sheetElevation = 0.dp,
-            sheetBackgroundColor = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp),
+            sheetBackgroundColor = MaterialTheme.colorScheme.surface,
             sheetContentColor = MaterialTheme.colorScheme.onSurface,
             sheetContent = {
                 Text(
@@ -169,11 +168,12 @@ fun AppLinkChooserSheet(
                         .padding(vertical = 16.dp),
                     color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleMedium
                 )
                 SoftDivider()
                 LazyColumn(
-                    contentPadding = WindowInsets.navigationBars.only(WindowInsetsSides.Bottom).asPaddingValues()
+                    contentPadding = WindowInsets.navigationBars.only(WindowInsetsSides.Bottom).asPaddingValues(),
+                    verticalArrangement = Arrangement.spacedBy(2.dp)
                 ) {
                     items(resolverIntent) { item ->
                         ListItem(
@@ -188,9 +188,8 @@ fun AppLinkChooserSheet(
                                         scope.launch { state.hide() }
                                         onItemClick(item)
                                     }
-                                )
-                                .padding(vertical = 2.dp),
-                            icon = {
+                                ),
+                            leadingContent = {
                                 Image(
                                     bitmap = shadowWrapper.run(item.loadIcon(context)!!)
                                         .toBitmap()
@@ -199,17 +198,18 @@ fun AppLinkChooserSheet(
                                     modifier = Modifier.size(36.dp)
                                 )
                             },
-                            text = {
+                            headlineText = {
                                 Text(
                                     text = item.loadLabel(context)!!,
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                    style = MaterialTheme.typography.bodyLarge
+                                    style = MaterialTheme.typography.titleLarge,
                                 )
-                            }
+                            },
+                            colors = ListItemDefaults.colors(
+                                containerColor = Color.Transparent // Doesn't used -- M3 1.0.0-alpha14 issue
+                            ),
                         )
                     }
                 }
-                Spacer(modifier = Modifier.height(16.dp))
             },
         ) {
             // Empty

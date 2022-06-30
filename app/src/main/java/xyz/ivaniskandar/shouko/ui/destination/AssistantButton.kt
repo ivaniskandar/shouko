@@ -11,6 +11,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Assistant
+import androidx.compose.material.icons.rounded.Clear
+import androidx.compose.material.icons.rounded.FlashlightOn
+import androidx.compose.material.icons.rounded.MicOff
+import androidx.compose.material.icons.rounded.Notifications
+import androidx.compose.material.icons.rounded.Screenshot
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -18,6 +25,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -39,18 +47,11 @@ import xyz.ivaniskandar.shouko.feature.StatusBarAction
 import xyz.ivaniskandar.shouko.ui.Screen
 import xyz.ivaniskandar.shouko.ui.component.ApplicationRow
 import xyz.ivaniskandar.shouko.ui.component.CategoryHeader
-import xyz.ivaniskandar.shouko.ui.component.DigitalAssistantRow
-import xyz.ivaniskandar.shouko.ui.component.DoNothingRow
-import xyz.ivaniskandar.shouko.ui.component.FlashlightRow
 import xyz.ivaniskandar.shouko.ui.component.M3SwipeRefreshIndicator
-import xyz.ivaniskandar.shouko.ui.component.MediaKeyRow
-import xyz.ivaniskandar.shouko.ui.component.MuteMicrophoneRow
+import xyz.ivaniskandar.shouko.ui.component.CommonActionRow
 import xyz.ivaniskandar.shouko.ui.component.Preference
 import xyz.ivaniskandar.shouko.ui.component.ReadLogsCard
-import xyz.ivaniskandar.shouko.ui.component.RingerModeRow
-import xyz.ivaniskandar.shouko.ui.component.ScreenshotRow
 import xyz.ivaniskandar.shouko.ui.component.ShortcutCreatorRow
-import xyz.ivaniskandar.shouko.ui.component.StatusBarRow
 import xyz.ivaniskandar.shouko.ui.component.SwitchPreference
 import xyz.ivaniskandar.shouko.ui.component.TabPager
 import xyz.ivaniskandar.shouko.ui.component.WriteSettingsCard
@@ -216,72 +217,104 @@ fun AssistantActionSelection(
                 ) {
                     item { CategoryHeader(title = stringResource(id = R.string.category_title_media_key)) }
                     items(MediaKeyAction.Key.values()) { item ->
-                        MediaKeyRow(key = item) {
-                            scope.launch {
-                                prefs.setAssistButtonAction(it)
-                                navController.popBackStack()
+                        CommonActionRow(
+                            iconPainter = painterResource(id = item.iconResId),
+                            label = stringResource(id = item.labelResId),
+                            onClick = {
+                                scope.launch {
+                                    prefs.setAssistButtonAction(MediaKeyAction(item))
+                                    navController.popBackStack()
+                                }
                             }
-                        }
+                        )
                     }
 
                     item { CategoryHeader(title = stringResource(id = R.string.tab_title_other), divider = true) }
                     if (FlashlightAction.isSupported(context)) {
                         item {
-                            FlashlightRow {
+                            CommonActionRow(
+                                iconVector = Icons.Rounded.FlashlightOn,
+                                label = FlashlightAction().getLabel(context),
+                                onClick = {
+                                    scope.launch {
+                                        prefs.setAssistButtonAction(FlashlightAction())
+                                        navController.popBackStack()
+                                    }
+                                }
+                            )
+                        }
+                    }
+                    item {
+                        CommonActionRow(
+                            iconVector = Icons.Rounded.Screenshot,
+                            label = ScreenshotAction().getLabel(context),
+                            onClick = {
                                 scope.launch {
-                                    prefs.setAssistButtonAction(FlashlightAction())
+                                    prefs.setAssistButtonAction(ScreenshotAction())
                                     navController.popBackStack()
                                 }
                             }
-                        }
-                    }
-                    item {
-                        ScreenshotRow {
-                            scope.launch {
-                                prefs.setAssistButtonAction(ScreenshotAction())
-                                navController.popBackStack()
-                            }
-                        }
+                        )
                     }
                     items(StatusBarAction.PanelType.values()) { item ->
-                        StatusBarRow(type = item) {
-                            scope.launch {
-                                prefs.setAssistButtonAction(it)
-                                navController.popBackStack()
+                        CommonActionRow(
+                            iconVector = item.iconVector,
+                            label = stringResource(id = item.labelResId),
+                            onClick = {
+                                scope.launch {
+                                    prefs.setAssistButtonAction(StatusBarAction(item))
+                                    navController.popBackStack()
+                                }
                             }
-                        }
+                        )
                     }
                     item {
-                        RingerModeRow {
-                            scope.launch {
-                                prefs.setAssistButtonAction(RingerModeAction())
-                                navController.popBackStack()
+                        CommonActionRow(
+                            iconVector = Icons.Rounded.Notifications,
+                            label = RingerModeAction().getLabel(context),
+                            onClick = {
+                                scope.launch {
+                                    prefs.setAssistButtonAction(RingerModeAction())
+                                    navController.popBackStack()
+                                }
                             }
-                        }
+                        )
                     }
                     item {
-                        MuteMicrophoneRow {
-                            scope.launch {
-                                prefs.setAssistButtonAction(MuteMicrophoneAction())
-                                navController.popBackStack()
+                        CommonActionRow(
+                            iconVector = Icons.Rounded.MicOff,
+                            label = MuteMicrophoneAction().getLabel(context),
+                            onClick = {
+                                scope.launch {
+                                    prefs.setAssistButtonAction(MuteMicrophoneAction())
+                                    navController.popBackStack()
+                                }
                             }
-                        }
+                        )
                     }
                     item {
-                        DigitalAssistantRow {
-                            scope.launch {
-                                prefs.setAssistButtonAction(DigitalAssistantAction())
-                                navController.popBackStack()
+                        CommonActionRow(
+                            iconVector = Icons.Rounded.Assistant,
+                            label = DigitalAssistantAction().getLabel(context),
+                            onClick = {
+                                scope.launch {
+                                    prefs.setAssistButtonAction(DigitalAssistantAction())
+                                    navController.popBackStack()
+                                }
                             }
-                        }
+                        )
                     }
                     item {
-                        DoNothingRow {
-                            scope.launch {
-                                prefs.setAssistButtonAction(DoNothingAction())
-                                navController.popBackStack()
+                        CommonActionRow(
+                            iconVector = Icons.Rounded.Clear,
+                            label = DoNothingAction().getLabel(context),
+                            onClick = {
+                                scope.launch {
+                                    prefs.setAssistButtonAction(DoNothingAction())
+                                    navController.popBackStack()
+                                }
                             }
-                        }
+                        )
                     }
                 }
             }
