@@ -31,8 +31,8 @@ import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper.Companion.LOCKSC
 import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper.Companion.LOCKSCREEN_RIGHT_BUTTON
 import xyz.ivaniskandar.shouko.ui.Screen
 import xyz.ivaniskandar.shouko.ui.component.ApplicationRow
-import xyz.ivaniskandar.shouko.ui.component.M3SwipeRefreshIndicator
 import xyz.ivaniskandar.shouko.ui.component.CommonActionRow
+import xyz.ivaniskandar.shouko.ui.component.M3SwipeRefreshIndicator
 import xyz.ivaniskandar.shouko.ui.component.Preference
 import xyz.ivaniskandar.shouko.ui.component.TabPager
 import xyz.ivaniskandar.shouko.ui.component.WriteSettingsCard
