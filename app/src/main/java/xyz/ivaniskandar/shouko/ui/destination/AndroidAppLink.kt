@@ -28,6 +28,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -55,7 +56,6 @@ import xyz.ivaniskandar.shouko.ui.ComposeLifecycleCallback
 import xyz.ivaniskandar.shouko.ui.Screen
 import xyz.ivaniskandar.shouko.ui.component.M3SwipeRefreshIndicator
 import xyz.ivaniskandar.shouko.ui.component.Preference
-import xyz.ivaniskandar.shouko.ui.component.Switch
 import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3PreviewTheme
 import xyz.ivaniskandar.shouko.util.checkDefaultBrowser
 import xyz.ivaniskandar.shouko.util.getPackageLabel
