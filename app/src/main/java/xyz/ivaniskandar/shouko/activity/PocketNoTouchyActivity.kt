@@ -74,6 +74,16 @@ class PocketNoTouchyActivity : AppCompatActivity() {
         if (intent.getBooleanExtra(EXTRA_HIDE, false)) finish()
     }
 
+    override fun onResume() {
+        super.onResume()
+        running = true
+    }
+
+    override fun onPause() {
+        super.onPause()
+        running = false
+    }
+
     @Composable
     fun DialogCard(onButtonClicked: () -> Unit = {}) {
         OutlinedCard(
@@ -112,9 +122,11 @@ class PocketNoTouchyActivity : AppCompatActivity() {
     }
 
     companion object {
+        private var running = false
         private const val EXTRA_HIDE = "PocketNoTouchyActivity.extra.HIDE"
 
         fun updateState(context: Context, show: Boolean) {
+            if ((show && running) || (!show && !running)) return
             val intent = Intent(context, PocketNoTouchyActivity::class.java).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
