@@ -1,0 +1,113 @@
+<resources>
+    <string name="app_name" translatable="false">XPERI+</string>
+    <string name="accessibility_service_desc">Запускайте функции и отправляйте действие кнопки, когда это необходимо.</string>
+
+    <string name="assistant_button_title">Кнопка помощника</string>
+    <string name="assistant_launch_selection_title">Пользовательское действие</string>
+    <string name="assistant_action_select_default_value">По умолчанию</string>
+    <string name="assistant_action_reset_toast">Действие сброшено по умолчанию.</string>
+    <string name="assistant_action_save_failed_toast">Не удалось сохранить выбор.</string>
+
+    <string name="pocket_no_touchy_title">Предотвратить случайное нажатие</string>
+    <string name="pocket_no_touchy_desc">Предотвращение непреднамеренных операций, вызванных случайным нажатием клавиш или прикосновением к экрану, когда устройство находится в кармане или сумке.</string>
+
+    <string name="flip_to_shush_title">Переключитесь на Тишину</string>
+    <string name="flip_to_shush_desc">Включите режим «Не беспокоить», положив телефон лицевой стороной вниз на ровную поверхность.</string>
+    <string name="flip_to_shush_desc_extra_screen_on">Примечание. Работает только при включенном экране.</string>
+    <string name="allow_dnd_access_toast">Разрешите XPERI+ доступ к режиму «Не беспокоить».</string>
+
+    <string name="tab_title_apps">Приложения</string>
+    <string name="tab_title_shortcuts">Клавиша быстрого доступа</string>
+    <string name="tab_title_other">Другой</string>
+
+    <string name="category_title_media_key">Мультимедийные клавиши</string>
+
+    <string name="no_touchy_dialog_title">Предотвращение случайных операций</string>
+    <string name="no_touchy_dialog_text">Держите датчик, расположенный на верхней части передней панели, чистым и не закрытым, чтобы он работал должным образом.</string>
+    <string name="no_touchy_dialog_ignore_button">Игнорировать</string>
+    <string name="accessibility_service_prompt_title">Служба специальных возможностей отключена</string>
+    <string name="accessibility_service_prompt_desc">Включите службу специальных возможностей, чтобы подготовить функции.</string>
+    <string name="button_open_settings">Откройте настройки</string>
+    <string name="logs_permission_prompt_title">Отсутствует разрешение на READ_LOGS</string>
+    <string name="logs_permission_prompt_desc">Разрешение READ_LOGS необходимо для обнаружения триггеров кнопок помощника.</string>
+    <string name="write_secure_settings_permission_prompt_title">Отсутствует разрешение WRITE_SECURE_SETTINGS</string>
+    <string name="write_secure_settings_permission_prompt_desc">Разрешение WRITE_SECURE_SETTINGS используется для отключения кнопки помощника при необходимости и установки пользовательского ярлыка на экране блокировки.</string>
+    <string name="button_grant_permission">Предоставить разрешение</string>
+
+    <string name="read_logs_permission_setup_title">Требуется разрешение READ_LOGS</string>
+    <string name="write_secure_settings_permission_setup_title">Требуется разрешение WRITE_SECURE_SETTINGS</string>
+    <string name="shell_permission_setup_desc_root">Root будет использоваться для предоставления этого разрешения.</string>
+    <string name="shell_permission_setup_desc_noroot">Чтобы предоставить это разрешение, выполните следующие действия:\n\n1. Настройте ADB на вашем компьютере и телефоне\n2. Подключите телефон к компьютеру\n3. Выполните эту команду в терминале вашего компьютера или командной строке в одну строку:</string>
+    <string name="shell_permission_setup_desc_noroot_adb_link_label">Настройка ADB на вашем компьютере и телефоне</string>  <!-- Label for annotated link inside read_logs_permission_setup_desc_noroot. -->
+    <string name="setup_adb_link" translatable="false">https://kutt.it/SetupADB</string>
+    <string name="shell_permission_setup_command_card_caption">Коснитесь карточки, чтобы поделиться командой</string>
+    <string name="shell_permission_setup_desc_extra">Приложение будет перезапущено после получения разрешения.</string>
+
+    <string name="tadano_tile_service_notif_channel_desc">Используется для отображения обязательного уведомления службы переднего плана. Можно безопасно спрятать.</string>
+    <string name="tadano_tile_service_notif_title">Услуги XPERI+</string>
+    <string name="tadano_tile_service_notif_text">Бесполезное уведомление. Нажмите, чтобы открыть настройки уведомлений</string>
+    <string name="coffee_tile_label">Кофе</string>
+    <string name="tea_tile_label">Чай</string>
+
+    <string name="intent_action_label">Запуск %s</string>
+    <string name="media_key_action_label">Медиа %s</string>
+    <string name="media_key_play">Играть</string>
+    <string name="media_key_pause">Пауза</string>
+    <string name="media_key_play_pause">Воспроизведение/Пауза</string>
+    <string name="media_key_stop">Остановка</string>
+    <string name="media_key_previous">Предыдущий</string>
+    <string name="media_key_next">Следующий</string>
+    <string name="flashlight_action_label">Вспышка</string>
+    <string name="screenshot_action_label">Сделать снимок экрана</string>
+    <string name="ringer_mode_action_label">Режим звонка (обычный/вибрация)</string>
+    <string name="mute_microphone_action_label">Выключить микрофон</string>
+    <string name="digital_assistant_action_label">Цифровой помощник</string>
+
+    <string name="hide_assistant_cue_title">Скрыть звуковой сигнал Ассистента</string>
+    <string name="hide_assistant_cue_desc">Отключает медиапоток на короткое время после нажатия кнопки «Ассистент».</string>
+
+    <string name="coffee_boarding_title">Держите телефон в бодрствующем состоянии с кофе</string>
+    <string name="tea_boarding_title">Выключите экран телефона, не давая ему заснуть, с помощью Tea</string>
+    <string name="coffee_boarding_desc">Посмотрите на фотографию своего любимого человека, не отрывая пальца от экрана. Кофе будет автоматически отключен при выключении экрана.</string>
+    <string name="tea_boarding_desc">Слушайте музыку на The Tube с заблокированным экраном телефона бесплатно. Просто заблокируйте датчик приближения и наблюдайте, как происходит волшебство..</string>
+    <string name="button_boarding_acknowledgement">Понятно</string>
+    <string name="button_continue">Продолжать</string>
+
+    <string name="check_for_update">Проверить наличие обновлений</string>
+    <string name="off">Выключить</string>
+    <string name="reset_to_default">Восстановление значений по умолчанию</string>
+    <string name="do_nothing">Ничего не делать</string>
+
+    <string name="lockscreen_shortcut_title">Ярлык на экране блокировки</string>
+    <string name="lockscreen_shortcut_desc">Настроить ярлык на экране блокировки</string>
+    <string name="lockscreen_shortcut_left">Левый ярлык</string>
+    <string name="lockscreen_shortcut_right">Правый ярлык</string>
+
+    <string name="statusbar_action_notifications">Открыть панель уведомлений</string>
+    <string name="statusbar_action_qs">Открыть панель быстрых настроек</string>
+
+    <string name="link_cleaner_label">Очиститель ссылок</string>
+    <string name="link_cleaner_success">Ссылка очищена</string>
+    <string name="link_cleaner_success_clipboard">Очищенная ссылка скопирована в буфер обмена</string>
+    <string name="link_cleaner_failed">Не удалось очистить ссылку</string>
+    <string name="link_cleaner_failed_clipboard">Новый элемент буфера обмена не является действительной ссылкой</string>
+
+    <string name="mute_microphone_notif_channel_title">Напоминание об отключенном микрофоне</string>
+    <string name="mute_microphone_on">Выключить микрофон</string>
+    <string name="mute_microphone_off">Включить микрофон</string>
+    <string name="mute_microphone_action_cancel">Без звука</string>
+
+    <string name="android_app_link_title">Ссылка на приложение для Android</string>
+    <string name="android_app_link_subtitle">Управление целевыми приложениями ссылок</string>
+    <string name="link_chooser_dialog_title">Открыть в</string>
+    <string name="link_chooser_toggle_label">Использовать пользовательский селектор</string>
+    <string name="link_chooser_enable_dialog">Установите %s в качестве браузера по умолчанию, чтобы включить выбор целевой ссылки.</string>
+    <string name="link_chooser_info">Пользовательский выбор отображается, когда открытая ссылка имеет несколько целей.\n\nДля любой одобренной цели указанной ссылки должны быть отключены настройки \"Открывать поддерживаемые ссылки\".</string>
+    <string name="approved_link_target_title">Утвержденные целевые ссылки</string>
+    <string name="approved_link_target_subtitle">Таргетинг на приложения с проверенным или одобренным вручную доменом</string>
+    <string name="unapproved_link_target_title">Неутвержденные целевые ссылки</string>
+    <string name="unapproved_link_target_subtitle">Целевые приложения с неутвержденным доменом</string>
+    <string name="approved_link_disabled_text">Это приложение никогда не будет автоматически открывать поддерживаемые ссылки</string>
+    <string name="disabled">Недоступный</string>
+    <string name="open_settings">Открыть настройки</string>
+</resources>

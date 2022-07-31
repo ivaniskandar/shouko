@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="approved_link_list_title">
+        <item quantity="one">%d ссылка для открытия в этом приложении</item>
+        <item quantity="other">%d ссылки для открытия в этом приложении</item>
+    </plurals>
+    <plurals name="approved_link_list_item_subtitle">
+        <item quantity="one">%d ссылка</item>
+        <item quantity="other">%d ссылки</item>
+    </plurals>
+    <plurals name="unapproved_link_list_item_subtitle">
+        <item quantity="one">%d ссылка доступна</item>
+        <item quantity="other">%d ссылки доступны</item>
+    </plurals>
+</resources>
