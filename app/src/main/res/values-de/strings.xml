@@ -1,0 +1,113 @@
+<resources>
+    <string name="app_name" translatable="false">XPERI+</string>
+    <string name="accessibility_service_desc">Ermöglicht Funktionsausführung und Tastenneubelegung.</string>
+
+    <string name="assistant_button_title">Assistant-Taste</string>
+    <string name="assistant_launch_selection_title">Personalisierte Aktion</string>
+    <string name="assistant_action_select_default_value">Standard</string>
+    <string name="assistant_action_reset_toast">Aktion auf Standard zurücksetzen.</string>
+    <string name="assistant_action_save_failed_toast">Speicher der Auswahl fehlgeschlagen.</string>
+
+    <string name="pocket_no_touchy_title">Verhinderung unbeabsichtigter Eingaben</string>
+    <string name="pocket_no_touchy_desc">Verhindert unbeabsichtigte Eingaben durch Tastendruck oder Touchscreenberührung während sich das Gerät in einer Tasche befindet.</string>
+
+    <string name="flip_to_shush_title">Umdrehen zum Stummschalten</string>
+    <string name="flip_to_shush_desc">Schaltet den Bitte-Nicht-Stören-Modus ein, wenn sich Ihr Gerät mit der Vorderseite nach unten auf einer ebenen Unterlage befindet.</string>
+    <string name="flip_to_shush_desc_extra_screen_on">Hinweis: Dies funktioniert nur, wenn das Display eingeschaltet ist.</string>
+    <string name="allow_dnd_access_toast">Bitte erlauben Sie XPERI+ Zugang zum Bitte-Nicht-Stören-Modus.</string>
+
+    <string name="tab_title_apps">Apps</string>
+    <string name="tab_title_shortcuts">Schnellzugriffe</string>
+    <string name="tab_title_other">Anderes</string>
+
+    <string name="category_title_media_key">Medientasten</string>
+
+    <string name="no_touchy_dialog_title">Verhinderung unbeabsichtigter Eingaben</string>
+    <string name="no_touchy_dialog_text">Halten Sie den Sensor über dem Bildschirm sauber und unbedeckt, damit dies zuverlässig funktioniert.</string>
+    <string name="no_touchy_dialog_ignore_button">Ignorieren</string>
+    <string name="accessibility_service_prompt_title">Eingabehilfsdienst deaktiviert</string>
+    <string name="accessibility_service_prompt_desc">Schalten Sie den Eingabehilfsdienst ein, um diese Funktion zu nutzen.</string>
+    <string name="button_open_settings">Einstellungen öffnen</string>
+    <string name="logs_permission_prompt_title">Fehlende READ_LOGS Berechtigung</string>
+    <string name="logs_permission_prompt_desc">READ_LOGS Berechtigung ist nötig, um die Betätigung der Assitant-Taste zu registrieren.</string>
+    <string name="write_secure_settings_permission_prompt_title">Fehlende WRITE_SECURE_SETTINGS Berechtigung</string>
+    <string name="write_secure_settings_permission_prompt_desc">WRITE_SECURE_SETTINGS Berechtigung wird benötigt, um die Assistant-Taste zu deaktivieren, falls erforderlich, oder die Sperrbildschirmschnellzugriffe zu bearbeiten.</string>
+    <string name="button_grant_permission">Berechtigung gewähren</string>
+
+    <string name="read_logs_permission_setup_title">READ_LOGS Berechtigung nötig</string>
+    <string name="write_secure_settings_permission_setup_title">WRITE_SECURE_SETTINGS Berechtigung nötig</string>
+    <string name="shell_permission_setup_desc_root">Root wird benutzt, um diese Berechtigungen zu gewähren.</string>
+    <string name="shell_permission_setup_desc_noroot">Um diese Berechtigungen zu gewären, tun Sie bitte das folgende:\n\n1. ADB auf Ihrem Computer einrichten und auf Ihrem Telefon aktivieren.\n2. Ihr Telefon mit Ihrem Computer über USB verbinden.\n3. Diesen Befehl in einem Terminal oder der Eingabeaufforderung auf Ihrem Computer eingeben:</string>
+    <string name="shell_permission_setup_desc_noroot_adb_link_label">Setup ADB on your computer and phone</string>  <!-- Label for annotated link inside read_logs_permission_setup_desc_noroot. -->
+    <string name="setup_adb_link" translatable="false">https://kutt.it/SetupADB</string>
+    <string name="shell_permission_setup_command_card_caption">Tap the card to share command</string>
+    <string name="shell_permission_setup_desc_extra">Die App wird neugestartet, nachdem die Berechtigungen gewährt worden.</string>
+
+    <string name="tadano_tile_service_notif_channel_desc">Nötig um die notwendige Vordergrund-Benachrichtigung auszugeben. Kann problemlos deaktiviert werden.</string>
+    <string name="tadano_tile_service_notif_title">XPERI+ tile service</string>
+    <string name="tadano_tile_service_notif_text">Sinnlose Benachrichtigung. Tippe, um Benachrichtigungseinstellungen zu öffnen.</string>
+    <string name="coffee_tile_label">Kaffee</string>
+    <string name="tea_tile_label">Tee</string>
+
+    <string name="intent_action_label">Launch %s</string>
+    <string name="media_key_action_label">Media key %s</string>
+    <string name="media_key_play">Play</string>
+    <string name="media_key_pause">Pause</string>
+    <string name="media_key_play_pause">Play/Pause</string>
+    <string name="media_key_stop">Stop</string>
+    <string name="media_key_previous">Zurück</string>
+    <string name="media_key_next">Vor</string>
+    <string name="flashlight_action_label">Taschenlampe</string>
+    <string name="screenshot_action_label">Screenshot aufnehmen</string>
+    <string name="ringer_mode_action_label">Klingelmodus (Normal/Vibration)</string>
+    <string name="mute_microphone_action_label">Mikrofon stummschalten</string>
+    <string name="digital_assistant_action_label">Digitaler Assistent</string>
+
+    <string name="hide_assistant_cue_title">Verstecke das Assistant-Start-Geräusch</string>
+    <string name="hide_assistant_cue_desc">Schaltet den Medientonausgang für einen kurzen Moment stumm, wenn die Assistant-Taste gedrückt wird.</string>
+
+    <string name="coffee_boarding_title">Halte dein Telefon mit Kaffee wach</string>
+    <string name="tea_boarding_title">Schalte den Bildschirm deines Telefons aus, während du es mit Tee wach hälst.</string>
+    <string name="coffee_boarding_desc">Schaue ein Foto deiner Liebsten an, ohne einen Finger auf dem Bildschirm zu halten. Kaffee wird automatisch aktiviert, wenn der Bildschirm ausgeschaltet wird.</string>
+    <string name="tea_boarding_desc">Listen to music on The Tube with your phone screen locked for free. Just block the proximity sensor and see the magic happens.</string>
+    <string name="button_boarding_acknowledgement">Verstanden</string>
+    <string name="button_continue">Weiter</string>
+
+    <string name="check_for_update">Auf Updates überprüfen</string>
+    <string name="off">Aus</string>
+    <string name="reset_to_default">Auf Standard zurücksetzen</string>
+    <string name="do_nothing">Nichtstun</string>
+
+    <string name="lockscreen_shortcut_title">Sperrbildschirmschnellzugriff</string>
+    <string name="lockscreen_shortcut_desc">Sperrbildschirmschnellzugriff personalisieren</string>
+    <string name="lockscreen_shortcut_left">Linker Schnellzugriff</string>
+    <string name="lockscreen_shortcut_right">Rechter Schnellzugriff</string>
+
+    <string name="statusbar_action_notifications">Benachrichtigungsübersicht öffnen</string>
+    <string name="statusbar_action_qs">Schnelleinstellungen öffnen</string>
+
+    <string name="link_cleaner_label">Link Cleaner</string>
+    <string name="link_cleaner_success">Link cleaned</string>
+    <string name="link_cleaner_success_clipboard">Cleaned link copied to clipboard</string>
+    <string name="link_cleaner_failed">Failed to clean link</string>
+    <string name="link_cleaner_failed_clipboard">Newest clipboard item is not a valid link</string>
+
+    <string name="mute_microphone_notif_channel_title">Erinnerung an Stummgeschaltetes Mikrofon</string>
+    <string name="mute_microphone_on">Mikrofon stummgeschalten</string>
+    <string name="mute_microphone_off">Mikrofonstummschaltung beendet</string>
+    <string name="mute_microphone_action_cancel">Stummschaltung aufheben</string>
+
+    <string name="android_app_link_title">Android App Link</string>
+    <string name="android_app_link_subtitle">Manage link target apps</string>
+    <string name="link_chooser_dialog_title">Open with</string>
+    <string name="link_chooser_toggle_label">Use custom chooser</string>
+    <string name="link_chooser_enable_dialog">Set %s as default browser to enable custom link target chooser.</string>
+    <string name="link_chooser_info">Custom chooser is shown when an opened link has multiple targets.\n\nAny approved target of said link must have the \"Open supported links\" settings disabled.</string>
+    <string name="approved_link_target_title">Approved Link Targets</string>
+    <string name="approved_link_target_subtitle">Target apps that have verified or manually approved domain</string>
+    <string name="unapproved_link_target_title">Unapproved Link Targets</string>
+    <string name="unapproved_link_target_subtitle">Target apps that have unapproved domain</string>
+    <string name="approved_link_disabled_text">This app will never automatically open supported links</string>
+    <string name="disabled">Deaktiviert</string>
+    <string name="open_settings">Einstellugen öffnen</string>
+</resources>
