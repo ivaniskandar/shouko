@@ -136,7 +136,7 @@ class GAKeyOverrider(
                     // Why even
                     return
                 }
-                if (service.isPackageInstalled(GOOGLE_PACKAGE_NAME)) {
+                if (service.isPackageInstalled(GOOGLE_PACKAGE_NAME) && service.isPackageInstalled(GOOGLE_ASSISTANT_PACKAGE_NAME)) {
                     assistButtonPressHandled = false
                 } else {
                     runGAKeyAction(false)
@@ -320,15 +320,17 @@ class GAKeyOverrider(
     companion object {
         private val ASSIST_BUTTON_LOG_TRIGGER = arrayOf(
             "WindowManager: startAssist launchMode=1",
+            "WindowManager: startAssist launchMode=-1",
             "GAKeyEventHandler: launchAssistGuideActivity",
             "GAKeyEventHandler: launchDefaultAssistSettings",
         )
         const val GOOGLE_PACKAGE_NAME = "com.google.android.googlequicksearchbox"
+        const val GOOGLE_ASSISTANT_PACKAGE_NAME = "com.google.android.apps.googleassistant"
 
         private const val GA_KEY_DISABLED_GLOBAL_SETTING_KEY = "somc.game_enhancer_gab_key_disabled"
 
-        // Only supports Xperia 5 II, Xperia 10 III, Xperia 5 III, Xperia 1 III
-        val isSupported = DeviceModel.isPDX206 || DeviceModel.isPDX213 || DeviceModel.isPDX214 || DeviceModel.isPDX215
+        // Only supports Xperia 5 II, Xperia 10 III, Xperia 5 III, Xperia 1 III, Xperia 1 IV
+        val isSupported = DeviceModel.isPDX206 || DeviceModel.isPDX213 || DeviceModel.isPDX214 || DeviceModel.isPDX215 || DeviceModel.isPDX223
     }
 }
 
