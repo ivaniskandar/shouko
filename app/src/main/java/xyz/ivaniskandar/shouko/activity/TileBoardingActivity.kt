@@ -1,8 +1,8 @@
 package xyz.ivaniskandar.shouko.activity
 
 import android.os.Bundle
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,7 +30,7 @@ import xyz.ivaniskandar.shouko.service.TadanoTileParentService.Companion.EXTRA_S
 import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3PreviewTheme
 import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3Theme
 
-class TileBoardingActivity : AppCompatActivity() {
+class TileBoardingActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val type = intent.getSerializableExtra(EXTRA_SERVICE_TYPE) as? TadanoTileParentService.Type

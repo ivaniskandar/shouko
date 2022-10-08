@@ -2,8 +2,8 @@ package xyz.ivaniskandar.shouko.activity
 
 import android.app.KeyguardManager
 import android.os.Bundle
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.getSystemService
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
@@ -23,7 +23,7 @@ import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3Theme
  *
  * @see xyz.ivaniskandar.shouko.feature.GAKeyOverrider
  */
-class GAKeyOverriderKeyguardActivity : AppCompatActivity() {
+class GAKeyOverriderKeyguardActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)

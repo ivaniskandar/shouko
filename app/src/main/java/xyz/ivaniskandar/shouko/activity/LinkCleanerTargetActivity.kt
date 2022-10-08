@@ -7,8 +7,8 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Patterns
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.getSystemService
@@ -18,7 +18,7 @@ import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3Theme
 import java.net.URLDecoder
 
-class LinkCleanerTargetActivity : AppCompatActivity() {
+class LinkCleanerTargetActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

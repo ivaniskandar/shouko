@@ -3,8 +3,8 @@ package xyz.ivaniskandar.shouko.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -40,7 +40,7 @@ import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3Theme
  *
  * @see PocketNoTouchy
  */
-class PocketNoTouchyActivity : AppCompatActivity() {
+class PocketNoTouchyActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (intent.getBooleanExtra(EXTRA_HIDE, false)) finish()
