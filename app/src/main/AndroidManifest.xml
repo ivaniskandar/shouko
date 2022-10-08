@@ -124,6 +124,10 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
+            android:theme="@style/Theme.AppCompat.DayNight" />
+
         <service
             android:name=".service.TadanoAccessibilityService"
             android:exported="true"
