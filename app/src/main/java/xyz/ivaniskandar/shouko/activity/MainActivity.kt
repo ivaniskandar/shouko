@@ -20,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -28,7 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTopAppBarScrollState
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,12 +39,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.core.content.getSystemService
 import androidx.core.view.WindowCompat
@@ -60,13 +58,14 @@ import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import kotlinx.coroutines.launch
 import logcat.LogPriority
 import logcat.logcat
-import soup.compose.material.motion.materialSharedAxisX
+import soup.compose.material.motion.animation.materialSharedAxisXIn
+import soup.compose.material.motion.animation.materialSharedAxisXOut
+import soup.compose.material.motion.animation.rememberSlideDistance
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.ShoukoApplication
 import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper.Companion.LOCKSCREEN_LEFT_BUTTON
 import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper.Companion.LOCKSCREEN_RIGHT_BUTTON
 import xyz.ivaniskandar.shouko.ui.Screen
-import xyz.ivaniskandar.shouko.ui.component.InsetAwareCenterAlignedTopAppBar
 import xyz.ivaniskandar.shouko.ui.component.Scaffold
 import xyz.ivaniskandar.shouko.ui.destination.AndroidAppLinkSettings
 import xyz.ivaniskandar.shouko.ui.destination.AssistantActionSelection
@@ -98,17 +97,13 @@ class MainActivity : ComponentActivity() {
             val bottomSheetNavigator = remember(sheetState) { BottomSheetNavigator(sheetState = sheetState) }
             val navController = rememberAnimatedNavController(bottomSheetNavigator)
             val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val scrollState = rememberTopAppBarScrollState()
-            val scrollBehavior = remember(navBackStackEntry) {
-                when (navBackStackEntry?.destination?.route) {
-                    // Disable scroll effect because tabs
-                    Screen.AssistantLaunchSelection.route, Screen.LockscreenShortcutSelection.route -> null
-                    else -> TopAppBarDefaults.pinnedScrollBehavior(scrollState)
-                }
+            val scrollState = rememberTopAppBarState()
+            val scrollBehavior = when (navBackStackEntry?.destination?.route) {
+                // Disable scroll effect because tabs
+                Screen.AssistantLaunchSelection.route, Screen.LockscreenShortcutSelection.route -> null
+                else -> TopAppBarDefaults.pinnedScrollBehavior(scrollState)
             }
-            val sharedAxisMotion = materialSharedAxisX()
-            val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
-            val density = LocalDensity.current
+            TopAppBarDefaults.pinnedScrollBehavior(scrollState)
             ShoukoM3Theme {
                 ModalBottomSheetLayout(bottomSheetNavigator) {
                     val scaffoldModifier = if (scrollBehavior != null) {
@@ -120,7 +115,7 @@ class MainActivity : ComponentActivity() {
                         modifier = scaffoldModifier,
                         topBar = {
                             val currentRoute = navBackStackEntry?.destination?.route
-                            InsetAwareCenterAlignedTopAppBar(
+                            CenterAlignedTopAppBar(
                                 title = {
                                     Text(
                                         text = getAppBarTitle(
@@ -135,7 +130,7 @@ class MainActivity : ComponentActivity() {
                                             Icon(imageVector = Icons.Rounded.ArrowBack, contentDescription = null)
                                         }
                                     }
-                                } else null,
+                                } else {{}},
                                 actions = { MainActivityActions(navController = navController) },
                                 scrollBehavior = scrollBehavior
                             )
@@ -143,13 +138,12 @@ class MainActivity : ComponentActivity() {
                         contentPadding = WindowInsets.navigationBars.asPaddingValues(),
                     ) { innerPadding ->
                         val rootAvailable = remember { isRootAvailable }
+                        val slideDistance = rememberSlideDistance()
                         AnimatedNavHost(
                             navController = navController,
                             startDestination = Screen.Home.route,
-                            enterTransition = { sharedAxisMotion.enter.transition(!isRtl, density) },
-                            exitTransition = { sharedAxisMotion.exit.transition(!isRtl, density) },
-                            popEnterTransition = { sharedAxisMotion.enter.transition(isRtl, density) },
-                            popExitTransition = { sharedAxisMotion.exit.transition(isRtl, density) }
+                            enterTransition = { materialSharedAxisXIn(forward = true, slideDistance) },
+                            exitTransition = { materialSharedAxisXOut(forward = true, slideDistance) },
                         ) {
                             composable(route = Screen.Home.route) { Home(navController, innerPadding) }
                             composable(Screen.ReadLogsSetup.route) {
