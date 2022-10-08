@@ -6,10 +6,7 @@ import android.os.IBinder
 import android.service.quicksettings.Tile.STATE_ACTIVE
 import android.service.quicksettings.Tile.STATE_INACTIVE
 import android.service.quicksettings.TileService
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import xyz.ivaniskandar.shouko.ShoukoApplication
 import xyz.ivaniskandar.shouko.activity.TileBoardingActivity
@@ -17,7 +14,6 @@ import xyz.ivaniskandar.shouko.service.TadanoTileParentService.Companion.ACTION_
 import xyz.ivaniskandar.shouko.service.TadanoTileParentService.Companion.ACTION_STOP_SERVICE
 import xyz.ivaniskandar.shouko.service.TadanoTileParentService.Companion.EXTRA_SERVICE_TYPE
 
-@DelicateCoroutinesApi
 class TeaTileService : TileService() {
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -55,29 +51,26 @@ class TeaTileService : TileService() {
         }
     }
 
-    @Suppress("BlockingMethodInNonBlockingContext")
     private fun switchService(start: Boolean) {
         val serviceIntent = Intent(this, TadanoTileParentService::class.java)
         if (start) {
-            GlobalScope.launch {
-                val prefs = ShoukoApplication.prefs
-                val boardingDone = runBlocking { prefs.teaBoardingDone.first() }
-                if (!boardingDone) {
-                    startActivityAndCollapse(
-                        Intent(this@TeaTileService, TileBoardingActivity::class.java).apply {
-                            putExtra(EXTRA_SERVICE_TYPE, TadanoTileParentService.Type.TEA)
-                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        }
-                    )
-                    prefs.setTeaBoardingDone()
-                }
-                startForegroundService(
-                    serviceIntent.apply {
-                        action = ACTION_START_SERVICE
+            val prefs = ShoukoApplication.prefs
+            val boardingDone = runBlocking { prefs.teaBoardingDone.first() }
+            if (!boardingDone) {
+                startActivityAndCollapse(
+                    Intent(this@TeaTileService, TileBoardingActivity::class.java).apply {
                         putExtra(EXTRA_SERVICE_TYPE, TadanoTileParentService.Type.TEA)
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     }
                 )
+                runBlocking { prefs.setTeaBoardingDone() }
             }
+            startForegroundService(
+                serviceIntent.apply {
+                    action = ACTION_START_SERVICE
+                    putExtra(EXTRA_SERVICE_TYPE, TadanoTileParentService.Type.TEA)
+                }
+            )
         } else {
             startService(
                 serviceIntent.apply {
