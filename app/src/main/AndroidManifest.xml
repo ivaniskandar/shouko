@@ -109,6 +109,20 @@
             android:label="@string/do_nothing"
             android:noHistory="true"
             android:theme="@style/Theme.Shouko.Transparent" />
+        <activity
+            android:name=".activity.WaMeActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:label="@string/wame_label"
+            android:noHistory="true"
+            android:theme="@style/Theme.Shouko.Transparent">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.DIAL" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="tel" />
+            </intent-filter>
+        </activity>
 
         <service
             android:name=".service.TadanoAccessibilityService"

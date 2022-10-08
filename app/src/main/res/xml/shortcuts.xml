@@ -10,4 +10,14 @@
             android:targetPackage="xyz.ivaniskandar.shouko"
             android:targetClass="xyz.ivaniskandar.shouko.activity.LinkCleanerTargetActivity" />
     </shortcut>
+    <shortcut
+        android:shortcutId="wame"
+        android:enabled="true"
+        android:icon="@mipmap/ic_wa_shortcut"
+        android:shortcutShortLabel="@string/wame_label">
+        <intent
+            android:action="shouko.action.WA_ME_CLIPBOARD"
+            android:targetPackage="xyz.ivaniskandar.shouko"
+            android:targetClass="xyz.ivaniskandar.shouko.activity.WaMeActivity" />
+    </shortcut>
 </shortcuts>
