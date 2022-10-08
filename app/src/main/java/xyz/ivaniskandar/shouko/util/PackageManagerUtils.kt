@@ -3,13 +3,12 @@ package xyz.ivaniskandar.shouko.util
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
-import android.content.pm.PackageManager.ResolveInfoFlagsBits
 import android.content.pm.ResolveInfo
 import android.os.Build
 
 fun PackageManager.queryIntentActivitiesCompat(
     intent: Intent,
-    @ResolveInfoFlagsBits flags: Int
+    flags: Int
 ): List<ResolveInfo> {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         queryIntentActivities(intent, PackageManager.ResolveInfoFlags.of(flags.toLong()))
