@@ -27,6 +27,7 @@ import android.os.Vibrator
 import android.provider.Settings
 import android.service.quicksettings.TileService
 import androidx.core.app.NotificationCompat
+import androidx.core.app.ServiceCompat
 import androidx.core.content.getSystemService
 import com.kieronquinn.monetcompat.core.MonetCompat
 import xyz.ivaniskandar.shouko.R
@@ -207,7 +208,7 @@ class TadanoTileParentService : Service() {
     }
 
     private fun stop() {
-        stopForeground(true)
+        ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
         stopSelf()
     }
 

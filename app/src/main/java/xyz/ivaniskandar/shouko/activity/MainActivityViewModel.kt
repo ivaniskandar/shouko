@@ -23,6 +23,9 @@ import xyz.ivaniskandar.shouko.item.ApplicationItem
 import xyz.ivaniskandar.shouko.item.LinkHandlerAppItem
 import xyz.ivaniskandar.shouko.item.ShortcutCreatorItem
 import xyz.ivaniskandar.shouko.ui.IconDrawableShadowWrapper
+import xyz.ivaniskandar.shouko.util.getApplicationInfoCompat
+import xyz.ivaniskandar.shouko.util.getInstalledApplicationsCompat
+import xyz.ivaniskandar.shouko.util.queryIntentActivitiesCompat
 
 class MainActivityViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -106,7 +109,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         val i = Intent(Intent.ACTION_MAIN).apply {
             addCategory(Intent.CATEGORY_LAUNCHER)
         }
-        val lst = pm.queryIntentActivities(i, 0)
+        val lst = pm.queryIntentActivitiesCompat(i, 0)
         val shadowWrapper = IconDrawableShadowWrapper()
         return lst.map {
             val cn = ComponentName(
@@ -126,14 +129,14 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         val i = Intent(Intent.ACTION_CREATE_SHORTCUT).apply {
             addCategory(Intent.CATEGORY_DEFAULT)
         }
-        val lst = pm.queryIntentActivities(i, 0)
+        val lst = pm.queryIntentActivitiesCompat(i, 0)
         val shadowWrapper = IconDrawableShadowWrapper()
         return lst.map {
             ShortcutCreatorItem(
                 ComponentName(it.activityInfo.packageName, it.activityInfo.name),
                 it.activityInfo.loadLabel(pm).toString(),
                 shadowWrapper.run(it.activityInfo.loadIcon(pm)).toBitmap().asImageBitmap(),
-                pm.getApplicationLabel(pm.getApplicationInfo(it.activityInfo.packageName, 0)).toString()
+                pm.getApplicationLabel(pm.getApplicationInfoCompat(it.activityInfo.packageName, 0)).toString()
             )
         }.sortedBy { it.label }
     }
@@ -144,7 +147,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         val pm = context.packageManager
         val shadowWrapper = IconDrawableShadowWrapper()
         val manager = context.getSystemService<DomainVerificationManager>() ?: return emptyList()
-        return pm.getInstalledApplications(0).asSequence()
+        return pm.getInstalledApplicationsCompat(0).asSequence()
             .map { Pair(manager.getDomainVerificationUserState(it.packageName), it) }
             .filter { !it.first?.hostToStateMap.isNullOrEmpty() }
             .map { (userState, ai) ->

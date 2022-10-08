@@ -67,6 +67,7 @@ import xyz.ivaniskandar.shouko.ui.component.SoftDivider
 import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3Theme
 import xyz.ivaniskandar.shouko.util.loadIcon
 import xyz.ivaniskandar.shouko.util.loadLabel
+import xyz.ivaniskandar.shouko.util.queryIntentActivitiesCompat
 import androidx.compose.material.MaterialTheme as M2Theme
 
 /**
@@ -88,7 +89,7 @@ class LinkTargetChooserActivity : ComponentActivity() {
             component = null
             setPackage(null)
         }
-        val resolverIntent = packageManager.queryIntentActivities(newIntent, PackageManager.MATCH_ALL)
+        val resolverIntent = packageManager.queryIntentActivitiesCompat(newIntent, PackageManager.MATCH_ALL)
             .map { ComponentName(it.activityInfo.packageName, it.activityInfo.name) }
             .filter { it.packageName != packageName }
 

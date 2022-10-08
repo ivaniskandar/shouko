@@ -19,7 +19,7 @@ val Context.canWriteSecureSettings: Boolean
 
 fun Context.isPackageInstalled(packageName: String): Boolean {
     return try {
-        packageManager.getApplicationInfo(packageName, 0).enabled
+        packageManager.getApplicationInfoCompat(packageName, 0).enabled
     } catch (e: PackageManager.NameNotFoundException) {
         false
     }
@@ -27,7 +27,7 @@ fun Context.isPackageInstalled(packageName: String): Boolean {
 
 fun Context.getPackageLabel(packageName: String): String {
     return try {
-        val ai = packageManager.getApplicationInfo(packageName, 0)
+        val ai = packageManager.getApplicationInfoCompat(packageName, 0)
         packageManager.getApplicationLabel(ai).toString()
     } catch (e: PackageManager.NameNotFoundException) {
         "null"
@@ -37,7 +37,7 @@ fun Context.getPackageLabel(packageName: String): String {
 fun checkDefaultBrowser(context: Context): Boolean {
     val i = Intent(Intent.ACTION_VIEW, Uri.parse("http://example.com"))
     val default = context.packageManager
-        .resolveActivity(i, PackageManager.MATCH_DEFAULT_ONLY)
+        .resolveActivityCompat(i, PackageManager.MATCH_DEFAULT_ONLY)
         ?.activityInfo
         ?.packageName
     return default == context.packageName
@@ -53,7 +53,7 @@ fun openOpenByDefaultSettings(context: Context, packageName: String) {
         Settings.ACTION_APP_OPEN_BY_DEFAULT_SETTINGS,
         Uri.parse("package:$packageName")
     )
-    if (Build.MANUFACTURER == "samsung" || context.packageManager.resolveActivity(i, 0) == null) {
+    if (Build.MANUFACTURER == "samsung" || context.packageManager.resolveActivityCompat(i, 0) == null) {
         // Back off to App Info
         i = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName"))
             .highlightSettingsTo("preferred_settings")

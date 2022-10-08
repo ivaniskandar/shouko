@@ -50,7 +50,7 @@ fun Intent.loadLabel(context: Context): String {
     return if (shortcutLabel != null) {
         shortcutLabel
     } else {
-        val ri = context.packageManager.resolveActivity(this, 0)
+        val ri = context.packageManager.resolveActivityCompat(this, 0)
         ri?.loadLabel(context.packageManager).toString()
     }
 }
@@ -59,6 +59,7 @@ fun Intent.loadLabel(context: Context): String {
  * Returns true if intent extra class type for [key] is the same with [type].
  */
 private fun <T> Intent?.isValidExtraType(key: String, type: Class<T>): Boolean {
+    @Suppress("DEPRECATION") // https://issuetracker.google.com/issues/240585930
     return type.isInstance(this?.getParcelableExtra(key))
 }
 
