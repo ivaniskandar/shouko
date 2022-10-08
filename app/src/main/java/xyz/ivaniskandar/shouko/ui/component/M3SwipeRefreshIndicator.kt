@@ -24,7 +24,7 @@ fun M3SwipeRefreshIndicator(
     backgroundColor: Color = MaterialTheme.colorScheme.surfaceVariant,
     contentColor: Color = MaterialTheme.colorScheme.primary,
     refreshingOffset: Dp = 16.dp,
-    largeIndication: Boolean = false,
+    largeIndication: Boolean = false
 ) {
     SwipeRefreshIndicator(
         state,

@@ -48,7 +48,7 @@ import kotlin.math.sqrt
  */
 class FlipToShush(
     private val lifecycleOwner: LifecycleOwner,
-    private val service: AccessibilityService,
+    private val service: AccessibilityService
 ) : DefaultLifecycleObserver {
 
     private val sensorManager: SensorManager = service.getSystemService()!!

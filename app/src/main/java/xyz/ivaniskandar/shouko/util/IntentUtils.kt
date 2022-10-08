@@ -46,7 +46,8 @@ suspend fun Intent.setAsAssistantAction(prefs: PreferencesRepository) {
  */
 fun Intent.loadLabel(context: Context): String {
     // Try to get shortcut label from intent first
-    @Suppress("DEPRECATION") val shortcutLabel = getStringExtra(Intent.EXTRA_SHORTCUT_NAME)
+    @Suppress("DEPRECATION")
+    val shortcutLabel = getStringExtra(Intent.EXTRA_SHORTCUT_NAME)
     return if (shortcutLabel != null) {
         shortcutLabel
     } else {

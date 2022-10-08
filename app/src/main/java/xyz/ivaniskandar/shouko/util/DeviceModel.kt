@@ -59,6 +59,6 @@ object DeviceModel {
     val isPDX223 = arrayOf(
         "XQ-CT54",
         "XQ-CT62",
-        "XQ-CT72",
+        "XQ-CT72"
     ).contains(Build.MODEL)
 }

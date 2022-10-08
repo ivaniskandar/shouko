@@ -45,7 +45,7 @@ import xyz.ivaniskandar.shouko.util.highlightSettingsTo
 @Composable
 fun Home(
     navController: NavController,
-    contentPadding: PaddingValues,
+    contentPadding: PaddingValues
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()

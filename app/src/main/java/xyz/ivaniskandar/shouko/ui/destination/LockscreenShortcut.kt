@@ -43,13 +43,13 @@ import xyz.ivaniskandar.shouko.util.toComponentName
 @Composable
 fun LockscreenShortcutSettings(
     navController: NavController,
-    contentPadding: PaddingValues,
+    contentPadding: PaddingValues
 ) {
     val context = LocalContext.current
     ComponentName.unflattenFromString("")
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = contentPadding,
+        contentPadding = contentPadding
     ) {
         item {
             WriteSettingsCard(visible = !context.canWriteSecureSettings) {
@@ -86,7 +86,7 @@ fun LockscreenShortcutSelection(
     mainViewModel: MainActivityViewModel = viewModel(),
     navController: NavController,
     settingsKey: String,
-    contentPadding: PaddingValues,
+    contentPadding: PaddingValues
 ) {
     val scope = rememberCoroutineScope()
     val titles = listOf(
@@ -95,7 +95,7 @@ fun LockscreenShortcutSelection(
     )
     TabPager(
         pageTitles = titles,
-        contentPadding = contentPadding,
+        contentPadding = contentPadding
     ) { page ->
         val context = LocalContext.current
         when (page) {
@@ -112,7 +112,7 @@ fun LockscreenShortcutSelection(
                 ) {
                     if (items != null) {
                         LazyColumn(
-                            contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding()),
+                            contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding())
                         ) {
                             items(items!!) { item ->
                                 ApplicationRow(item = item) {
@@ -129,7 +129,7 @@ fun LockscreenShortcutSelection(
             }
             1 -> {
                 LazyColumn(
-                    contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding()),
+                    contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding())
                 ) {
                     item {
                         CommonActionRow(

@@ -74,7 +74,7 @@ fun AndroidAppLinkSettings(
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = contentPadding,
+        contentPadding = contentPadding
     ) {
         item {
             CustomChooserToggle(
@@ -192,7 +192,7 @@ fun LinkTargetList(
     approved: Boolean, // if true, show approved else unapproved
     mainViewModel: MainActivityViewModel = viewModel(),
     navController: NavController,
-    contentPadding: PaddingValues,
+    contentPadding: PaddingValues
 ) {
     val items by mainViewModel.linkHandlerList.observeAsState()
     val isRefreshing by mainViewModel.isRefreshingLinkHandlerList.collectAsState()
@@ -203,13 +203,13 @@ fun LinkTargetList(
         indicatorPadding = contentPadding,
         indicator = { s, trigger ->
             M3SwipeRefreshIndicator(state = s, refreshTriggerDistance = trigger)
-        },
+        }
     ) {
         val filteredItems = items?.filter { if (approved) it.linkHandlingAllowed && it.isApproved else it.isUnapproved }
         val disabledItems = if (approved) items?.filter { !it.linkHandlingAllowed && it.isApproved } else null
 
         LazyColumn(
-            contentPadding = contentPadding,
+            contentPadding = contentPadding
         ) {
             if (filteredItems != null) {
                 items(items = filteredItems, key = { it.packageName }) { item ->
@@ -255,7 +255,7 @@ fun LinkTargetListItem(item: LinkHandlerAppItem, onClick: () -> Unit) {
         headlineText = {
             Text(
                 text = item.label,
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.titleLarge
             )
         },
         supportingText = {
@@ -265,7 +265,7 @@ fun LinkTargetListItem(item: LinkHandlerAppItem, onClick: () -> Unit) {
                     text = pluralStringResource(
                         id = R.plurals.approved_link_list_item_subtitle,
                         count = count,
-                        count,
+                        count
                     )
                 )
             } else {
@@ -274,7 +274,7 @@ fun LinkTargetListItem(item: LinkHandlerAppItem, onClick: () -> Unit) {
                     text = pluralStringResource(
                         id = R.plurals.unapproved_link_list_item_subtitle,
                         count = count,
-                        count,
+                        count
                     )
                 )
             }

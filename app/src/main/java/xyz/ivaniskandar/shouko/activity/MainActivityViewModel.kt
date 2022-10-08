@@ -119,7 +119,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
             ApplicationItem(
                 cn,
                 it.activityInfo.loadLabel(pm).toString(),
-                shadowWrapper.run(it.activityInfo.loadIcon(pm)).toBitmap().asImageBitmap(),
+                shadowWrapper.run(it.activityInfo.loadIcon(pm)).toBitmap().asImageBitmap()
             )
         }.sortedBy { it.label }
     }

@@ -202,16 +202,16 @@ fun AppLinkChooserSheet(
                             headlineText = {
                                 Text(
                                     text = item.loadLabel(context)!!,
-                                    style = MaterialTheme.typography.titleLarge,
+                                    style = MaterialTheme.typography.titleLarge
                                 )
                             },
                             colors = ListItemDefaults.colors(
                                 containerColor = Color.Transparent // Doesn't used -- M3 1.0.0-alpha14 issue
-                            ),
+                            )
                         )
                     }
                 }
-            },
+            }
         ) {
             // Empty
         }

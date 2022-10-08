@@ -63,7 +63,7 @@ import xyz.ivaniskandar.shouko.util.setAsAssistantAction
 @Composable
 fun AssistantButtonSettings(
     navController: NavController,
-    contentPadding: PaddingValues,
+    contentPadding: PaddingValues
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -72,7 +72,7 @@ fun AssistantButtonSettings(
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = contentPadding,
+        contentPadding = contentPadding
     ) {
         item {
             ReadLogsCard(visible = !context.canReadSystemLogs) {
@@ -121,7 +121,7 @@ fun AssistantButtonSettings(
 fun AssistantActionSelection(
     mainViewModel: MainActivityViewModel = viewModel(),
     navController: NavController,
-    contentPadding: PaddingValues,
+    contentPadding: PaddingValues
 ) {
     val scope = rememberCoroutineScope()
     val prefs = ShoukoApplication.prefs
@@ -132,7 +132,7 @@ fun AssistantActionSelection(
     )
     TabPager(
         pageTitles = titles,
-        contentPadding = contentPadding,
+        contentPadding = contentPadding
     ) { page ->
         when (page) {
             0 -> {
@@ -148,7 +148,7 @@ fun AssistantActionSelection(
                 ) {
                     if (items != null) {
                         LazyColumn(
-                            contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding()),
+                            contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding())
                         ) {
                             items(items!!) { item ->
                                 ApplicationRow(item = item) {
@@ -198,7 +198,7 @@ fun AssistantActionSelection(
                 ) {
                     if (items != null) {
                         LazyColumn(
-                            contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding()),
+                            contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding())
                         ) {
                             items(items!!) { item ->
                                 ShortcutCreatorRow(item = item) {
@@ -215,7 +215,7 @@ fun AssistantActionSelection(
             2 -> {
                 val context = LocalContext.current
                 LazyColumn(
-                    contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding()),
+                    contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding())
                 ) {
                     item { CategoryHeader(title = stringResource(id = R.string.category_title_media_key)) }
                     items(MediaKeyAction.Key.values()) { item ->

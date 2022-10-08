@@ -97,7 +97,7 @@ import java.net.URISyntaxException
  */
 class GAKeyOverrider(
     private val lifecycleOwner: LifecycleOwner,
-    private val service: AccessibilityService,
+    private val service: AccessibilityService
 ) : DefaultLifecycleObserver {
 
     private val keyguardManager: KeyguardManager = service.getSystemService()!!
@@ -322,7 +322,7 @@ class GAKeyOverrider(
             "WindowManager: startAssist launchMode=1",
             "WindowManager: startAssist launchMode=-1",
             "GAKeyEventHandler: launchAssistGuideActivity",
-            "GAKeyEventHandler: launchDefaultAssistSettings",
+            "GAKeyEventHandler: launchDefaultAssistSettings"
         )
         const val GOOGLE_PACKAGE_NAME = "com.google.android.googlequicksearchbox"
         const val GOOGLE_ASSISTANT_PACKAGE_NAME = "com.google.android.apps.googleassistant"

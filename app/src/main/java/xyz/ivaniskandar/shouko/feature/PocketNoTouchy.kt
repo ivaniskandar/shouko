@@ -42,7 +42,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  */
 class PocketNoTouchy(
     lifecycleOwner: LifecycleOwner,
-    private val service: AccessibilityService,
+    private val service: AccessibilityService
 ) : DefaultLifecycleObserver {
 
     private val sensorManager: SensorManager = service.getSystemService()!!

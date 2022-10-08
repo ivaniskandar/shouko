@@ -11,8 +11,10 @@ class AdaptiveForegroundDrawable : DrawableWrapper(ColorDrawable()) {
     override fun draw(canvas: Canvas) {
         val saveCount = canvas.save()
         canvas.scale(
-            scaleX, scaleY,
-            bounds.exactCenterX(), bounds.exactCenterY()
+            scaleX,
+            scaleY,
+            bounds.exactCenterX(),
+            bounds.exactCenterY()
         )
         super.draw(canvas)
         canvas.restoreToCount(saveCount)

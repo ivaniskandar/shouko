@@ -165,7 +165,7 @@ fun PermissionSetupNoRoot(command: String) {
         modifier = Modifier
             .clickable { context.startActivity(createShareTextIntent(adbCommand)) }
             .fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Color.Black, contentColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = Color.Black, contentColor = Color.White)
     ) {
         Text(
             text = adbCommand,

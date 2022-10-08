@@ -130,12 +130,12 @@ class MainActivity : ComponentActivity() {
                                             Icon(imageVector = Icons.Rounded.ArrowBack, contentDescription = null)
                                         }
                                     }
-                                } else {{}},
+                                } else { {} },
                                 actions = { MainActivityActions(navController = navController) },
                                 scrollBehavior = scrollBehavior
                             )
                         },
-                        contentPadding = WindowInsets.navigationBars.asPaddingValues(),
+                        contentPadding = WindowInsets.navigationBars.asPaddingValues()
                     ) { innerPadding ->
                         val rootAvailable = remember { isRootAvailable }
                         val slideDistance = rememberSlideDistance()
@@ -143,7 +143,7 @@ class MainActivity : ComponentActivity() {
                             navController = navController,
                             startDestination = Screen.Home.route,
                             enterTransition = { materialSharedAxisXIn(forward = true, slideDistance) },
-                            exitTransition = { materialSharedAxisXOut(forward = true, slideDistance) },
+                            exitTransition = { materialSharedAxisXOut(forward = true, slideDistance) }
                         ) {
                             composable(route = Screen.Home.route) { Home(navController, innerPadding) }
                             composable(Screen.ReadLogsSetup.route) {
@@ -186,7 +186,7 @@ class MainActivity : ComponentActivity() {
                                         mainViewModel = viewModel,
                                         navController = navController,
                                         settingsKey = key,
-                                        contentPadding = innerPadding,
+                                        contentPadding = innerPadding
                                     )
                                 } else {
                                     logcat(LogPriority.ERROR) { "Lockscreen shortcut settings key is not specified." }
@@ -215,7 +215,7 @@ class MainActivity : ComponentActivity() {
                                         approved = true,
                                         mainViewModel = viewModel,
                                         navController = navController,
-                                        contentPadding = innerPadding,
+                                        contentPadding = innerPadding
                                     )
                                 }
                                 composable(Screen.UnapprovedLinkTargetList.route) {
@@ -223,7 +223,7 @@ class MainActivity : ComponentActivity() {
                                         approved = false,
                                         mainViewModel = viewModel,
                                         navController = navController,
-                                        contentPadding = innerPadding,
+                                        contentPadding = innerPadding
                                     )
                                 }
                                 bottomSheet(Screen.LinkTargetInfoSheet.route) {
