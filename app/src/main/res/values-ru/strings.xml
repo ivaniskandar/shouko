@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name" translatable="false">XPERI+</string>
     <string name="accessibility_service_desc">Запускайте функции и отправляйте действие кнопки, когда это необходимо.</string>
 
     <string name="assistant_button_title">Кнопка помощника</string>
@@ -39,7 +38,6 @@
     <string name="shell_permission_setup_desc_root">Root будет использоваться для предоставления этого разрешения.</string>
     <string name="shell_permission_setup_desc_noroot">Чтобы предоставить это разрешение, выполните следующие действия:\n\n1. Настройте ADB на вашем компьютере и телефоне\n2. Подключите телефон к компьютеру\n3. Выполните эту команду в терминале вашего компьютера или командной строке в одну строку:</string>
     <string name="shell_permission_setup_desc_noroot_adb_link_label">Настройка ADB на вашем компьютере и телефоне</string>  <!-- Label for annotated link inside read_logs_permission_setup_desc_noroot. -->
-    <string name="setup_adb_link" translatable="false">https://kutt.it/SetupADB</string>
     <string name="shell_permission_setup_command_card_caption">Коснитесь карточки, чтобы поделиться командой</string>
     <string name="shell_permission_setup_desc_extra">Приложение будет перезапущено после получения разрешения.</string>
 

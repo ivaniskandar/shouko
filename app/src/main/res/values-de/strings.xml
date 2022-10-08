@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name" translatable="false">XPERI+</string>
     <string name="accessibility_service_desc">Ermöglicht Funktionsausführung und Tastenneubelegung.</string>
 
     <string name="assistant_button_title">Assistant-Taste</string>
@@ -39,7 +38,6 @@
     <string name="shell_permission_setup_desc_root">Root wird benutzt, um diese Berechtigungen zu gewähren.</string>
     <string name="shell_permission_setup_desc_noroot">Um diese Berechtigungen zu gewären, tun Sie bitte das folgende:\n\n1. ADB auf Ihrem Computer einrichten und auf Ihrem Telefon aktivieren.\n2. Ihr Telefon mit Ihrem Computer über USB verbinden.\n3. Diesen Befehl in einem Terminal oder der Eingabeaufforderung auf Ihrem Computer eingeben:</string>
     <string name="shell_permission_setup_desc_noroot_adb_link_label">Setup ADB on your computer and phone</string>  <!-- Label for annotated link inside read_logs_permission_setup_desc_noroot. -->
-    <string name="setup_adb_link" translatable="false">https://kutt.it/SetupADB</string>
     <string name="shell_permission_setup_command_card_caption">Tap the card to share command</string>
     <string name="shell_permission_setup_desc_extra">Die App wird neugestartet, nachdem die Berechtigungen gewährt worden.</string>
 
