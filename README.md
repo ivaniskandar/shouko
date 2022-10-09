@@ -7,7 +7,7 @@ Features
 
 - **Assistant Button Override**
 
-  This feature is available on Xperia 5 II, Xperia 10 III, Xperia 5 III and Xperia 1 III.
+  This feature is available on Xperia 5 II, Xperia 10 III, Xperia 5 III, Xperia 1 III and Xperia 1 IV.
 
   Launches an app or a shortcut when the Assistant button is pressed. You can also disable the button completely.
 
@@ -39,6 +39,12 @@ Features
   
   To clean a link, share the original link to the Link Cleaner activity and the cleaned link will be reshared. You can also copy the original link to clipboard and open the Link Cleaner shortcut, the cleaned link will replace the original link in the clipboard.
 
+- **Click to Chat**
+
+  Start a WhatsApp chat without adding the recipient phone number to your contacts first.
+
+  To do so, click a phone number detected by the system or launch the shortcut after copying a phone number.
+
 - **Coffee**
 
   A Quick Settings tile that runs a service to keep your phone screen awake. Turning off the screen will automatically disable this feature.
@@ -63,7 +69,7 @@ Some feature in this app requires accessibility service to run. Features using t
 Device Compatibility
 ----------
 
-This app is mainly tested on the **Xperia 5 II** running **stock Android 11** firmware. Some features require specific hardware features to work, but other than that it should work properly on other devices.
+This app features generally works on all devices unless specified otherwise. Some feature require specific hardware features to work.
 
 Download
 ----------
