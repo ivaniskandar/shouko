@@ -17,9 +17,9 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -34,9 +35,9 @@ import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -68,7 +69,6 @@ import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3Theme
 import xyz.ivaniskandar.shouko.util.loadIcon
 import xyz.ivaniskandar.shouko.util.loadLabel
 import xyz.ivaniskandar.shouko.util.queryIntentActivitiesCompat
-import androidx.compose.material.MaterialTheme as M2Theme
 
 /**
  * "Browser" activity as a workaround for App Link changes in S.
@@ -145,7 +145,7 @@ fun AppLinkChooserSheet(
 
     Box {
         Scrim(
-            color = M2Theme.colors.onSurface.copy(alpha = 0.32f),
+            color = MaterialTheme.colorScheme.scrim.copy(alpha = 0.32f),
             onDismiss = {
                 scope.launch { state.hide() }
             },
@@ -157,9 +157,9 @@ fun AppLinkChooserSheet(
                 .align(Alignment.BottomCenter),
             scrimColor = Color.Transparent,
             sheetState = state,
-            sheetShape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
+            sheetShape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
             sheetElevation = 0.dp,
-            sheetBackgroundColor = MaterialTheme.colorScheme.surface,
+            sheetBackgroundColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
             sheetContentColor = MaterialTheme.colorScheme.onSurface,
             sheetContent = {
                 Text(
@@ -169,11 +169,12 @@ fun AppLinkChooserSheet(
                         .padding(vertical = 16.dp),
                     color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
                 )
-                SoftDivider()
+                SoftDivider(modifier = Modifier.padding(horizontal = 16.dp))
                 LazyColumn(
-                    contentPadding = WindowInsets.navigationBars.only(WindowInsetsSides.Bottom).asPaddingValues(),
+                    modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom)),
+                    contentPadding = PaddingValues(vertical = 8.dp),
                     verticalArrangement = Arrangement.spacedBy(2.dp)
                 ) {
                     items(resolverIntent) { item ->
@@ -207,16 +208,13 @@ fun AppLinkChooserSheet(
                                     style = MaterialTheme.typography.titleLarge
                                 )
                             },
-                            colors = ListItemDefaults.colors(
-                                containerColor = Color.Transparent // Doesn't used -- M3 1.0.0-alpha14 issue
-                            )
+                            tonalElevation = 1.dp,
                         )
                     }
                 }
-            }
-        ) {
-            // Empty
-        }
+            },
+            content = { /* Empty */ }
+        )
     }
     var opened by remember { mutableStateOf(false) }
     LaunchedEffect(key1 = state.currentValue) {
