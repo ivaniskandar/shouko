@@ -21,10 +21,6 @@ fun ComponentName?.loadLabel(context: Context): String? {
     }
 }
 
-fun ComponentName?.loadIcon(context: Context): Drawable? {
-    return if (this != null) {
-        context.packageManager.getApplicationIcon(packageName)
-    } else {
-        null
-    }
+fun ComponentName.loadIcon(context: Context): Drawable {
+    return context.packageManager.getApplicationIcon(packageName)
 }
