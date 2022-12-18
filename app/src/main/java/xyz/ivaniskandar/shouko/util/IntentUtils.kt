@@ -3,6 +3,7 @@ package xyz.ivaniskandar.shouko.util
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_VIEW
+import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.core.os.bundleOf
 import logcat.LogPriority
@@ -45,14 +46,17 @@ suspend fun Intent.setAsAssistantAction(prefs: PreferencesRepository) {
  * @see [loadLabel]
  */
 fun Intent.loadLabel(context: Context): String {
+    val pm = context.packageManager
     // Try to get shortcut label from intent first
     @Suppress("DEPRECATION")
     val shortcutLabel = getStringExtra(Intent.EXTRA_SHORTCUT_NAME)
     return if (shortcutLabel != null) {
         shortcutLabel
     } else {
-        val ri = context.packageManager.resolveActivityCompat(this, 0)
-        ri?.loadLabel(context.packageManager).toString()
+        val ri = pm.resolveActivityCompat(this, PackageManager.MATCH_ALL)
+        ri?.loadLabel(pm)?.toString()
+            // Backoff to app label
+            ?: pm.getApplicationLabel(pm.getApplicationInfoCompat(component.packageName, 0)).toString()
     }
 }
 

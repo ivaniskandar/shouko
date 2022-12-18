@@ -192,16 +192,18 @@ fun AppLinkChooserSheet(
                                 ),
                             leadingContent = {
                                 Image(
-                                    bitmap = shadowWrapper.run(item.loadIcon(context)!!)
-                                        .toBitmap()
-                                        .asImageBitmap(),
+                                    bitmap = remember {
+                                        shadowWrapper.run(item.loadIcon(context)!!)
+                                            .toBitmap()
+                                            .asImageBitmap()
+                                    },
                                     contentDescription = null,
                                     modifier = Modifier.size(36.dp)
                                 )
                             },
                             headlineText = {
                                 Text(
-                                    text = item.loadLabel(context)!!,
+                                    text = remember { item.loadLabel(context)!! },
                                     style = MaterialTheme.typography.titleLarge
                                 )
                             },
