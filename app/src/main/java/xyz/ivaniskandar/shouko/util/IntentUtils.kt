@@ -47,17 +47,16 @@ suspend fun Intent.setAsAssistantAction(prefs: PreferencesRepository) {
  */
 fun Intent.loadLabel(context: Context): String {
     val pm = context.packageManager
+
     // Try to get shortcut label from intent first
     @Suppress("DEPRECATION")
-    val shortcutLabel = getStringExtra(Intent.EXTRA_SHORTCUT_NAME)
-    return if (shortcutLabel != null) {
-        shortcutLabel
-    } else {
-        val ri = pm.resolveActivityCompat(this, PackageManager.MATCH_ALL)
-        ri?.loadLabel(pm)?.toString()
-            // Backoff to app label
-            ?: pm.getApplicationLabel(pm.getApplicationInfoCompat(component.packageName, 0)).toString()
-    }
+    return getStringExtra(Intent.EXTRA_SHORTCUT_NAME)
+        ?: (
+            // Backoff to activity label
+            pm.resolveActivityCompat(this, PackageManager.MATCH_ALL)?.loadLabel(pm)?.toString()
+                // Backoff to app label
+                ?: pm.getApplicationLabel(pm.getApplicationInfoCompat(component!!.packageName, 0)).toString()
+            )
 }
 
 /**

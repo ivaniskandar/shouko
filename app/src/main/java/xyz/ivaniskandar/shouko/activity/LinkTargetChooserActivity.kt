@@ -152,7 +152,7 @@ class LinkTargetChooserActivity : ComponentActivity() {
 private data class Target(
     val component: ComponentName,
     val title: String,
-    val icon: ImageBitmap,
+    val icon: ImageBitmap
 )
 
 @Composable
@@ -192,7 +192,7 @@ private fun AppLinkChooserSheet(
                             .fillMaxWidth()
                             .padding(vertical = 16.dp),
                         textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.titleLarge,
+                        style = MaterialTheme.typography.titleLarge
                     )
                     SoftDivider(modifier = Modifier.padding(horizontal = 16.dp))
                     LazyRow(
@@ -200,7 +200,7 @@ private fun AppLinkChooserSheet(
                             .fillMaxWidth()
                             .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom)),
                         contentPadding = PaddingValues(horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
                     ) {
                         items(targets) { item ->
                             Column(
@@ -221,7 +221,7 @@ private fun AppLinkChooserSheet(
                                     .padding(horizontal = 8.dp)
                                     .size(width = 96.dp, height = 128.dp),
                                 verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally,
+                                horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Image(
                                     bitmap = item.icon,
@@ -234,7 +234,7 @@ private fun AppLinkChooserSheet(
                                     style = MaterialTheme.typography.bodySmall,
                                     textAlign = TextAlign.Center,
                                     maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                             }
                         }
