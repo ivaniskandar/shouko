@@ -25,7 +25,7 @@ import kotlin.math.ln
 
 private fun MonetCompat.getMonetNeutralColor(
     @IntRange(from = 1, to = 2) type: Int,
-    @IntRange(from = 50, to = 900) shade: Int
+    @IntRange(from = 50, to = 900) shade: Int,
 ): Color {
     val monetColor = when (type) {
         1 -> this.getMonetColors().neutral1[shade]
@@ -36,7 +36,7 @@ private fun MonetCompat.getMonetNeutralColor(
 
 private fun MonetCompat.getMonetAccentColor(
     @IntRange(from = 1, to = 3) type: Int,
-    @IntRange(from = 50, to = 900) shade: Int
+    @IntRange(from = 50, to = 900) shade: Int,
 ): Color {
     val monetColor = when (type) {
         1 -> this.getMonetColors().accent1[shade]
@@ -74,7 +74,7 @@ fun MonetCompat.lightMonetCompatScheme(
     onSurfaceVariant: Color = getMonetNeutralColor(2, 700),
     inverseSurface: Color = getMonetNeutralColor(1, 800),
     inverseOnSurface: Color = getMonetNeutralColor(2, 50),
-    outline: Color = getMonetAccentColor(2, 500)
+    outline: Color = getMonetAccentColor(2, 500),
 ): ColorScheme =
     lightColorScheme(
         primary = primary,
@@ -98,7 +98,7 @@ fun MonetCompat.lightMonetCompatScheme(
         onSurfaceVariant = onSurfaceVariant,
         inverseSurface = inverseSurface,
         inverseOnSurface = inverseOnSurface,
-        outline = outline
+        outline = outline,
     )
 
 /**
@@ -129,7 +129,7 @@ fun MonetCompat.darkMonetCompatScheme(
     onSurfaceVariant: Color = getMonetNeutralColor(2, 200),
     inverseSurface: Color = getMonetNeutralColor(1, 100),
     inverseOnSurface: Color = getMonetNeutralColor(1, 800),
-    outline: Color = getMonetNeutralColor(2, 500)
+    outline: Color = getMonetNeutralColor(2, 500),
 ): ColorScheme =
     darkColorScheme(
         primary = primary,
@@ -153,7 +153,7 @@ fun MonetCompat.darkMonetCompatScheme(
         onSurfaceVariant = onSurfaceVariant,
         inverseSurface = inverseSurface,
         inverseOnSurface = inverseOnSurface,
-        outline = outline
+        outline = outline,
     )
 
 val ShoukoTypography = Typography(
@@ -162,14 +162,14 @@ val ShoukoTypography = Typography(
         fontWeight = FontWeight.Normal,
         fontSize = 20.sp,
         lineHeight = 28.0.sp,
-        letterSpacing = 0.0.sp
-    )
+        letterSpacing = 0.0.sp,
+    ),
 )
 
 @Composable
 fun ShoukoM3Theme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val monet = remember(LocalConfiguration.current) { MonetCompat.getInstance() }
     val colorScheme = if (darkTheme) monet.darkMonetCompatScheme() else monet.lightMonetCompatScheme()
@@ -179,14 +179,14 @@ fun ShoukoM3Theme(
 @Composable
 fun ShoukoM3PreviewTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val colorScheme = if (darkTheme) darkColorScheme() else lightColorScheme()
     MaterialTheme(colorScheme = colorScheme, content = content)
 }
 
 fun ColorScheme.surfaceColorAtElevation(
-    elevation: Dp
+    elevation: Dp,
 ): Color {
     if (elevation == 0.dp) return surface
     val alpha = ((4.5f * ln(elevation.value + 1)) + 2f) / 100f

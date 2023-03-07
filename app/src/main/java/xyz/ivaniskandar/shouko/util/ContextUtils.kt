@@ -51,7 +51,7 @@ fun openDefaultAppsSettings(context: Context) {
 fun openOpenByDefaultSettings(context: Context, packageName: String) {
     var i = Intent(
         Settings.ACTION_APP_OPEN_BY_DEFAULT_SETTINGS,
-        Uri.parse("package:$packageName")
+        Uri.parse("package:$packageName"),
     )
     if (Build.MANUFACTURER == "samsung" || context.packageManager.resolveActivityCompat(i, 0) == null) {
         // Back off to App Info

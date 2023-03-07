@@ -63,7 +63,7 @@ import xyz.ivaniskandar.shouko.util.setAsAssistantAction
 @Composable
 fun AssistantButtonSettings(
     navController: NavController,
-    contentPadding: PaddingValues
+    contentPadding: PaddingValues,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -72,7 +72,7 @@ fun AssistantButtonSettings(
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = contentPadding
+        contentPadding = contentPadding,
     ) {
         item {
             ReadLogsCard(visible = !context.canReadSystemLogs) {
@@ -88,7 +88,7 @@ fun AssistantButtonSettings(
             SwitchPreference(
                 title = stringResource(id = R.string.assistant_button_title),
                 checked = buttonPrefs.enabled,
-                enabled = context.canWriteSecureSettings
+                enabled = context.canWriteSecureSettings,
             ) {
                 scope.launch { prefs.setAssistButtonEnabled(it) }
             }
@@ -98,7 +98,7 @@ fun AssistantButtonSettings(
                 title = stringResource(id = R.string.assistant_launch_selection_title),
                 subtitle = buttonPrefs.action?.getLabel(context)
                     ?: stringResource(id = R.string.assistant_action_select_default_value),
-                enabled = buttonPrefs.enabled && context.canReadSystemLogs
+                enabled = buttonPrefs.enabled && context.canReadSystemLogs,
             ) {
                 navController.navigate(Screen.AssistantLaunchSelection.route)
             }
@@ -111,7 +111,7 @@ fun AssistantButtonSettings(
                 enabled = buttonPrefs.enabled && buttonPrefs.action != null,
                 onCheckedChanged = {
                     scope.launch { prefs.setHideAssistantCue(it) }
-                }
+                },
             )
         }
     }
@@ -121,18 +121,18 @@ fun AssistantButtonSettings(
 fun AssistantActionSelection(
     mainViewModel: MainActivityViewModel = viewModel(),
     navController: NavController,
-    contentPadding: PaddingValues
+    contentPadding: PaddingValues,
 ) {
     val scope = rememberCoroutineScope()
     val prefs = ShoukoApplication.prefs
     val titles = listOf(
         stringResource(R.string.tab_title_apps),
         stringResource(R.string.tab_title_shortcuts),
-        stringResource(R.string.tab_title_other)
+        stringResource(R.string.tab_title_other),
     )
     TabPager(
         pageTitles = titles,
-        contentPadding = contentPadding
+        contentPadding = contentPadding,
     ) { page ->
         when (page) {
             0 -> {
@@ -144,11 +144,11 @@ fun AssistantActionSelection(
                     modifier = Modifier.fillMaxSize(),
                     indicator = { s, trigger ->
                         M3SwipeRefreshIndicator(state = s, refreshTriggerDistance = trigger)
-                    }
+                    },
                 ) {
                     if (items != null) {
                         LazyColumn(
-                            contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding())
+                            contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding()),
                         ) {
                             items(items!!) { item ->
                                 ApplicationRow(item = item) {
@@ -180,7 +180,7 @@ fun AssistantActionSelection(
                                 Toast.makeText(
                                     context,
                                     context.getString(R.string.assistant_action_save_failed_toast),
-                                    Toast.LENGTH_SHORT
+                                    Toast.LENGTH_SHORT,
                                 ).show()
                             }
                             navController.popBackStack()
@@ -194,11 +194,11 @@ fun AssistantActionSelection(
                     indicatorPadding = contentPadding,
                     indicator = { s, trigger ->
                         M3SwipeRefreshIndicator(state = s, refreshTriggerDistance = trigger)
-                    }
+                    },
                 ) {
                     if (items != null) {
                         LazyColumn(
-                            contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding())
+                            contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding()),
                         ) {
                             items(items!!) { item ->
                                 ShortcutCreatorRow(item = item) {
@@ -215,7 +215,7 @@ fun AssistantActionSelection(
             2 -> {
                 val context = LocalContext.current
                 LazyColumn(
-                    contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding())
+                    contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding()),
                 ) {
                     item { CategoryHeader(title = stringResource(id = R.string.category_title_media_key)) }
                     items(MediaKeyAction.Key.values()) { item ->
@@ -227,7 +227,7 @@ fun AssistantActionSelection(
                                     prefs.setAssistButtonAction(MediaKeyAction(item))
                                     navController.popBackStack()
                                 }
-                            }
+                            },
                         )
                     }
 
@@ -242,7 +242,7 @@ fun AssistantActionSelection(
                                         prefs.setAssistButtonAction(FlashlightAction())
                                         navController.popBackStack()
                                     }
-                                }
+                                },
                             )
                         }
                     }
@@ -255,7 +255,7 @@ fun AssistantActionSelection(
                                     prefs.setAssistButtonAction(ScreenshotAction())
                                     navController.popBackStack()
                                 }
-                            }
+                            },
                         )
                     }
                     items(StatusBarAction.PanelType.values()) { item ->
@@ -267,7 +267,7 @@ fun AssistantActionSelection(
                                     prefs.setAssistButtonAction(StatusBarAction(item))
                                     navController.popBackStack()
                                 }
-                            }
+                            },
                         )
                     }
                     item {
@@ -279,7 +279,7 @@ fun AssistantActionSelection(
                                     prefs.setAssistButtonAction(RingerModeAction())
                                     navController.popBackStack()
                                 }
-                            }
+                            },
                         )
                     }
                     item {
@@ -291,7 +291,7 @@ fun AssistantActionSelection(
                                     prefs.setAssistButtonAction(MuteMicrophoneAction())
                                     navController.popBackStack()
                                 }
-                            }
+                            },
                         )
                     }
                     item {
@@ -303,7 +303,7 @@ fun AssistantActionSelection(
                                     prefs.setAssistButtonAction(DigitalAssistantAction())
                                     navController.popBackStack()
                                 }
-                            }
+                            },
                         )
                     }
                     item {
@@ -315,7 +315,7 @@ fun AssistantActionSelection(
                                     prefs.setAssistButtonAction(DoNothingAction())
                                     navController.popBackStack()
                                 }
-                            }
+                            },
                         )
                     }
                 }

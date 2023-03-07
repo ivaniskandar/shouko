@@ -45,7 +45,7 @@ import xyz.ivaniskandar.shouko.util.highlightSettingsTo
 @Composable
 fun Home(
     navController: NavController,
-    contentPadding: PaddingValues
+    contentPadding: PaddingValues,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -71,7 +71,7 @@ fun Home(
                                 ?: stringResource(id = R.string.assistant_action_select_default_value)
                         }
                     },
-                    enabled = TadanoAccessibilityService.isActive
+                    enabled = TadanoAccessibilityService.isActive,
                 ) {
                     navController.navigate(Screen.AssistantButtonSettings.route)
                 }
@@ -100,7 +100,7 @@ fun Home(
                 title = stringResource(R.string.flip_to_shush_title),
                 subtitle = subtitle,
                 checked = flipToShushEnabled,
-                enabled = TadanoAccessibilityService.isActive
+                enabled = TadanoAccessibilityService.isActive,
             ) {
                 if (it) {
                     val isGrantedDndAccess = context.getSystemService<NotificationManager>()!!
@@ -109,7 +109,7 @@ fun Home(
                         Toast.makeText(
                             context,
                             context.getString(R.string.allow_dnd_access_toast),
-                            Toast.LENGTH_SHORT
+                            Toast.LENGTH_SHORT,
                         ).show()
                         val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
                             .highlightSettingsTo(context.packageName)
@@ -126,7 +126,7 @@ fun Home(
                 title = stringResource(R.string.pocket_no_touchy_title),
                 subtitle = stringResource(R.string.pocket_no_touchy_desc),
                 checked = preventPocketTouch,
-                enabled = TadanoAccessibilityService.isActive
+                enabled = TadanoAccessibilityService.isActive,
             ) {
                 scope.launch { prefs.setPreventPocketTouchEnabled(it) }
             }
@@ -135,7 +135,7 @@ fun Home(
             Preference(
                 title = stringResource(R.string.lockscreen_shortcut_title),
                 subtitle = stringResource(R.string.lockscreen_shortcut_desc),
-                enabled = TadanoAccessibilityService.isActive
+                enabled = TadanoAccessibilityService.isActive,
             ) {
                 navController.navigate(Screen.LockscreenShortcutSettings.route)
             }
@@ -146,7 +146,7 @@ fun Home(
                 SoftDivider()
                 Preference(
                     title = stringResource(R.string.android_app_link_title),
-                    subtitle = stringResource(id = R.string.android_app_link_subtitle)
+                    subtitle = stringResource(id = R.string.android_app_link_subtitle),
                 ) {
                     navController.navigate(Screen.AndroidAppLinkSettings.route)
                 }
@@ -159,7 +159,7 @@ fun Home(
             contentDescription = null,
             modifier = Modifier
                 .padding(horizontal = 8.dp)
-                .size(64.dp)
+                .size(64.dp),
         )
     }
 }

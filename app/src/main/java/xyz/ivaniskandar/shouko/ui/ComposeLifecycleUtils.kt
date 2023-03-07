@@ -14,7 +14,7 @@ fun ComposeLifecycleCallback(
     onPause: (() -> Unit)? = null,
     onStop: (() -> Unit)? = null,
     onDestroy: (() -> Unit)? = null,
-    onAny: (() -> Unit)? = null
+    onAny: (() -> Unit)? = null,
 ) {
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     DisposableEffect(lifecycle) {

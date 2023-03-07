@@ -106,7 +106,7 @@ class LinkCleanerTargetActivity : ComponentActivity() {
                 type = intent.type
                 putExtra(Intent.EXTRA_TEXT, newLink)
             },
-            null
+            null,
         ).apply {
             // Don't loop lol
             putExtra(Intent.EXTRA_EXCLUDE_COMPONENTS, arrayOf(componentName))

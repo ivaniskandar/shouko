@@ -97,7 +97,7 @@ import java.net.URISyntaxException
  */
 class GAKeyOverrider(
     private val lifecycleOwner: LifecycleOwner,
-    private val service: AccessibilityService
+    private val service: AccessibilityService,
 ) : DefaultLifecycleObserver {
 
     private val keyguardManager: KeyguardManager = service.getSystemService()!!
@@ -187,7 +187,7 @@ class GAKeyOverrider(
                 service.contentResolver.registerContentObserver(
                     Settings.Global.getUriFor(GA_KEY_DISABLED_GLOBAL_SETTING_KEY),
                     false,
-                    gaKeyDisabler
+                    gaKeyDisabler,
                 )
                 isGAKeyDisablerRegistered = true
             }
@@ -294,7 +294,7 @@ class GAKeyOverrider(
                 audioManager.setStreamVolume(
                     AudioManager.STREAM_MUSIC,
                     audioManager.getStreamMinVolume(AudioManager.STREAM_MUSIC),
-                    0
+                    0,
                 )
             }
         } else if (volumeBeforeMuted != null) {
@@ -322,7 +322,7 @@ class GAKeyOverrider(
             "WindowManager: startAssist launchMode=1",
             "WindowManager: startAssist launchMode=-1",
             "GAKeyEventHandler: launchAssistGuideActivity",
-            "GAKeyEventHandler: launchDefaultAssistSettings"
+            "GAKeyEventHandler: launchDefaultAssistSettings",
         )
         const val GOOGLE_PACKAGE_NAME = "com.google.android.googlequicksearchbox"
         const val GOOGLE_ASSISTANT_PACKAGE_NAME = "com.google.android.apps.googleassistant"
@@ -405,7 +405,7 @@ class MediaKeyAction(private val key: Key) : Action() {
         PLAY_PAUSE(KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, R.string.media_key_play_pause, R.drawable.ic_play_pause),
         STOP(KeyEvent.KEYCODE_MEDIA_STOP, R.string.media_key_stop, R.drawable.ic_stop),
         PREVIOUS(KeyEvent.KEYCODE_MEDIA_PREVIOUS, R.string.media_key_previous, R.drawable.ic_previous),
-        NEXT(KeyEvent.KEYCODE_MEDIA_NEXT, R.string.media_key_next, R.drawable.ic_next)
+        NEXT(KeyEvent.KEYCODE_MEDIA_NEXT, R.string.media_key_next, R.drawable.ic_next),
     }
 
     companion object {
@@ -534,7 +534,7 @@ class StatusBarAction(private val type: PanelType) : Action() {
 
     enum class PanelType(val method: String, val labelResId: Int, val iconVector: ImageVector) {
         NOTIFICATION("expandNotificationsPanel", R.string.statusbar_action_notifications, Icons.Rounded.Aod),
-        QS("expandSettingsPanel", R.string.statusbar_action_qs, Icons.Rounded.AdUnits)
+        QS("expandSettingsPanel", R.string.statusbar_action_qs, Icons.Rounded.AdUnits),
     }
 
     companion object {
@@ -622,7 +622,7 @@ class MuteMicrophoneAction : Action() {
         val newChannel = NotificationChannel(
             toPlainString(),
             context.getString(R.string.mute_microphone_notif_channel_title),
-            NotificationManager.IMPORTANCE_DEFAULT
+            NotificationManager.IMPORTANCE_DEFAULT,
         ).apply {
             setSound(null, null)
             enableVibration(false)
@@ -644,8 +644,8 @@ class MuteMicrophoneAction : Action() {
                     context,
                     NOTIFICATION_ID,
                     Intent(NOTIFICATION_CANCEL_ACTION),
-                    PendingIntent.FLAG_IMMUTABLE
-                )
+                    PendingIntent.FLAG_IMMUTABLE,
+                ),
             )
             .build()
         nm.notify(NOTIFICATION_ID, notification)

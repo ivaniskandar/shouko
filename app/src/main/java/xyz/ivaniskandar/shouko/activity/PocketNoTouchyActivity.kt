@@ -55,7 +55,7 @@ class PocketNoTouchyActivity : ComponentActivity() {
                     modifier = Modifier
                         .fillMaxSize()
                         .background(Color.Black),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     DialogCard {
                         lifecycleScope.launch { PocketNoTouchy.ignoreCheckFlow.emit(Unit) }
@@ -88,18 +88,18 @@ class PocketNoTouchyActivity : ComponentActivity() {
     fun DialogCard(onButtonClicked: () -> Unit = {}) {
         OutlinedCard(
             modifier = Modifier.padding(24.dp),
-            border = BorderStroke(width = 1.dp, color = Color(0x1FFFFFFF))
+            border = BorderStroke(width = 1.dp, color = Color(0x1FFFFFFF)),
         ) {
             Column(modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 16.dp)) {
                 Text(
                     text = stringResource(R.string.no_touchy_dialog_title),
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = stringResource(R.string.no_touchy_dialog_text),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
                 )
                 Spacer(modifier = Modifier.height(24.dp))
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {

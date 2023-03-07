@@ -28,7 +28,7 @@ fun CategoryHeader(title: String, divider: Boolean = false) {
         text = title.uppercase(Locale.getDefault()),
         modifier = Modifier.padding(start = 68.dp, top = 20.dp, end = 16.dp, bottom = 8.dp),
         color = MaterialTheme.colorScheme.primary,
-        style = MaterialTheme.typography.labelMedium
+        style = MaterialTheme.typography.labelMedium,
     )
 }
 
@@ -43,9 +43,9 @@ fun ApplicationRow(item: ApplicationItem, onClick: (ComponentName) -> Unit) {
             Image(
                 bitmap = item.icon,
                 contentDescription = null,
-                modifier = RowIconModifier
+                modifier = RowIconModifier,
             )
-        }
+        },
     )
 }
 
@@ -61,9 +61,9 @@ fun ShortcutCreatorRow(item: ShortcutCreatorItem, onClick: (ComponentName) -> Un
             Image(
                 bitmap = item.icon,
                 contentDescription = null,
-                modifier = RowIconModifier
+                modifier = RowIconModifier,
             )
-        }
+        },
     )
 }
 
@@ -71,7 +71,7 @@ fun ShortcutCreatorRow(item: ShortcutCreatorItem, onClick: (ComponentName) -> Un
 fun CommonActionRow(
     iconPainter: Painter,
     label: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     ListItem(
         modifier = Modifier
@@ -83,9 +83,9 @@ fun CommonActionRow(
                 painter = iconPainter,
                 contentDescription = null,
                 modifier = RowIconModifier,
-                tint = MaterialTheme.colorScheme.primary
+                tint = MaterialTheme.colorScheme.primary,
             )
-        }
+        },
     )
 }
 
@@ -93,7 +93,7 @@ fun CommonActionRow(
 fun CommonActionRow(
     iconVector: ImageVector,
     label: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     ListItem(
         modifier = Modifier
@@ -106,8 +106,8 @@ fun CommonActionRow(
                 imageVector = iconVector,
                 contentDescription = null,
                 modifier = RowIconModifier,
-                tint = MaterialTheme.colorScheme.primary
+                tint = MaterialTheme.colorScheme.primary,
             )
-        }
+        },
     )
 }

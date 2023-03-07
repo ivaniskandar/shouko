@@ -11,7 +11,7 @@ object DeviceModel {
         "XQ-AS42",
         "XQ-AS52",
         "XQ-AS62",
-        "XQ-AS72"
+        "XQ-AS72",
     ).contains(Build.MODEL)
 
     // Xperia 1 II
@@ -21,7 +21,7 @@ object DeviceModel {
         "XQ-AT42",
         "XQ-AT51",
         "XQ-AT52",
-        "XQ-AT72"
+        "XQ-AT72",
     ).contains(Build.MODEL)
 
     // Xperia 10 III
@@ -30,7 +30,7 @@ object DeviceModel {
         "SO-52B",
         "SOG04",
         "XQ-BT52",
-        "XQ-BT44"
+        "XQ-BT44",
     ).contains(Build.MODEL)
 
     // Xperia 5 III
@@ -41,7 +41,7 @@ object DeviceModel {
         "XQ-BQ42",
         "XQ-BQ52",
         "XQ-BQ62",
-        "XQ-BQ72"
+        "XQ-BQ72",
     ).contains(Build.MODEL)
 
     // Xperia 1 III
@@ -52,13 +52,13 @@ object DeviceModel {
         "XQ-BC72",
         "XQ-BC62",
         "XQ-BC52",
-        "XQ-BC42"
+        "XQ-BC42",
     ).contains(Build.MODEL)
 
     // Xperia 1 IV
     val isPDX223 = arrayOf(
         "XQ-CT54",
         "XQ-CT62",
-        "XQ-CT72"
+        "XQ-CT72",
     ).contains(Build.MODEL)
 }

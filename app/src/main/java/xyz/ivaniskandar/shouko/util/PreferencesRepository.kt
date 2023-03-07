@@ -27,7 +27,7 @@ class PreferencesRepository(private val preferencesStore: DataStore<Preferences>
         AssistButtonPrefs(
             it.assistButtonEnabled,
             Action.fromPlainString(it.assistButtonAction),
-            it.hideAssistantCue
+            it.hideAssistantCue,
         )
     }
 
@@ -154,5 +154,5 @@ class PreferencesRepository(private val preferencesStore: DataStore<Preferences>
 data class AssistButtonPrefs(
     val enabled: Boolean = false,
     val action: Action? = null,
-    val hideAssistantCue: Boolean = false
+    val hideAssistantCue: Boolean = false,
 )

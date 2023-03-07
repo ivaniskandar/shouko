@@ -52,7 +52,7 @@ fun PermissionSetup(
     title: String,
     permissionName: String,
     isRootAvailable: Boolean,
-    onPermissionGranted: () -> Unit
+    onPermissionGranted: () -> Unit,
 ) {
     val context = LocalContext.current
     Column(
@@ -61,7 +61,7 @@ fun PermissionSetup(
             .padding(16.dp)
             .fillMaxSize(),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Icon(
             imageVector = Icons.Rounded.PermDeviceInformation,
@@ -69,7 +69,7 @@ fun PermissionSetup(
             modifier = Modifier
                 .size(48.dp)
                 .padding(bottom = 12.dp),
-            tint = MaterialTheme.colorScheme.primary
+            tint = MaterialTheme.colorScheme.primary,
         )
 
         Text(text = title, style = MaterialTheme.typography.titleLarge, textAlign = TextAlign.Center)
@@ -106,7 +106,7 @@ fun PermissionSetupRoot(command: String) {
             .padding(vertical = 16.dp)
             .fillMaxWidth(),
         color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.bodyLarge
+        style = MaterialTheme.typography.bodyLarge,
     )
     Text(
         text = stringResource(R.string.shell_permission_setup_desc_extra),
@@ -114,7 +114,7 @@ fun PermissionSetupRoot(command: String) {
             .padding(bottom = 24.dp)
             .fillMaxWidth(),
         color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.bodyLarge
+        style = MaterialTheme.typography.bodyLarge,
     )
 
     FilledTonalButton(onClick = { Shell.cmd(command).submit() }) {
@@ -134,29 +134,29 @@ fun PermissionSetupNoRoot(command: String) {
         addStyle(
             style = SpanStyle(
                 color = MaterialTheme.colorScheme.primary,
-                textDecoration = TextDecoration.Underline
+                textDecoration = TextDecoration.Underline,
             ),
             start = startAnnotationIndex,
-            end = endAnnotationIndex
+            end = endAnnotationIndex,
         )
         addStringAnnotation(
             tag = "URL",
             annotation = stringResource(R.string.setup_adb_link),
             start = startAnnotationIndex,
-            end = endAnnotationIndex
+            end = endAnnotationIndex,
         )
     }
     val uriHandler = LocalUriHandler.current
     ClickableText(
         text = annotatedString,
         modifier = Modifier.padding(vertical = 24.dp),
-        style = MaterialTheme.typography.bodyLarge
+        style = MaterialTheme.typography.bodyLarge,
     ) {
         annotatedString
             .getStringAnnotations("URL", it, it)
             .firstOrNull()?.let { stringAnnotation ->
-                uriHandler.openUri(stringAnnotation.item)
-            }
+            uriHandler.openUri(stringAnnotation.item)
+        }
     }
 
     val context = LocalContext.current
@@ -165,13 +165,13 @@ fun PermissionSetupNoRoot(command: String) {
         modifier = Modifier
             .clickable { context.startActivity(createShareTextIntent(adbCommand)) }
             .fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Color.Black, contentColor = Color.White)
+        colors = CardDefaults.cardColors(containerColor = Color.Black, contentColor = Color.White),
     ) {
         Text(
             text = adbCommand,
             modifier = Modifier.padding(12.dp),
             fontSize = 12.sp,
-            fontFamily = FontFamily.Monospace
+            fontFamily = FontFamily.Monospace,
         )
     }
 
@@ -179,14 +179,14 @@ fun PermissionSetupNoRoot(command: String) {
         modifier = Modifier.padding(top = 2.dp),
         text = stringResource(R.string.shell_permission_setup_command_card_caption),
         color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.bodySmall
+        style = MaterialTheme.typography.bodySmall,
     )
 
     Text(
         text = stringResource(R.string.shell_permission_setup_desc_extra),
         modifier = Modifier.padding(vertical = 24.dp),
         color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.bodyLarge
+        style = MaterialTheme.typography.bodyLarge,
     )
 
     CircularProgressIndicator(modifier = Modifier.padding(24.dp))
@@ -202,7 +202,7 @@ fun ReadLogsPermissionSetupRootPreview() {
                 title = stringResource(id = R.string.read_logs_permission_setup_title),
                 permissionName = Manifest.permission.READ_LOGS,
                 isRootAvailable = true,
-                onPermissionGranted = {}
+                onPermissionGranted = {},
             )
         }
     }
@@ -218,7 +218,7 @@ fun ReadLogsPermissionSetupNoRootPreview() {
                 title = stringResource(id = R.string.read_logs_permission_setup_title),
                 permissionName = Manifest.permission.READ_LOGS,
                 isRootAvailable = false,
-                onPermissionGranted = {}
+                onPermissionGranted = {},
             )
         }
     }
@@ -234,7 +234,7 @@ fun WriteSettingsPermissionSetupNoRootPreview() {
                 title = stringResource(id = R.string.write_secure_settings_permission_setup_title),
                 permissionName = Manifest.permission.WRITE_SECURE_SETTINGS,
                 isRootAvailable = false,
-                onPermissionGranted = {}
+                onPermissionGranted = {},
             )
         }
     }

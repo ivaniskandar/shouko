@@ -43,13 +43,13 @@ import xyz.ivaniskandar.shouko.util.toComponentName
 @Composable
 fun LockscreenShortcutSettings(
     navController: NavController,
-    contentPadding: PaddingValues
+    contentPadding: PaddingValues,
 ) {
     val context = LocalContext.current
     ComponentName.unflattenFromString("")
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = contentPadding
+        contentPadding = contentPadding,
     ) {
         item {
             WriteSettingsCard(visible = !context.canWriteSecureSettings) {
@@ -62,7 +62,7 @@ fun LockscreenShortcutSettings(
                 subtitle = ShoukoApplication.prefs.lockscreenLeftAction.collectAsState(initial = null).value
                     ?.toComponentName()?.loadLabel(context)
                     ?: stringResource(id = R.string.assistant_action_select_default_value),
-                enabled = context.canWriteSecureSettings
+                enabled = context.canWriteSecureSettings,
             ) {
                 navController.navigate(Screen.LockscreenShortcutSelection.createRoute(LOCKSCREEN_LEFT_BUTTON))
             }
@@ -73,7 +73,7 @@ fun LockscreenShortcutSettings(
                 subtitle = ShoukoApplication.prefs.lockscreenRightAction.collectAsState(initial = null).value
                     ?.toComponentName()?.loadLabel(context)
                     ?: stringResource(id = R.string.assistant_action_select_default_value),
-                enabled = context.canWriteSecureSettings
+                enabled = context.canWriteSecureSettings,
             ) {
                 navController.navigate(Screen.LockscreenShortcutSelection.createRoute(LOCKSCREEN_RIGHT_BUTTON))
             }
@@ -86,16 +86,16 @@ fun LockscreenShortcutSelection(
     mainViewModel: MainActivityViewModel = viewModel(),
     navController: NavController,
     settingsKey: String,
-    contentPadding: PaddingValues
+    contentPadding: PaddingValues,
 ) {
     val scope = rememberCoroutineScope()
     val titles = listOf(
         stringResource(R.string.tab_title_apps),
-        stringResource(R.string.tab_title_other)
+        stringResource(R.string.tab_title_other),
     )
     TabPager(
         pageTitles = titles,
-        contentPadding = contentPadding
+        contentPadding = contentPadding,
     ) { page ->
         val context = LocalContext.current
         when (page) {
@@ -108,11 +108,11 @@ fun LockscreenShortcutSelection(
                     modifier = Modifier.fillMaxSize(),
                     indicator = { s, trigger ->
                         M3SwipeRefreshIndicator(state = s, refreshTriggerDistance = trigger)
-                    }
+                    },
                 ) {
                     if (items != null) {
                         LazyColumn(
-                            contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding())
+                            contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding()),
                         ) {
                             items(items!!) { item ->
                                 ApplicationRow(item = item) {
@@ -129,7 +129,7 @@ fun LockscreenShortcutSelection(
             }
             1 -> {
                 LazyColumn(
-                    contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding())
+                    contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding()),
                 ) {
                     item {
                         CommonActionRow(
@@ -141,7 +141,7 @@ fun LockscreenShortcutSelection(
                                     ShoukoApplication.prefs.setLockscreenAction(settingsKey, emptyCn.flattenToString())
                                     navController.popBackStack()
                                 }
-                            }
+                            },
                         )
                     }
                 }

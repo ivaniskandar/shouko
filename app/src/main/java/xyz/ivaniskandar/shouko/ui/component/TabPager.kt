@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 fun TabPager(
     pageTitles: List<String>,
     contentPadding: PaddingValues,
-    content: @Composable ColumnScope.(page: Int) -> Unit
+    content: @Composable ColumnScope.(page: Int) -> Unit,
 ) {
     val layoutDirection = LocalLayoutDirection.current
     val coroutineScope = rememberCoroutineScope()
@@ -39,8 +39,8 @@ fun TabPager(
                 .padding(
                     start = contentPadding.calculateStartPadding(layoutDirection),
                     top = contentPadding.calculateTopPadding(),
-                    end = contentPadding.calculateEndPadding(layoutDirection)
-                )
+                    end = contentPadding.calculateEndPadding(layoutDirection),
+                ),
         ) {
             pageTitles.forEachIndexed { index, title ->
                 Tab(
@@ -52,7 +52,7 @@ fun TabPager(
                         }
                     },
                     text = { Text(text = title) },
-                    unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                    unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
@@ -62,7 +62,7 @@ fun TabPager(
             state = pagerState,
             modifier = Modifier.weight(1f),
             verticalAlignment = Alignment.Top,
-            content = { page -> content.invoke(this@Column, page) }
+            content = { page -> content.invoke(this@Column, page) },
         )
     }
 }

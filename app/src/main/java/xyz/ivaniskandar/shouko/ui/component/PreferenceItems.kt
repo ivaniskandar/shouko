@@ -28,7 +28,7 @@ private fun BasePreference(
     title: String,
     subtitle: String? = null,
     enabled: Boolean = true,
-    widget: @Composable RowScope.() -> Unit = {}
+    widget: @Composable RowScope.() -> Unit = {},
 ) {
     val textAlpha = if (enabled) 1F else 0.38F
     Row(
@@ -36,20 +36,20 @@ private fun BasePreference(
             .alpha(textAlpha)
             .padding(horizontal = 20.dp, vertical = 18.dp)
             .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = title,
                 modifier = Modifier.alpha(textAlpha),
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleLarge,
             )
             if (subtitle != null) {
                 Text(
                     text = subtitle,
                     modifier = Modifier.alpha(textAlpha).padding(top = 1.dp),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
                 )
             }
         }
@@ -62,13 +62,13 @@ fun Preference(
     title: String,
     subtitle: String? = null,
     enabled: Boolean = true,
-    onPreferenceClick: () -> Unit
+    onPreferenceClick: () -> Unit,
 ) {
     BasePreference(
         modifier = Modifier.clickable(enabled = enabled, onClick = onPreferenceClick),
         title = title,
         subtitle = subtitle,
-        enabled = enabled
+        enabled = enabled,
     )
 }
 
@@ -78,19 +78,19 @@ fun SwitchPreference(
     subtitle: String? = null,
     checked: Boolean = false,
     enabled: Boolean = true,
-    onCheckedChanged: (Boolean) -> Unit
+    onCheckedChanged: (Boolean) -> Unit,
 ) {
     BasePreference(
         modifier = Modifier.clickable(enabled = enabled, onClick = { onCheckedChanged.invoke(!checked) }),
         title = title,
         subtitle = subtitle,
-        enabled = enabled
+        enabled = enabled,
     ) {
         Switch(
             checked = checked,
             onCheckedChange = onCheckedChanged,
             modifier = Modifier.padding(start = 8.dp),
-            enabled = enabled
+            enabled = enabled,
         )
     }
 }
@@ -111,14 +111,14 @@ fun PreferenceItemsPreview() {
                 SwitchPreference(
                     title = "Switch preference",
                     subtitle = "With subtitle",
-                    checked = switch
+                    checked = switch,
                 ) {
                     switch = !switch
                 }
 
                 SwitchPreference(
                     title = "Dark theme",
-                    checked = darkTheme
+                    checked = darkTheme,
                 ) {
                     darkTheme = !darkTheme
                 }

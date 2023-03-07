@@ -61,7 +61,7 @@ class CoffeeTileService : TileService() {
                     Intent(this@CoffeeTileService, TileBoardingActivity::class.java).apply {
                         putExtra(EXTRA_SERVICE_TYPE, TadanoTileParentService.Type.COFFEE)
                         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    }
+                    },
                 )
                 runBlocking { prefs.setCoffeeBoardingDone() }
             }
@@ -69,13 +69,13 @@ class CoffeeTileService : TileService() {
                 serviceIntent.apply {
                     action = ACTION_START_SERVICE
                     putExtra(EXTRA_SERVICE_TYPE, TadanoTileParentService.Type.COFFEE)
-                }
+                },
             )
         } else {
             startService(
                 serviceIntent.apply {
                     action = ACTION_STOP_SERVICE
-                }
+                },
             )
         }
     }

@@ -93,7 +93,7 @@ class IconDrawableShadowWrapper {
                     val factor = 1 / (1 + 2 * ICON_SIZE_BLUR_FACTOR + ICON_SIZE_KEY_SHADOW_DELTA_FACTOR)
                     translate(
                         bounds.width() * factor * (ICON_SIZE_BLUR_FACTOR + ICON_SIZE_KEY_SHADOW_DELTA_FACTOR / 2),
-                        bounds.height() * factor * ICON_SIZE_BLUR_FACTOR
+                        bounds.height() * factor * ICON_SIZE_BLUR_FACTOR,
                     )
                     scale(factor, factor)
                     super.draw(this)
@@ -103,7 +103,7 @@ class IconDrawableShadowWrapper {
 
         private class MyConstantState(
             val mShadow: Bitmap?,
-            val mChildState: ConstantState?
+            val mChildState: ConstantState?,
         ) : ConstantState() {
             val mPaint = Paint(Paint.FILTER_BITMAP_FLAG)
             override fun newDrawable(): Drawable {

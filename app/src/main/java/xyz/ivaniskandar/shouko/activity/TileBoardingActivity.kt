@@ -42,7 +42,7 @@ class TileBoardingActivity : ComponentActivity() {
                     val onDismissRequest = { finish() }
                     Dialog(
                         onDismissRequest = onDismissRequest,
-                        properties = DialogProperties(dismissOnClickOutside = false)
+                        properties = DialogProperties(dismissOnClickOutside = false),
                     ) {
                         TileBoardingScreen(type = type, onDismissRequest = onDismissRequest)
                     }
@@ -59,7 +59,7 @@ class TileBoardingActivity : ComponentActivity() {
                     .padding(16.dp)
                     .fillMaxWidth(),
                 verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 val iconResId = when (type) {
                     TadanoTileParentService.Type.COFFEE -> R.drawable.ic_coffee
@@ -71,7 +71,7 @@ class TileBoardingActivity : ComponentActivity() {
                     modifier = Modifier
                         .padding(8.dp)
                         .size(56.dp),
-                    tint = MaterialTheme.colorScheme.primary
+                    tint = MaterialTheme.colorScheme.primary,
                 )
 
                 val titleResId = when (type) {
@@ -82,7 +82,7 @@ class TileBoardingActivity : ComponentActivity() {
                     text = stringResource(titleResId),
                     modifier = Modifier.padding(bottom = 20.dp),
                     textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.headlineSmall
+                    style = MaterialTheme.typography.headlineSmall,
                 )
 
                 val subtitleResId = when (type) {
@@ -93,14 +93,14 @@ class TileBoardingActivity : ComponentActivity() {
                     text = stringResource(subtitleResId),
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
                 )
 
                 FilledTonalButton(
                     onClick = onDismissRequest,
                     modifier = Modifier
                         .padding(top = 32.dp)
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
                 ) {
                     Text(text = stringResource(R.string.button_boarding_acknowledgement))
                 }

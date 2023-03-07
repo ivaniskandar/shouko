@@ -27,7 +27,7 @@ fun Scaffold(
     containerColor: Color = MaterialTheme.colorScheme.background,
     contentColor: Color = contentColorFor(containerColor),
     contentPadding: PaddingValues = PaddingValues(0.dp),
-    content: @Composable (PaddingValues) -> Unit
+    content: @Composable (PaddingValues) -> Unit,
 ) {
     androidx.compose.material3.Scaffold(
         modifier = modifier,
@@ -37,7 +37,7 @@ fun Scaffold(
         floatingActionButton = floatingActionButton,
         floatingActionButtonPosition = floatingActionButtonPosition,
         containerColor = containerColor,
-        contentColor = contentColor
+        contentColor = contentColor,
     ) { padding ->
         val direction = LocalLayoutDirection.current
         val newContentPadding = remember(contentPadding, padding) {
@@ -45,7 +45,7 @@ fun Scaffold(
                 start = contentPadding.calculateStartPadding(direction) + padding.calculateStartPadding(direction),
                 top = contentPadding.calculateTopPadding() + padding.calculateTopPadding(),
                 end = contentPadding.calculateEndPadding(direction) + padding.calculateEndPadding(direction),
-                bottom = contentPadding.calculateBottomPadding() + padding.calculateBottomPadding()
+                bottom = contentPadding.calculateBottomPadding() + padding.calculateBottomPadding(),
             )
         }
         content(newContentPadding)

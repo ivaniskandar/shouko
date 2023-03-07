@@ -92,7 +92,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val sheetState = rememberModalBottomSheetState(
                 initialValue = ModalBottomSheetValue.Hidden,
-                skipHalfExpanded = true
+                skipHalfExpanded = true,
             )
             val bottomSheetNavigator = remember(sheetState) { BottomSheetNavigator(sheetState = sheetState) }
             val navController = rememberAnimatedNavController(bottomSheetNavigator)
@@ -120,8 +120,8 @@ class MainActivity : ComponentActivity() {
                                     Text(
                                         text = getAppBarTitle(
                                             navController = navController,
-                                            navBackStackEntry = navBackStackEntry
-                                        )
+                                            navBackStackEntry = navBackStackEntry,
+                                        ),
                                     )
                                 },
                                 navigationIcon = if (currentRoute != null && currentRoute != Screen.Home.route) {
@@ -132,10 +132,10 @@ class MainActivity : ComponentActivity() {
                                     }
                                 } else { {} },
                                 actions = { MainActivityActions(navController = navController) },
-                                scrollBehavior = scrollBehavior
+                                scrollBehavior = scrollBehavior,
                             )
                         },
-                        contentPadding = WindowInsets.navigationBars.asPaddingValues()
+                        contentPadding = WindowInsets.navigationBars.asPaddingValues(),
                     ) { innerPadding ->
                         val rootAvailable = remember { isRootAvailable }
                         val slideDistance = rememberSlideDistance()
@@ -143,7 +143,7 @@ class MainActivity : ComponentActivity() {
                             navController = navController,
                             startDestination = Screen.Home.route,
                             enterTransition = { materialSharedAxisXIn(forward = true, slideDistance) },
-                            exitTransition = { materialSharedAxisXOut(forward = true, slideDistance) }
+                            exitTransition = { materialSharedAxisXOut(forward = true, slideDistance) },
                         ) {
                             composable(route = Screen.Home.route) { Home(navController, innerPadding) }
                             composable(Screen.ReadLogsSetup.route) {
@@ -151,7 +151,7 @@ class MainActivity : ComponentActivity() {
                                     contentPadding = innerPadding,
                                     title = stringResource(id = R.string.read_logs_permission_setup_title),
                                     permissionName = Manifest.permission.READ_LOGS,
-                                    isRootAvailable = rootAvailable
+                                    isRootAvailable = rootAvailable,
                                 ) {
                                     finishAffinity()
                                     startActivity(intent)
@@ -163,7 +163,7 @@ class MainActivity : ComponentActivity() {
                                     contentPadding = innerPadding,
                                     title = stringResource(id = R.string.write_secure_settings_permission_setup_title),
                                     permissionName = Manifest.permission.WRITE_SECURE_SETTINGS,
-                                    isRootAvailable = rootAvailable
+                                    isRootAvailable = rootAvailable,
                                 ) {
                                     finishAffinity()
                                     startActivity(intent)
@@ -186,7 +186,7 @@ class MainActivity : ComponentActivity() {
                                         mainViewModel = viewModel,
                                         navController = navController,
                                         settingsKey = key,
-                                        contentPadding = innerPadding
+                                        contentPadding = innerPadding,
                                     )
                                 } else {
                                     logcat(LogPriority.ERROR) { "Lockscreen shortcut settings key is not specified." }
@@ -198,7 +198,7 @@ class MainActivity : ComponentActivity() {
                                 composable(Screen.AndroidAppLinkSettings.route) {
                                     AndroidAppLinkSettings(
                                         navController = navController,
-                                        contentPadding = innerPadding
+                                        contentPadding = innerPadding,
                                     ) {
                                         val roleManager = getSystemService<RoleManager>()
                                         if (roleManager?.isRoleHeld(RoleManager.ROLE_BROWSER) == true) {
@@ -215,7 +215,7 @@ class MainActivity : ComponentActivity() {
                                         approved = true,
                                         mainViewModel = viewModel,
                                         navController = navController,
-                                        contentPadding = innerPadding
+                                        contentPadding = innerPadding,
                                     )
                                 }
                                 composable(Screen.UnapprovedLinkTargetList.route) {
@@ -223,19 +223,19 @@ class MainActivity : ComponentActivity() {
                                         approved = false,
                                         mainViewModel = viewModel,
                                         navController = navController,
-                                        contentPadding = innerPadding
+                                        contentPadding = innerPadding,
                                     )
                                 }
                                 bottomSheet(Screen.LinkTargetInfoSheet.route) {
                                     // TODO: Remove surface when bottom sheet uses M3 colors
                                     Surface(
                                         color = MaterialTheme.colorScheme.surface,
-                                        tonalElevation = 4.dp
+                                        tonalElevation = 4.dp,
                                     ) {
                                         val packageName = Screen.LinkTargetInfoSheet.getPackageName(it)
                                         LinkTargetInfoSheet(
                                             packageName = packageName,
-                                            mainViewModel = viewModel
+                                            mainViewModel = viewModel,
                                         ) {
                                             openOpenByDefaultSettings(this@MainActivity, packageName)
                                             navController.popBackStack()
@@ -281,7 +281,7 @@ fun getAppBarTitle(navController: NavController, navBackStackEntry: NavBackStack
 
 @Composable
 fun MainActivityActions(
-    navController: NavController
+    navController: NavController,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -297,13 +297,13 @@ fun MainActivityActions(
                         Text(
                             text = stringResource(R.string.check_for_update),
                             overflow = TextOverflow.Ellipsis,
-                            maxLines = 1
+                            maxLines = 1,
                         )
                     },
                     onClick = {
                         context.startActivity(RELEASES_PAGE_INTENT)
                         showPopup = false
-                    }
+                    },
                 )
             }
             menuItems += {
@@ -312,13 +312,13 @@ fun MainActivityActions(
                         Text(
                             text = stringResource(R.string.oss_license_title),
                             overflow = TextOverflow.Ellipsis,
-                            maxLines = 1
+                            maxLines = 1,
                         )
                     },
                     onClick = {
                         context.startActivity(Intent(context, OssLicensesMenuActivity::class.java))
                         showPopup = false
-                    }
+                    },
                 )
             }
         }
@@ -329,7 +329,7 @@ fun MainActivityActions(
                         Text(
                             text = stringResource(id = R.string.reset_to_default),
                             overflow = TextOverflow.Ellipsis,
-                            maxLines = 1
+                            maxLines = 1,
                         )
                     },
                     onClick = {
@@ -338,12 +338,12 @@ fun MainActivityActions(
                             Toast.makeText(
                                 context,
                                 context.getString(R.string.assistant_action_reset_toast),
-                                Toast.LENGTH_SHORT
+                                Toast.LENGTH_SHORT,
                             ).show()
                             showPopup = false
                             navController.popBackStack()
                         }
-                    }
+                    },
                 )
             }
         }
@@ -354,7 +354,7 @@ fun MainActivityActions(
                         Text(
                             text = stringResource(id = R.string.reset_to_default),
                             overflow = TextOverflow.Ellipsis,
-                            maxLines = 1
+                            maxLines = 1,
                         )
                     },
                     onClick = {
@@ -367,7 +367,7 @@ fun MainActivityActions(
                         }
                         showPopup = false
                         navController.popBackStack()
-                    }
+                    },
                 )
             }
         }
@@ -382,7 +382,7 @@ fun MainActivityActions(
             onDismissRequest = { showPopup = false },
             modifier = Modifier.sizeIn(minWidth = 196.dp, maxWidth = 196.dp),
             offset = DpOffset(8.dp, 0.dp),
-            content = { menuItems.forEach { it() } }
+            content = { menuItems.forEach { it() } },
         )
     }
 }

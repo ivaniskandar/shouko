@@ -37,7 +37,7 @@ import xyz.ivaniskandar.shouko.util.canWriteSecureSettings
  */
 class LockscreenShortcutHelper(
     private val lifecycleOwner: LifecycleOwner,
-    private val context: Context
+    private val context: Context,
 ) : DefaultLifecycleObserver {
     private var receiverRegistered = false
     private val receiver = object : BroadcastReceiver() {
@@ -56,12 +56,12 @@ class LockscreenShortcutHelper(
                     Settings.Secure.putString(
                         context.contentResolver,
                         LOCKSCREEN_LEFT_BUTTON,
-                        prefs.lockscreenLeftAction.first()
+                        prefs.lockscreenLeftAction.first(),
                     )
                     Settings.Secure.putString(
                         context.contentResolver,
                         LOCKSCREEN_RIGHT_BUTTON,
-                        prefs.lockscreenRightAction.first()
+                        prefs.lockscreenRightAction.first(),
                     )
                 }
             } else {

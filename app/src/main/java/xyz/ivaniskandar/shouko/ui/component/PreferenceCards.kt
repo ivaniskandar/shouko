@@ -25,25 +25,25 @@ fun BasePreferenceCard(
     title: String,
     description: String,
     buttonLabel: String,
-    onButtonClicked: () -> Unit
+    onButtonClicked: () -> Unit,
 ) {
     Card(
-        modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp)
+        modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
     ) {
         Column(
             modifier = Modifier
                 .padding(16.dp)
-                .fillMaxWidth()
+                .fillMaxWidth(),
         ) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = description,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium,
             )
             Spacer(modifier = Modifier.height(24.dp))
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
@@ -62,7 +62,7 @@ fun AccessibilityServiceCard(visible: Boolean = true, onButtonClicked: () -> Uni
             title = stringResource(id = R.string.accessibility_service_prompt_title),
             description = stringResource(id = R.string.accessibility_service_prompt_desc),
             buttonLabel = stringResource(id = R.string.button_open_settings),
-            onButtonClicked = onButtonClicked
+            onButtonClicked = onButtonClicked,
         )
     }
 }
@@ -74,7 +74,7 @@ fun ReadLogsCard(visible: Boolean = true, onButtonClicked: () -> Unit) {
             title = stringResource(id = R.string.logs_permission_prompt_title),
             description = stringResource(id = R.string.logs_permission_prompt_desc),
             buttonLabel = stringResource(id = R.string.button_grant_permission),
-            onButtonClicked = onButtonClicked
+            onButtonClicked = onButtonClicked,
         )
     }
 }
@@ -86,7 +86,7 @@ fun WriteSettingsCard(visible: Boolean = true, onButtonClicked: () -> Unit) {
             title = stringResource(id = R.string.write_secure_settings_permission_prompt_title),
             description = stringResource(id = R.string.write_secure_settings_permission_prompt_desc),
             buttonLabel = stringResource(id = R.string.button_grant_permission),
-            onButtonClicked = onButtonClicked
+            onButtonClicked = onButtonClicked,
         )
     }
 }

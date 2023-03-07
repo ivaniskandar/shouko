@@ -97,7 +97,7 @@ class TadanoTileParentService : Service() {
                     val channel = NotificationChannel(
                         CHANNEL_GENERAL,
                         getString(R.string.tadano_tile_service_notif_title),
-                        NotificationManager.IMPORTANCE_LOW
+                        NotificationManager.IMPORTANCE_LOW,
                     ).apply {
                         description = getString(R.string.tadano_tile_service_notif_channel_desc)
                         setSound(null, null)
@@ -112,7 +112,7 @@ class TadanoTileParentService : Service() {
                     this,
                     FOREGROUND_SERVICE_ID,
                     channelSettingsIntent,
-                    PendingIntent.FLAG_IMMUTABLE
+                    PendingIntent.FLAG_IMMUTABLE,
                 )
                 val type = intent.getSerializableExtra(EXTRA_SERVICE_TYPE) as Type
                 val icon = when (type) {
@@ -128,7 +128,7 @@ class TadanoTileParentService : Service() {
                         .setContentTitle(getString(R.string.tadano_tile_service_notif_title))
                         .setContentText(getString(R.string.tadano_tile_service_notif_text))
                         .setContentIntent(clickPendingIntent)
-                        .build()
+                        .build(),
                 )
 
                 when (type) {
@@ -174,7 +174,7 @@ class TadanoTileParentService : Service() {
         // Update tile state
         TileService.requestListeningState(
             this,
-            ComponentName(this, TeaTileService::class.java)
+            ComponentName(this, TeaTileService::class.java),
         )
     }
 
@@ -203,7 +203,7 @@ class TadanoTileParentService : Service() {
         // Update tile state
         TileService.requestListeningState(
             this,
-            ComponentName(this, CoffeeTileService::class.java)
+            ComponentName(this, CoffeeTileService::class.java),
         )
     }
 

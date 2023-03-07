@@ -14,7 +14,7 @@ class AdaptiveForegroundDrawable : DrawableWrapper(ColorDrawable()) {
             scaleX,
             scaleY,
             bounds.exactCenterX(),
-            bounds.exactCenterY()
+            bounds.exactCenterY(),
         )
         super.draw(canvas)
         canvas.restoreToCount(saveCount)

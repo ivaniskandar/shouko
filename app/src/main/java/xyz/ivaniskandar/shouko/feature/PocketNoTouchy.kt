@@ -42,7 +42,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  */
 class PocketNoTouchy(
     lifecycleOwner: LifecycleOwner,
-    private val service: AccessibilityService
+    private val service: AccessibilityService,
 ) : DefaultLifecycleObserver {
 
     private val sensorManager: SensorManager = service.getSystemService()!!
@@ -87,7 +87,7 @@ class PocketNoTouchy(
                         sensorManager.registerListener(
                             proximityEventListener,
                             sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY),
-                            SensorManager.SENSOR_DELAY_UI
+                            SensorManager.SENSOR_DELAY_UI,
                         )
                     } else {
                         logcat { "Screen on event but in call, do nothing..." }
@@ -120,7 +120,8 @@ class PocketNoTouchy(
         get() = when (audioManager.mode) {
             AudioManager.MODE_IN_CALL,
             AudioManager.MODE_IN_COMMUNICATION,
-            AudioManager.MODE_RINGTONE -> true
+            AudioManager.MODE_RINGTONE,
+            -> true
             else -> false
         }
 

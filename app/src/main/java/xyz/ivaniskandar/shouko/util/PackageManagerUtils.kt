@@ -8,7 +8,7 @@ import android.os.Build
 
 fun PackageManager.queryIntentActivitiesCompat(
     intent: Intent,
-    flags: Int
+    flags: Int,
 ): List<ResolveInfo> {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         queryIntentActivities(intent, PackageManager.ResolveInfoFlags.of(flags.toLong()))
@@ -20,7 +20,7 @@ fun PackageManager.queryIntentActivitiesCompat(
 
 fun PackageManager.resolveActivityCompat(
     intent: Intent,
-    flags: Int
+    flags: Int,
 ): ResolveInfo? {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         resolveActivity(intent, PackageManager.ResolveInfoFlags.of(flags.toLong()))
@@ -32,7 +32,7 @@ fun PackageManager.resolveActivityCompat(
 
 fun PackageManager.getApplicationInfoCompat(
     packageName: String,
-    flags: Int
+    flags: Int,
 ): ApplicationInfo {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         getApplicationInfo(packageName, PackageManager.ApplicationInfoFlags.of(flags.toLong()))
@@ -43,7 +43,7 @@ fun PackageManager.getApplicationInfoCompat(
 }
 
 fun PackageManager.getInstalledApplicationsCompat(
-    flags: Int
+    flags: Int,
 ): List<ApplicationInfo> {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         getInstalledApplications(PackageManager.ApplicationInfoFlags.of(flags.toLong()))

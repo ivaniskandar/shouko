@@ -9,7 +9,7 @@ data class LinkHandlerAppItem(
     val linkHandlingAllowed: Boolean,
     val verifiedDomains: Set<String>,
     val userSelectedDomains: Set<String>,
-    val unapprovedDomains: Set<String>
+    val unapprovedDomains: Set<String>,
 ) {
     /**
      * True if this target has verified and/or user selected domains regardless

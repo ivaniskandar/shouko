@@ -61,7 +61,7 @@ class TeaTileService : TileService() {
                     Intent(this@TeaTileService, TileBoardingActivity::class.java).apply {
                         putExtra(EXTRA_SERVICE_TYPE, TadanoTileParentService.Type.TEA)
                         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    }
+                    },
                 )
                 runBlocking { prefs.setTeaBoardingDone() }
             }
@@ -69,13 +69,13 @@ class TeaTileService : TileService() {
                 serviceIntent.apply {
                     action = ACTION_START_SERVICE
                     putExtra(EXTRA_SERVICE_TYPE, TadanoTileParentService.Type.TEA)
-                }
+                },
             )
         } else {
             startService(
                 serviceIntent.apply {
                     action = ACTION_STOP_SERVICE
-                }
+                },
             )
         }
     }

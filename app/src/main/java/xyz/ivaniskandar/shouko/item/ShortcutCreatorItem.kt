@@ -7,5 +7,5 @@ data class ShortcutCreatorItem(
     val componentName: ComponentName,
     val label: String,
     val icon: ImageBitmap,
-    val applicationLabel: String
+    val applicationLabel: String,
 )

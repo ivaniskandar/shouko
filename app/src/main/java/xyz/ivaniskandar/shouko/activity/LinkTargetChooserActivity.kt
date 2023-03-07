@@ -113,7 +113,7 @@ class LinkTargetChooserActivity : ComponentActivity() {
                     title = it.loadLabel(this).toString(),
                     icon = shadowWrapper.run(it.loadIcon(this))
                         .toBitmap()
-                        .asImageBitmap()
+                        .asImageBitmap(),
                 )
             }
             .sortedBy { it.title.lowercase() }
@@ -124,7 +124,7 @@ class LinkTargetChooserActivity : ComponentActivity() {
                     targets = mapped,
                     onItemClick = { start(it) },
                     onItemLongClick = { startAppInfo(it) },
-                    onSheetHidden = { finish() }
+                    onSheetHidden = { finish() },
                 )
             }
         }
@@ -136,7 +136,7 @@ class LinkTargetChooserActivity : ComponentActivity() {
                 data = intent.data
                 component = componentName
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
+            },
         )
     }
 
@@ -144,7 +144,7 @@ class LinkTargetChooserActivity : ComponentActivity() {
         startActivity(
             Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                 data = Uri.parse("package:${componentName.packageName}")
-            }
+            },
         )
     }
 }
@@ -152,7 +152,7 @@ class LinkTargetChooserActivity : ComponentActivity() {
 private data class Target(
     val component: ComponentName,
     val title: String,
-    val icon: ImageBitmap
+    val icon: ImageBitmap,
 )
 
 @Composable
@@ -160,7 +160,7 @@ private fun AppLinkChooserSheet(
     targets: List<Target>,
     onItemClick: (ComponentName) -> Unit,
     onItemLongClick: (ComponentName) -> Unit,
-    onSheetHidden: () -> Unit
+    onSheetHidden: () -> Unit,
 ) {
     val state = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     val scope = rememberCoroutineScope()
@@ -172,7 +172,7 @@ private fun AppLinkChooserSheet(
             onDismiss = {
                 scope.launch { state.hide() }
             },
-            visible = state.targetValue != ModalBottomSheetValue.Hidden
+            visible = state.targetValue != ModalBottomSheetValue.Hidden,
         )
         ModalBottomSheetLayout(
             modifier = Modifier
@@ -192,7 +192,7 @@ private fun AppLinkChooserSheet(
                             .fillMaxWidth()
                             .padding(vertical = 16.dp),
                         textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.titleLarge
+                        style = MaterialTheme.typography.titleLarge,
                     )
                     SoftDivider(modifier = Modifier.padding(horizontal = 16.dp))
                     LazyRow(
@@ -200,7 +200,7 @@ private fun AppLinkChooserSheet(
                             .fillMaxWidth()
                             .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom)),
                         contentPadding = PaddingValues(horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
+                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
                     ) {
                         items(targets) { item ->
                             Column(
@@ -216,17 +216,17 @@ private fun AppLinkChooserSheet(
                                         onClick = {
                                             scope.launch { state.hide() }
                                             onItemClick(item.component)
-                                        }
+                                        },
                                     )
                                     .padding(horizontal = 8.dp)
                                     .size(width = 96.dp, height = 128.dp),
                                 verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally
+                                horizontalAlignment = Alignment.CenterHorizontally,
                             ) {
                                 Image(
                                     bitmap = item.icon,
                                     contentDescription = null,
-                                    modifier = Modifier.size(48.dp)
+                                    modifier = Modifier.size(48.dp),
                                 )
                                 Text(
                                     modifier = Modifier.padding(top = 12.dp),
@@ -234,14 +234,14 @@ private fun AppLinkChooserSheet(
                                     style = MaterialTheme.typography.bodySmall,
                                     textAlign = TextAlign.Center,
                                     maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
+                                    overflow = TextOverflow.Ellipsis,
                                 )
                             }
                         }
                     }
                 }
             },
-            content = { /* Empty */ }
+            content = { /* Empty */ },
         )
     }
     var opened by remember { mutableStateOf(false) }
@@ -261,12 +261,12 @@ private fun AppLinkChooserSheet(
 private fun Scrim(
     color: Color,
     onDismiss: () -> Unit,
-    visible: Boolean
+    visible: Boolean,
 ) {
     if (color.isSpecified) {
         val alpha by animateFloatAsState(
             targetValue = if (visible) 1f else 0f,
-            animationSpec = TweenSpec()
+            animationSpec = TweenSpec(),
         )
         val dismissModifier = if (visible) {
             Modifier
@@ -281,7 +281,7 @@ private fun Scrim(
         Canvas(
             Modifier
                 .fillMaxSize()
-                .then(dismissModifier)
+                .then(dismissModifier),
         ) {
             drawRect(color = color, alpha = alpha)
         }

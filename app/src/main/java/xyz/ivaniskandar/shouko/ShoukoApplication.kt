@@ -30,7 +30,7 @@ private val Context.preferencesStore: DataStore<Preferences> by dataStore(
             SharedPreferencesMigration(
                 produceSharedPreferences = {
                     context.getSharedPreferences("${context.packageName}_preferences", Context.MODE_PRIVATE)
-                }
+                },
             ) { sharedPrefs: SharedPreferencesView, currentData: Preferences ->
                 val builder = currentData.toBuilder()
                 if (sharedPrefs.contains("assist_button_enabled")) {
@@ -57,7 +57,7 @@ private val Context.preferencesStore: DataStore<Preferences> by dataStore(
                 builder.build()
             },
             SharedPreferencesMigration(
-                produceSharedPreferences = { context.getSharedPreferences("secure_settings", Context.MODE_PRIVATE) }
+                produceSharedPreferences = { context.getSharedPreferences("secure_settings", Context.MODE_PRIVATE) },
             ) { sharedPrefs: SharedPreferencesView, currentData: Preferences ->
                 val builder = currentData.toBuilder()
                 if (sharedPrefs.contains("sysui_keyguard_left")) {
@@ -67,9 +67,9 @@ private val Context.preferencesStore: DataStore<Preferences> by dataStore(
                     builder.lockscreenRightAction = sharedPrefs.getString("sysui_keyguard_right", "")
                 }
                 builder.build()
-            }
+            },
         )
-    }
+    },
 )
 
 class ShoukoApplication : Application() {
@@ -87,7 +87,7 @@ class ShoukoApplication : Application() {
         Shell.setDefaultBuilder(
             Shell.Builder.create()
                 .setFlags(Shell.FLAG_REDIRECT_STDERR or if (!isRootAvailable) Shell.FLAG_NON_ROOT_SHELL else 0)
-                .setTimeout(10)
+                .setTimeout(10),
         )
 
         // Enable when proximity exists
@@ -95,7 +95,7 @@ class ShoukoApplication : Application() {
             packageManager.setComponentEnabledSetting(
                 ComponentName(this, TeaTileService::class.java),
                 PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                PackageManager.DONT_KILL_APP
+                PackageManager.DONT_KILL_APP,
             )
         }
 
@@ -108,7 +108,7 @@ class ShoukoApplication : Application() {
         packageManager.setComponentEnabledSetting(
             ComponentName(this, LinkTargetChooserActivity::class.java),
             state,
-            PackageManager.DONT_KILL_APP
+            PackageManager.DONT_KILL_APP,
         )
 
         // Init preferences

@@ -23,13 +23,13 @@ fun KeyguardUnlock(onClick: () -> Unit) {
             modifier = Modifier
                 .clickable(onClick = onClick)
                 .fillMaxSize(),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             Icon(
                 imageVector = Icons.Rounded.Lock,
                 contentDescription = null,
                 modifier = Modifier.size(42.dp),
-                tint = MaterialTheme.colorScheme.onPrimaryContainer
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
             )
         }
     }

@@ -7,10 +7,10 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun SoftDivider(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Divider(
         modifier = modifier,
-        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.12F)
+        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.12F),
     )
 }

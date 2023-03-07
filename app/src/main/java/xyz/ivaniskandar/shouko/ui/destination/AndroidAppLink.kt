@@ -67,14 +67,14 @@ fun AndroidAppLinkSettings(
     context: Context = LocalContext.current,
     contentPadding: PaddingValues,
     navController: NavController,
-    onOpenSettings: () -> Unit
+    onOpenSettings: () -> Unit,
 ) {
     var isDefaultBrowser by remember { mutableStateOf(checkDefaultBrowser(context)) }
     var showEnableInfoDialog by remember { mutableStateOf(false) }
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = contentPadding
+        contentPadding = contentPadding,
     ) {
         item {
             CustomChooserToggle(
@@ -85,7 +85,7 @@ fun AndroidAppLinkSettings(
                     } else {
                         onOpenSettings()
                     }
-                }
+                },
             )
         }
 
@@ -93,14 +93,14 @@ fun AndroidAppLinkSettings(
             Preference(
                 title = stringResource(R.string.approved_link_target_title),
                 subtitle = stringResource(R.string.approved_link_target_subtitle),
-                onPreferenceClick = { navController.navigate(Screen.ApprovedLinkTargetList.route) }
+                onPreferenceClick = { navController.navigate(Screen.ApprovedLinkTargetList.route) },
             )
         }
         item {
             Preference(
                 title = stringResource(R.string.unapproved_link_target_title),
                 subtitle = stringResource(R.string.unapproved_link_target_subtitle),
-                onPreferenceClick = { navController.navigate(Screen.UnapprovedLinkTargetList.route) }
+                onPreferenceClick = { navController.navigate(Screen.UnapprovedLinkTargetList.route) },
             )
         }
 
@@ -109,7 +109,7 @@ fun AndroidAppLinkSettings(
                 imageVector = Icons.Outlined.Info,
                 contentDescription = null,
                 modifier = Modifier.padding(start = 20.dp, top = 16.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
         item {
@@ -117,7 +117,7 @@ fun AndroidAppLinkSettings(
                 text = stringResource(id = R.string.link_chooser_info),
                 modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium,
             )
         }
     }
@@ -130,7 +130,7 @@ fun AndroidAppLinkSettings(
                     onClick = {
                         showEnableInfoDialog = false
                         onOpenSettings()
-                    }
+                    },
                 ) {
                     Text(text = stringResource(id = android.R.string.ok))
                 }
@@ -140,10 +140,10 @@ fun AndroidAppLinkSettings(
                 Text(
                     text = stringResource(
                         R.string.link_chooser_enable_dialog,
-                        context.getPackageLabel(context.packageName)
-                    )
+                        context.getPackageLabel(context.packageName),
+                    ),
                 )
-            }
+            },
         )
     }
 
@@ -156,23 +156,23 @@ fun CustomChooserToggle(checked: Boolean, onClick: () -> Unit) {
     Card(
         onClick = onClick,
         modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
-        shape = RoundedCornerShape(28.dp)
+        shape = RoundedCornerShape(28.dp),
     ) {
         Row(
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 20.dp)
                 .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = stringResource(R.string.link_chooser_toggle_label),
                 modifier = Modifier.weight(1F),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleLarge,
             )
             Switch(
                 checked = checked,
-                onCheckedChange = null
+                onCheckedChange = null,
             )
         }
     }
@@ -192,7 +192,7 @@ fun LinkTargetList(
     approved: Boolean, // if true, show approved else unapproved
     mainViewModel: MainActivityViewModel = viewModel(),
     navController: NavController,
-    contentPadding: PaddingValues
+    contentPadding: PaddingValues,
 ) {
     val items by mainViewModel.linkHandlerList.observeAsState()
     val isRefreshing by mainViewModel.isRefreshingLinkHandlerList.collectAsState()
@@ -203,13 +203,13 @@ fun LinkTargetList(
         indicatorPadding = contentPadding,
         indicator = { s, trigger ->
             M3SwipeRefreshIndicator(state = s, refreshTriggerDistance = trigger)
-        }
+        },
     ) {
         val filteredItems = items?.filter { if (approved) it.linkHandlingAllowed && it.isApproved else it.isUnapproved }
         val disabledItems = if (approved) items?.filter { !it.linkHandlingAllowed && it.isApproved } else null
 
         LazyColumn(
-            contentPadding = contentPadding
+            contentPadding = contentPadding,
         ) {
             if (filteredItems != null) {
                 items(items = filteredItems, key = { it.packageName }) { item ->
@@ -225,7 +225,7 @@ fun LinkTargetList(
                         text = stringResource(R.string.disabled),
                         modifier = Modifier.padding(16.dp),
                         color = MaterialTheme.colorScheme.primary,
-                        style = MaterialTheme.typography.titleSmall
+                        style = MaterialTheme.typography.titleSmall,
                     )
                 }
 
@@ -249,13 +249,13 @@ fun LinkTargetListItem(item: LinkHandlerAppItem, onClick: () -> Unit) {
             Image(
                 bitmap = item.icon,
                 contentDescription = null,
-                modifier = Modifier.size(32.dp)
+                modifier = Modifier.size(32.dp),
             )
         },
         headlineText = {
             Text(
                 text = item.label,
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleLarge,
             )
         },
         supportingText = {
@@ -265,8 +265,8 @@ fun LinkTargetListItem(item: LinkHandlerAppItem, onClick: () -> Unit) {
                     text = pluralStringResource(
                         id = R.plurals.approved_link_list_item_subtitle,
                         count = count,
-                        count
-                    )
+                        count,
+                    ),
                 )
             } else {
                 val count = remember { item.unapprovedDomains.size }
@@ -274,11 +274,11 @@ fun LinkTargetListItem(item: LinkHandlerAppItem, onClick: () -> Unit) {
                     text = pluralStringResource(
                         id = R.plurals.unapproved_link_list_item_subtitle,
                         count = count,
-                        count
-                    )
+                        count,
+                    ),
                 )
             }
-        }
+        },
     )
 }
 
@@ -287,7 +287,7 @@ fun LinkTargetListItem(item: LinkHandlerAppItem, onClick: () -> Unit) {
 fun LinkTargetInfoSheet(
     packageName: String,
     mainViewModel: MainActivityViewModel = viewModel(),
-    onOpenSettings: (String) -> Unit
+    onOpenSettings: (String) -> Unit,
 ) {
     val list by mainViewModel.linkHandlerList.observeAsState()
     val item = list!!.find { it.packageName == packageName }!!
@@ -295,7 +295,7 @@ fun LinkTargetInfoSheet(
         modifier = Modifier
             .fillMaxWidth()
             .navigationBarsPadding()
-            .padding(start = 20.dp, top = 24.dp, end = 20.dp)
+            .padding(start = 20.dp, top = 24.dp, end = 20.dp),
     ) {
         Image(
             bitmap = item.icon,
@@ -303,12 +303,12 @@ fun LinkTargetInfoSheet(
             modifier = Modifier
                 .size(56.dp)
                 .padding(bottom = 4.dp)
-                .align(Alignment.CenterHorizontally)
+                .align(Alignment.CenterHorizontally),
         )
         Text(
             text = item.label,
             modifier = Modifier.align(Alignment.CenterHorizontally),
-            style = MaterialTheme.typography.titleLarge
+            style = MaterialTheme.typography.titleLarge,
         )
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -319,24 +319,24 @@ fun LinkTargetInfoSheet(
                 text = LocalContext.current.resources.getQuantityString(
                     R.plurals.approved_link_list_title,
                     domainsCount,
-                    domainsCount
+                    domainsCount,
                 ),
                 modifier = Modifier.padding(top = 8.dp, bottom = 16.dp),
                 color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.titleSmall
+                style = MaterialTheme.typography.titleSmall,
             )
             LazyColumn(
                 modifier = Modifier
                     .weight(1F, fill = false)
                     .fillMaxWidth(),
-                contentPadding = PaddingValues(bottom = 8.dp)
+                contentPadding = PaddingValues(bottom = 8.dp),
             ) {
                 items(domains) { domain ->
                     Text(
                         text = domain,
                         modifier = Modifier.padding(vertical = 2.dp),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodyMedium,
                     )
                 }
             }
@@ -348,7 +348,7 @@ fun LinkTargetInfoSheet(
                     .padding(horizontal = 24.dp),
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium,
             )
         }
 
@@ -356,12 +356,12 @@ fun LinkTargetInfoSheet(
             onClick = { onOpenSettings(packageName) },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 24.dp, bottom = 8.dp)
+                .padding(top = 24.dp, bottom = 8.dp),
         ) {
             Icon(
                 Icons.Default.Launch,
                 contentDescription = null,
-                modifier = Modifier.size(ButtonDefaults.IconSize)
+                modifier = Modifier.size(ButtonDefaults.IconSize),
             )
             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
             Text(text = stringResource(R.string.open_settings))
