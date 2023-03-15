@@ -16,11 +16,14 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.googlefonts.Font
+import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kieronquinn.monetcompat.core.MonetCompat
 import com.kieronquinn.monetcompat.extensions.toArgb
+import xyz.ivaniskandar.shouko.R
 import kotlin.math.ln
 
 private fun MonetCompat.getMonetNeutralColor(
@@ -156,6 +159,22 @@ fun MonetCompat.darkMonetCompatScheme(
         outline = outline,
     )
 
+private val googleFontProvider = GoogleFont.Provider(
+    providerAuthority = "com.google.android.gms.fonts",
+    providerPackage = "com.google.android.gms",
+    certificates = R.array.com_google_android_gms_fonts_certs,
+)
+
+val GoogleSansFont = GoogleFont(name = "Google Sans")
+
+val GoogleSansFontFamily = FontFamily(
+    Font(googleFont = GoogleSansFont, fontProvider = googleFontProvider),
+    Font(googleFont = GoogleSansFont, fontProvider = googleFontProvider, weight = FontWeight.Light),
+    Font(googleFont = GoogleSansFont, fontProvider = googleFontProvider, weight = FontWeight.Medium),
+    Font(googleFont = GoogleSansFont, fontProvider = googleFontProvider, weight = FontWeight.SemiBold),
+    Font(googleFont = GoogleSansFont, fontProvider = googleFontProvider, weight = FontWeight.Bold),
+)
+
 val ShoukoTypography = Typography(
     titleLarge = TextStyle(
         fontFamily = FontFamily.SansSerif,
@@ -173,7 +192,60 @@ fun ShoukoM3Theme(
 ) {
     val monet = remember(LocalConfiguration.current) { MonetCompat.getInstance() }
     val colorScheme = if (darkTheme) monet.darkMonetCompatScheme() else monet.lightMonetCompatScheme()
-    MaterialTheme(colorScheme = colorScheme, typography = ShoukoTypography, content = content)
+
+    val googleSansTypography = MaterialTheme.typography.copy(
+        headlineSmall = TextStyle(
+            fontFamily = GoogleSansFontFamily,
+            fontWeight = FontWeight.Normal,
+            fontSize = 24.sp,
+            lineHeight = 32.sp,
+            letterSpacing = 0.sp,
+        ),
+        titleLarge = TextStyle(
+            fontFamily = GoogleSansFontFamily,
+            fontWeight = FontWeight.Normal,
+            fontSize = 20.sp,
+            lineHeight = 28.sp,
+            letterSpacing = 0.sp,
+        ),
+        titleMedium = TextStyle(
+            fontFamily = GoogleSansFontFamily,
+            fontWeight = FontWeight.Medium,
+            fontSize = 16.sp,
+            lineHeight = 24.sp,
+            letterSpacing = 0.2.sp,
+        ),
+        titleSmall = TextStyle(
+            fontFamily = GoogleSansFontFamily,
+            fontWeight = FontWeight.Medium,
+            fontSize = 14.sp,
+            lineHeight = 20.sp,
+            letterSpacing = 0.1.sp,
+        ),
+        bodyLarge = TextStyle(
+            fontFamily = GoogleSansFontFamily,
+            fontWeight = FontWeight.Normal,
+            fontSize = 16.sp,
+            lineHeight = 24.sp,
+            letterSpacing = 0.5.sp,
+        ),
+        bodyMedium = TextStyle(
+            fontFamily = GoogleSansFontFamily,
+            fontWeight = FontWeight.Normal,
+            fontSize = 14.sp,
+            lineHeight = 20.sp,
+            letterSpacing = 0.2.sp,
+        ),
+        labelLarge = TextStyle(
+            fontFamily = GoogleSansFontFamily,
+            fontWeight = FontWeight.Medium,
+            fontSize = 14.sp,
+            lineHeight = 20.sp,
+            letterSpacing = 0.1.sp,
+        ),
+    )
+
+    MaterialTheme(colorScheme = colorScheme, typography = googleSansTypography, content = content)
 }
 
 @Composable
