@@ -15,10 +15,8 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -30,20 +28,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
-import androidx.compose.material.ripple.rememberRipple
-import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -63,7 +58,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.WindowCompat
@@ -186,60 +180,50 @@ private fun AppLinkChooserSheet(
             sheetBackgroundColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
             sheetContentColor = MaterialTheme.colorScheme.onSurface,
             sheetContent = {
-                CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurface) {
-                    Text(
-                        text = stringResource(R.string.link_chooser_dialog_title),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 16.dp),
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.titleLarge,
-                    )
-                    SoftDivider(modifier = Modifier.padding(horizontal = 16.dp))
-                    LazyVerticalGrid(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom)),
-                        contentPadding = PaddingValues(horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-                        columns = GridCells.Adaptive(minSize = 96.dp),
-                    ) {
-                        items(targets) { item ->
-                            Column(
-                                modifier = Modifier
-                                    .combinedClickable(
-                                        interactionSource = remember { MutableInteractionSource() },
-                                        indication = rememberRipple(bounded = false, radius = 56.dp),
-                                        onLongClick = {
-                                            scope.launch { state.hide() }
-                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                            onItemLongClick(item.component)
-                                        },
-                                        onClick = {
-                                            scope.launch { state.hide() }
-                                            onItemClick(item.component)
-                                        },
-                                    )
-                                    .padding(horizontal = 8.dp)
-                                    .size(width = 96.dp, height = 128.dp),
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                            ) {
+                Text(
+                    text = stringResource(R.string.link_chooser_dialog_title),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                SoftDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                LazyColumn(
+                    modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom)),
+                    contentPadding = PaddingValues(vertical = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                ) {
+                    items(targets) { item ->
+                        ListItem(
+                            modifier = Modifier
+                                .combinedClickable(
+                                    onLongClick = {
+                                        scope.launch { state.hide() }
+                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                        onItemLongClick(item.component)
+                                    },
+                                    onClick = {
+                                        scope.launch { state.hide() }
+                                        onItemClick(item.component)
+                                    },
+                                ),
+                            leadingContent = {
                                 Image(
                                     bitmap = item.icon,
                                     contentDescription = null,
-                                    modifier = Modifier.size(48.dp),
+                                    modifier = Modifier.size(36.dp),
                                 )
+                            },
+                            headlineText = {
                                 Text(
-                                    modifier = Modifier.padding(top = 12.dp),
                                     text = item.title,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    textAlign = TextAlign.Center,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
+                                    style = MaterialTheme.typography.bodyLarge,
                                 )
-                            }
-                        }
+                            },
+                            tonalElevation = 1.dp,
+                        )
                     }
                 }
             },
