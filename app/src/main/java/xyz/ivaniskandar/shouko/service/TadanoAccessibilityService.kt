@@ -70,7 +70,7 @@ class TadanoAccessibilityService : AccessibilityService(), LifecycleOwner {
         logcat { "onDestroy" }
     }
 
-    override fun getLifecycle() = dispatcher.lifecycle
+    override val lifecycle = dispatcher.lifecycle
 
     companion object {
         var isActive: Boolean by mutableStateOf(false)
