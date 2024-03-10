@@ -2,7 +2,7 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'com.google.android.gms.oss-licenses-plugin'
-    id "com.google.protobuf" version "0.8.19"
+    id "com.google.protobuf" version "0.9.4"
 }
 
 final def keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -16,7 +16,7 @@ final def gitCommitHash = { ->
 }
 
 android {
-    compileSdkVersion 33
+    compileSdk 34
     namespace 'xyz.ivaniskandar.shouko'
 
     defaultConfig {
@@ -76,38 +76,37 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.10.0'
+    implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.activity:activity-compose:1.7.0'
-    implementation "androidx.navigation:navigation-compose:2.5.3"
+    implementation 'androidx.activity:activity-compose:1.8.2'
+    implementation "androidx.navigation:navigation-compose:2.8.0-alpha04"
     implementation "com.github.topjohnwu.libsu:core:5.0.4"
     implementation 'com.squareup.logcat:logcat:0.1'
-    implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
+    implementation 'com.google.android.gms:play-services-oss-licenses:17.0.1'
     implementation 'com.github.KieronQuinn:MonetCompat:0.4.1'
-    implementation "io.github.fornewid:material-motion-compose-core:0.11.1"
+    implementation "io.github.fornewid:material-motion-compose-core:1.2.0"
 
-    implementation platform("androidx.compose:compose-bom:$compose_bom_version")
+    implementation platform("dev.chrisbanes.compose:compose-bom:$compose_bom_version")
     implementation "androidx.compose.ui:ui"
-    implementation "androidx.compose.material3:material3"
     implementation "androidx.compose.material:material"
     implementation "androidx.compose.material:material-icons-extended"
+    implementation "androidx.compose.material3:material3"
     implementation "androidx.compose.runtime:runtime-livedata"
     implementation "androidx.compose.ui:ui-text-google-fonts"
     implementation "androidx.compose.ui:ui-tooling-preview"
     debugImplementation "androidx.compose.ui:ui-tooling"
 
-    def accompanist_version = "0.30.1"
+    def accompanist_version = "0.35.0-alpha"
     implementation "com.google.accompanist:accompanist-pager:$accompanist_version"
     implementation "com.google.accompanist:accompanist-swiperefresh:$accompanist_version"
     implementation "com.google.accompanist:accompanist-navigation-material:$accompanist_version"
-    implementation "com.google.accompanist:accompanist-navigation-animation:$accompanist_version"
     implementation "com.google.accompanist:accompanist-systemuicontroller:$accompanist_version"
 
-    def coroutines_version = "1.6.4"
+    def coroutines_version = "1.8.0"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
 
-    def lifecycle_version = "2.6.1"
+    def lifecycle_version = "2.7.0"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-service:$lifecycle_version"

@@ -216,7 +216,7 @@ private fun AppLinkChooserSheet(
                                     modifier = Modifier.size(36.dp),
                                 )
                             },
-                            headlineText = {
+                            headlineContent = {
                                 Text(
                                     text = item.title,
                                     style = MaterialTheme.typography.bodyLarge,

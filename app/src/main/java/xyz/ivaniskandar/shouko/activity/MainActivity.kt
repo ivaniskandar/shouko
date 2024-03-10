@@ -47,13 +47,14 @@ import androidx.core.content.getSystemService
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.composable
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.navigation.material.BottomSheetNavigator
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.navigation.material.bottomSheet
+import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import kotlinx.coroutines.launch
 import logcat.LogPriority
@@ -95,7 +96,7 @@ class MainActivity : ComponentActivity() {
                 skipHalfExpanded = true,
             )
             val bottomSheetNavigator = remember(sheetState) { BottomSheetNavigator(sheetState = sheetState) }
-            val navController = rememberAnimatedNavController(bottomSheetNavigator)
+            val navController = rememberNavController(bottomSheetNavigator)
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val scrollState = rememberTopAppBarState()
             val scrollBehavior = when (navBackStackEntry?.destination?.route) {
@@ -139,7 +140,7 @@ class MainActivity : ComponentActivity() {
                     ) { innerPadding ->
                         val rootAvailable = remember { isRootAvailable }
                         val slideDistance = rememberSlideDistance()
-                        AnimatedNavHost(
+                        NavHost(
                             navController = navController,
                             startDestination = Screen.Home.route,
                             enterTransition = { materialSharedAxisXIn(forward = true, slideDistance) },
@@ -255,9 +256,7 @@ class MainActivity : ComponentActivity() {
 fun getAppBarTitle(navController: NavController, navBackStackEntry: NavBackStackEntry?): String {
     return if (navBackStackEntry?.destination is BottomSheetNavigator.Destination) {
         // Keep previous destination title when showing bottom sheet
-        val currentIndex = navController.backQueue.indexOf(navBackStackEntry)
-        val prevEntry = navController.backQueue[currentIndex - 1]
-        getAppBarTitle(navController = navController, navBackStackEntry = prevEntry)
+        getAppBarTitle(navController = navController, navBackStackEntry = navController.previousBackStackEntry)
     } else {
         when (navBackStackEntry?.destination?.route) {
             Screen.AssistantButtonSettings.route -> stringResource(id = R.string.assistant_button_title)
@@ -310,7 +309,7 @@ fun MainActivityActions(
                 DropdownMenuItem(
                     text = {
                         Text(
-                            text = stringResource(R.string.oss_license_title),
+                            text = stringResource(com.google.android.gms.oss.licenses.R.string.oss_license_title),
                             overflow = TextOverflow.Ellipsis,
                             maxLines = 1,
                         )

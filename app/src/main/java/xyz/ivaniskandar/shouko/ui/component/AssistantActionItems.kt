@@ -38,7 +38,7 @@ fun ApplicationRow(item: ApplicationItem, onClick: (ComponentName) -> Unit) {
         modifier = Modifier
             .clickable(onClick = { onClick.invoke(item.componentName) })
             .fillMaxWidth(),
-        headlineText = { Text(text = item.label) },
+        headlineContent = { Text(text = item.label) },
         leadingContent = {
             Image(
                 bitmap = item.icon,
@@ -55,8 +55,8 @@ fun ShortcutCreatorRow(item: ShortcutCreatorItem, onClick: (ComponentName) -> Un
         modifier = Modifier
             .clickable(onClick = { onClick.invoke(item.componentName) })
             .fillMaxWidth(),
-        headlineText = { Text(text = item.label) },
-        supportingText = { Text(text = item.applicationLabel) },
+        headlineContent = { Text(text = item.label) },
+        supportingContent = { Text(text = item.applicationLabel) },
         leadingContent = {
             Image(
                 bitmap = item.icon,
@@ -77,7 +77,7 @@ fun CommonActionRow(
         modifier = Modifier
             .clickable(onClick = onClick)
             .fillMaxWidth(),
-        headlineText = { Text(text = label) },
+        headlineContent = { Text(text = label) },
         leadingContent = {
             Icon(
                 painter = iconPainter,
@@ -100,7 +100,7 @@ fun CommonActionRow(
             .clickable(onClick = onClick)
             .padding(vertical = 2.dp)
             .fillMaxWidth(),
-        headlineText = { Text(text = label) },
+        headlineContent = { Text(text = label) },
         leadingContent = {
             Icon(
                 imageVector = iconVector,

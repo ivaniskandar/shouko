@@ -252,13 +252,13 @@ fun LinkTargetListItem(item: LinkHandlerAppItem, onClick: () -> Unit) {
                 modifier = Modifier.size(32.dp),
             )
         },
-        headlineText = {
+        headlineContent = {
             Text(
                 text = item.label,
                 style = MaterialTheme.typography.titleLarge,
             )
         },
-        supportingText = {
+        supportingContent = {
             if (item.isApproved) {
                 val count = remember { item.verifiedDomains.size + item.userSelectedDomains.size }
                 Text(
