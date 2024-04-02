@@ -22,7 +22,7 @@ android {
     defaultConfig {
         applicationId "xyz.ivaniskandar.shouko"
         minSdkVersion 29
-        targetSdkVersion 32
+        targetSdkVersion 33
         versionCode 9
         versionName "0.8.0"
         resConfigs 'en', 'ja', 'ru', 'de'
