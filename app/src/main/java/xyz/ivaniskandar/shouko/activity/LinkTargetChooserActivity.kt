@@ -111,7 +111,7 @@ class LinkTargetChooserActivity : ComponentActivity() {
                         .asImageBitmap(),
                 )
             }
-            .sortedBy { it.title.lowercase() }
+            .sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.title })
 
         setContent {
             ShoukoM3Theme {
