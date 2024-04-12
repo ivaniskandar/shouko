@@ -121,7 +121,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
                 it.activityInfo.loadLabel(pm).toString(),
                 shadowWrapper.run(it.activityInfo.loadIcon(pm)).toBitmap().asImageBitmap(),
             )
-        }.sortedBy { it.label }
+        }.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.label })
     }
 
     private fun getShortcutCreatorList(): List<ShortcutCreatorItem> {
@@ -138,7 +138,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
                 shadowWrapper.run(it.activityInfo.loadIcon(pm)).toBitmap().asImageBitmap(),
                 pm.getApplicationLabel(pm.getApplicationInfoCompat(it.activityInfo.packageName, 0)).toString(),
             )
-        }.sortedBy { it.label }
+        }.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.label })
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
@@ -171,7 +171,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
                     unapproved ?: emptySet(),
                 )
             }
-            .sortedBy { it.label }
+            .sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.label })
             .toList()
     }
 }
