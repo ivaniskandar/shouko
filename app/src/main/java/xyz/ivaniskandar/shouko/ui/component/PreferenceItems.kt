@@ -12,6 +12,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -97,12 +98,12 @@ fun SwitchPreference(
 
 @Preview
 @Composable
-fun PreferenceItemsPreview() {
+private fun PreferenceItemsPreview() {
     var darkTheme by remember { mutableStateOf(false) }
     ShoukoM3PreviewTheme(darkTheme = darkTheme) {
         Surface(color = MaterialTheme.colorScheme.background) {
             Column {
-                var count by remember { mutableStateOf(0) }
+                var count by remember { mutableIntStateOf(0) }
                 Text(text = "Preference clicked $count time(s)")
                 Preference(title = "Preference", subtitle = "With subtitle") { count += 1 }
                 Preference(title = "Preference") { count += 1 }

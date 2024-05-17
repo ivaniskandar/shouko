@@ -19,7 +19,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Launch
+import androidx.compose.material.icons.automirrored.filled.Launch
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
@@ -180,7 +180,7 @@ fun CustomChooserToggle(checked: Boolean, onClick: () -> Unit) {
 
 @Preview
 @Composable
-fun CustomChooserTogglePreview() {
+private fun CustomChooserTogglePreview() {
     ShoukoM3PreviewTheme {
         CustomChooserToggle(checked = true) {}
     }
@@ -242,7 +242,7 @@ fun LinkTargetList(
 }
 
 @Composable
-fun LinkTargetListItem(item: LinkHandlerAppItem, onClick: () -> Unit) {
+private fun LinkTargetListItem(item: LinkHandlerAppItem, onClick: () -> Unit) {
     ListItem(
         modifier = Modifier.clickable(onClick = onClick),
         leadingContent = {
@@ -359,7 +359,7 @@ fun LinkTargetInfoSheet(
                 .padding(top = 24.dp, bottom = 8.dp),
         ) {
             Icon(
-                Icons.Default.Launch,
+                Icons.AutoMirrored.Filled.Launch,
                 contentDescription = null,
                 modifier = Modifier.size(ButtonDefaults.IconSize),
             )

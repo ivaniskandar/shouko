@@ -1,9 +1,9 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     ext {
-        kotlin_version = "1.9.22"
-        compose_bom_version = '2024.03.00-alpha01'
-        compose_compiler_version = '1.5.10'
+        kotlin_version = "1.9.24"
+        compose_bom_version = '2024.05.00-alpha02'
+        compose_compiler_version = '1.5.14'
         protobuf_version = '3.25.3'
     }
     repositories {
@@ -12,7 +12,7 @@ buildscript {
         maven { url 'https://jitpack.io' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.3.0'
+        classpath 'com.android.tools.build:gradle:8.4.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.google.android.gms:oss-licenses-plugin:0.10.6'
         classpath 'com.diffplug.spotless:spotless-plugin-gradle:6.16.0'

@@ -6,5 +6,6 @@ dependencyResolutionManagement {
         maven { url 'https://jitpack.io' }
     }
 }
+
 rootProject.name = "XPERI+"
 include ':app'
