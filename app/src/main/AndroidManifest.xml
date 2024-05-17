@@ -49,6 +49,17 @@
             <meta-data android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
         </activity>
+        <activity android:name=".activity.LinkArchiverTargetActivity"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:label="@string/link_archiver_label"
+            android:theme="@style/Theme.Shouko.Transparent">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/*" />
+            </intent-filter>
+        </activity>
         <activity android:name=".activity.LinkCleanerTargetActivity"
             android:exported="true"
             android:excludeFromRecents="true"

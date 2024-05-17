@@ -2,7 +2,6 @@ package xyz.ivaniskandar.shouko.activity
 
 import android.content.ClipboardManager
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.telephony.PhoneNumberUtils
 import android.util.Patterns
@@ -12,6 +11,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.getSystemService
+import androidx.core.net.toUri
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3Theme
 import xyz.ivaniskandar.shouko.util.isPackageInstalled
@@ -63,7 +63,7 @@ class WaMeActivity : ComponentActivity() {
     private fun handle(number: CharSequence) {
         val stripped = number.filter { it.isDigit() }
         val waIntent = Intent(Intent.ACTION_VIEW).apply {
-            data = Uri.parse(WA_ME_LINK + stripped)
+            data = "$WA_ME_LINK$stripped".toUri()
             `package` = WA_PACKAGE_NAME
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }

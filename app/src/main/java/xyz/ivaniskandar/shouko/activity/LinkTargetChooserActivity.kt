@@ -3,7 +3,6 @@ package xyz.ivaniskandar.shouko.activity
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
@@ -60,6 +59,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.net.toUri
 import androidx.core.view.WindowCompat
 import kotlinx.coroutines.launch
 import xyz.ivaniskandar.shouko.R
@@ -138,7 +138,7 @@ class LinkTargetChooserActivity : ComponentActivity() {
     private fun startAppInfo(componentName: ComponentName) {
         startActivity(
             Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                data = Uri.parse("package:${componentName.packageName}")
+                data = "package:${componentName.packageName}".toUri()
             },
         )
     }
