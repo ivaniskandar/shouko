@@ -113,7 +113,7 @@ class PocketNoTouchyActivity : ComponentActivity() {
 
     @Preview
     @Composable
-    fun DialogCardPreview() {
+    private fun DialogCardPreview() {
         ShoukoM3PreviewTheme(darkTheme = true) {
             Box(modifier = Modifier.background(Color.Black)) {
                 DialogCard()

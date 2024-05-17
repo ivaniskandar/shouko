@@ -37,7 +37,7 @@ fun KeyguardUnlock(onClick: () -> Unit) {
 
 @Preview
 @Composable
-fun KeyguardUnlockPreview() {
+private fun KeyguardUnlockPreview() {
     ShoukoM3PreviewTheme {
         KeyguardUnlock {}
     }

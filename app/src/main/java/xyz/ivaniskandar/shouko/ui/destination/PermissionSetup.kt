@@ -194,7 +194,7 @@ fun PermissionSetupNoRoot(command: String) {
 
 @Preview
 @Composable
-fun ReadLogsPermissionSetupRootPreview() {
+private fun ReadLogsPermissionSetupRootPreview() {
     ShoukoM3PreviewTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             PermissionSetup(
@@ -210,7 +210,7 @@ fun ReadLogsPermissionSetupRootPreview() {
 
 @Preview
 @Composable
-fun ReadLogsPermissionSetupNoRootPreview() {
+private fun ReadLogsPermissionSetupNoRootPreview() {
     ShoukoM3PreviewTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             PermissionSetup(
@@ -226,7 +226,7 @@ fun ReadLogsPermissionSetupNoRootPreview() {
 
 @Preview
 @Composable
-fun WriteSettingsPermissionSetupNoRootPreview() {
+private fun WriteSettingsPermissionSetupNoRootPreview() {
     ShoukoM3PreviewTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             PermissionSetup(

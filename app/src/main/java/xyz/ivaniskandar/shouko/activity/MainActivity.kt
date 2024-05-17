@@ -17,7 +17,7 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -132,7 +132,7 @@ class MainActivity : ComponentActivity() {
                                 navigationIcon = if (currentRoute != null && currentRoute != Screen.Home.route) {
                                     {
                                         IconButton(onClick = { navController.popBackStack() }) {
-                                            Icon(imageVector = Icons.Rounded.ArrowBack, contentDescription = null)
+                                            Icon(imageVector = Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = null)
                                         }
                                     }
                                 } else { {} },
@@ -257,7 +257,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun getAppBarTitle(navController: NavController, navBackStackEntry: NavBackStackEntry?): String {
+private fun getAppBarTitle(navController: NavController, navBackStackEntry: NavBackStackEntry?): String {
     return if (navBackStackEntry?.destination is BottomSheetNavigator.Destination) {
         // Keep previous destination title when showing bottom sheet
         getAppBarTitle(navController = navController, navBackStackEntry = navController.previousBackStackEntry)
@@ -283,7 +283,7 @@ fun getAppBarTitle(navController: NavController, navBackStackEntry: NavBackStack
 }
 
 @Composable
-fun MainActivityActions(
+private fun MainActivityActions(
     navController: NavController,
 ) {
     val context = LocalContext.current

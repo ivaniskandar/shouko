@@ -218,7 +218,7 @@ fun AssistantActionSelection(
                     contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding()),
                 ) {
                     item { CategoryHeader(title = stringResource(id = R.string.category_title_media_key)) }
-                    items(MediaKeyAction.Key.values()) { item ->
+                    items(MediaKeyAction.Key.entries.toTypedArray()) { item ->
                         CommonActionRow(
                             iconPainter = painterResource(id = item.iconResId),
                             label = stringResource(id = item.labelResId),
@@ -258,7 +258,7 @@ fun AssistantActionSelection(
                             },
                         )
                     }
-                    items(StatusBarAction.PanelType.values()) { item ->
+                    items(StatusBarAction.PanelType.entries.toTypedArray()) { item ->
                         CommonActionRow(
                             iconVector = item.iconVector,
                             label = stringResource(id = item.labelResId),

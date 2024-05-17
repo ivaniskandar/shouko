@@ -93,7 +93,7 @@ fun WriteSettingsCard(visible: Boolean = true, onButtonClicked: () -> Unit) {
 
 @Preview
 @Composable
-fun PreferenceCardsPreview() {
+private fun PreferenceCardsPreview() {
     ShoukoM3PreviewTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             Column {

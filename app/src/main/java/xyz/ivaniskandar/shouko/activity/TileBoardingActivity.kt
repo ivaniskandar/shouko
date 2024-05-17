@@ -110,7 +110,7 @@ class TileBoardingActivity : ComponentActivity() {
 
     @Preview
     @Composable
-    fun APreview() {
+    private fun APreview() {
         ShoukoM3PreviewTheme {
             TileBoardingScreen(type = TadanoTileParentService.Type.COFFEE, onDismissRequest = {})
         }
