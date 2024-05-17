@@ -4,13 +4,13 @@ import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_VIEW
 import android.content.pm.PackageManager
-import android.net.Uri
+import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import logcat.LogPriority
 import logcat.logcat
 import xyz.ivaniskandar.shouko.feature.IntentAction
 
-val RELEASES_PAGE_INTENT = Intent(ACTION_VIEW, Uri.parse("https://github.com/ivaniskandar/shouko/releases/latest"))
+val RELEASES_PAGE_INTENT = Intent(ACTION_VIEW, "https://github.com/ivaniskandar/shouko/releases/latest".toUri())
 
 /**
  * Extras for settings
