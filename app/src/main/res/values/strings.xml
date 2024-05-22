@@ -93,6 +93,9 @@
     <string name="link_cleaner_failed">Failed to clean link</string>
     <string name="link_cleaner_failed_clipboard">Newest clipboard item is not a valid link</string>
 
+    <string name="fixtweet_label">FxTwitter/FixupX</string>
+    <string name="fixtweet_failed_unknown">Unknown link</string>
+
     <string name="wame_label">Click to WA Chat</string>
     <string name="wame_unavailable">WhatsApp not installed</string>
     <string name="wame_failed_clipboard">Newest clipboard item is not a valid phone number</string>

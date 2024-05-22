@@ -16,6 +16,7 @@ import logcat.logcat
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.feature.LinkCleaner
 import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3Theme
+import xyz.ivaniskandar.shouko.util.shareLink
 
 class LinkCleanerTargetActivity : ComponentActivity() {
 
@@ -67,20 +68,6 @@ class LinkCleanerTargetActivity : ComponentActivity() {
 
     private fun CharSequence?.isValidUrl(): Boolean {
         return this != null && Patterns.WEB_URL.matcher(this).matches()
-    }
-
-    private fun shareLink(newLink: String) {
-        val newIntent = Intent.createChooser(
-            Intent(Intent.ACTION_SEND).apply {
-                type = intent.type
-                putExtra(Intent.EXTRA_TEXT, newLink)
-            },
-            null,
-        ).apply {
-            // Don't loop lol
-            putExtra(Intent.EXTRA_EXCLUDE_COMPONENTS, arrayOf(componentName))
-        }
-        startActivity(newIntent)
     }
 
     companion object {
