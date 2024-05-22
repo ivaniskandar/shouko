@@ -63,7 +63,7 @@ jobs:
 
       - name: Upload APK
         if: "!startsWith(github.ref, 'refs/tags/') && github.repository == 'ivaniskandar/shouko' && github.event_name == 'push'"
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: shouko-canary
           path: ${{ steps.sign_app.outputs.signedReleaseFile }}
