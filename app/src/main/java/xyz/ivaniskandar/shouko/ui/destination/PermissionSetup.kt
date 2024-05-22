@@ -52,11 +52,12 @@ fun PermissionSetup(
     title: String,
     permissionName: String,
     isRootAvailable: Boolean,
+    modifier: Modifier = Modifier,
     onPermissionGranted: () -> Unit,
 ) {
     val context = LocalContext.current
     Column(
-        modifier = Modifier
+        modifier = modifier
             .padding(contentPadding)
             .padding(16.dp)
             .fillMaxSize(),
@@ -83,7 +84,7 @@ fun PermissionSetup(
     }
 
     // Permission listener
-    LaunchedEffect(true) {
+    LaunchedEffect(true, onPermissionGranted) {
         launch(Dispatchers.Default) {
             while (context.checkSelfPermission(permissionName) != PackageManager.PERMISSION_GRANTED) {
                 logcat { "Waiting for $permissionName permission" }
@@ -99,97 +100,107 @@ fun PermissionSetup(
 }
 
 @Composable
-fun PermissionSetupRoot(command: String) {
-    Text(
-        text = stringResource(R.string.shell_permission_setup_desc_root),
-        modifier = Modifier
-            .padding(vertical = 16.dp)
-            .fillMaxWidth(),
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.bodyLarge,
-    )
-    Text(
-        text = stringResource(R.string.shell_permission_setup_desc_extra),
-        modifier = Modifier
-            .padding(bottom = 24.dp)
-            .fillMaxWidth(),
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.bodyLarge,
-    )
+fun PermissionSetupRoot(
+    command: String,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier) {
+        Text(
+            text = stringResource(R.string.shell_permission_setup_desc_root),
+            modifier = Modifier
+                .padding(vertical = 16.dp)
+                .fillMaxWidth(),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyLarge,
+        )
+        Text(
+            text = stringResource(R.string.shell_permission_setup_desc_extra),
+            modifier = Modifier
+                .padding(bottom = 24.dp)
+                .fillMaxWidth(),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyLarge,
+        )
 
-    FilledTonalButton(onClick = { Shell.cmd(command).submit() }) {
-        Text(text = stringResource(R.string.button_continue))
+        FilledTonalButton(onClick = { Shell.cmd(command).submit() }) {
+            Text(text = stringResource(R.string.button_continue))
+        }
     }
 }
 
 @Composable
-fun PermissionSetupNoRoot(command: String) {
-    val annotatedString = buildAnnotatedString {
-        pushStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurfaceVariant))
-        val str = stringResource(id = R.string.shell_permission_setup_desc_noroot)
-        val txtToBeAnnotated = stringResource(R.string.shell_permission_setup_desc_noroot_adb_link_label)
-        val startAnnotationIndex = str.indexOf(txtToBeAnnotated)
-        val endAnnotationIndex = startAnnotationIndex + txtToBeAnnotated.length
-        append(str)
-        addStyle(
-            style = SpanStyle(
-                color = MaterialTheme.colorScheme.primary,
-                textDecoration = TextDecoration.Underline,
-            ),
-            start = startAnnotationIndex,
-            end = endAnnotationIndex,
-        )
-        addStringAnnotation(
-            tag = "URL",
-            annotation = stringResource(R.string.setup_adb_link),
-            start = startAnnotationIndex,
-            end = endAnnotationIndex,
-        )
-    }
-    val uriHandler = LocalUriHandler.current
-    ClickableText(
-        text = annotatedString,
-        modifier = Modifier.padding(vertical = 24.dp),
-        style = MaterialTheme.typography.bodyLarge,
-    ) {
-        annotatedString
-            .getStringAnnotations("URL", it, it)
-            .firstOrNull()?.let { stringAnnotation ->
-            uriHandler.openUri(stringAnnotation.item)
+fun PermissionSetupNoRoot(
+    command: String,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier) {
+        val annotatedString = buildAnnotatedString {
+            pushStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurfaceVariant))
+            val str = stringResource(id = R.string.shell_permission_setup_desc_noroot)
+            val txtToBeAnnotated = stringResource(R.string.shell_permission_setup_desc_noroot_adb_link_label)
+            val startAnnotationIndex = str.indexOf(txtToBeAnnotated)
+            val endAnnotationIndex = startAnnotationIndex + txtToBeAnnotated.length
+            append(str)
+            addStyle(
+                style = SpanStyle(
+                    color = MaterialTheme.colorScheme.primary,
+                    textDecoration = TextDecoration.Underline,
+                ),
+                start = startAnnotationIndex,
+                end = endAnnotationIndex,
+            )
+            addStringAnnotation(
+                tag = "URL",
+                annotation = stringResource(R.string.setup_adb_link),
+                start = startAnnotationIndex,
+                end = endAnnotationIndex,
+            )
         }
-    }
+        val uriHandler = LocalUriHandler.current
+        ClickableText(
+            text = annotatedString,
+            modifier = Modifier.padding(vertical = 24.dp),
+            style = MaterialTheme.typography.bodyLarge,
+        ) {
+            annotatedString
+                .getStringAnnotations("URL", it, it)
+                .firstOrNull()?.let { stringAnnotation ->
+                    uriHandler.openUri(stringAnnotation.item)
+                }
+        }
 
-    val context = LocalContext.current
-    val adbCommand = "adb shell $command"
-    Card(
-        modifier = Modifier
-            .clickable { context.startActivity(createShareTextIntent(adbCommand)) }
-            .fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Color.Black, contentColor = Color.White),
-    ) {
+        val context = LocalContext.current
+        val adbCommand = "adb shell $command"
+        Card(
+            modifier = Modifier
+                .clickable { context.startActivity(createShareTextIntent(adbCommand)) }
+                .fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = Color.Black, contentColor = Color.White),
+        ) {
+            Text(
+                text = adbCommand,
+                modifier = Modifier.padding(12.dp),
+                fontSize = 12.sp,
+                fontFamily = FontFamily.Monospace,
+            )
+        }
+
         Text(
-            text = adbCommand,
-            modifier = Modifier.padding(12.dp),
-            fontSize = 12.sp,
-            fontFamily = FontFamily.Monospace,
+            modifier = Modifier.padding(top = 2.dp),
+            text = stringResource(R.string.shell_permission_setup_command_card_caption),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodySmall,
         )
+
+        Text(
+            text = stringResource(R.string.shell_permission_setup_desc_extra),
+            modifier = Modifier.padding(vertical = 24.dp),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyLarge,
+        )
+
+        CircularProgressIndicator(modifier = Modifier.padding(24.dp))
     }
-
-    Text(
-        modifier = Modifier.padding(top = 2.dp),
-        text = stringResource(R.string.shell_permission_setup_command_card_caption),
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.bodySmall,
-    )
-
-    Text(
-        text = stringResource(R.string.shell_permission_setup_desc_extra),
-        modifier = Modifier.padding(vertical = 24.dp),
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.bodyLarge,
-    )
-
-    CircularProgressIndicator(modifier = Modifier.padding(24.dp))
 }
 
 @Preview

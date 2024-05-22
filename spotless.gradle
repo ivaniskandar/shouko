@@ -7,6 +7,8 @@ spotless {
         targetExclude('bin/**/*.kt')
 
         ktlint()
+            .customRuleSets(["io.nlopez.compose.rules:ktlint:0.4.1"])
+            .editorConfigOverride("ktlint_function_naming_ignore_when_annotated_with":"Composable")
         trimTrailingWhitespace()
         indentWithSpaces()
         endWithNewline()

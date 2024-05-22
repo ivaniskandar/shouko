@@ -85,9 +85,12 @@ class PocketNoTouchyActivity : ComponentActivity() {
     }
 
     @Composable
-    fun DialogCard(onButtonClicked: () -> Unit = {}) {
+    private fun DialogCard(
+        modifier: Modifier = Modifier,
+        onButtonClicked: () -> Unit,
+    ) {
         OutlinedCard(
-            modifier = Modifier.padding(24.dp),
+            modifier = modifier.padding(24.dp),
             border = BorderStroke(width = 1.dp, color = Color(0x1FFFFFFF)),
         ) {
             Column(modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 16.dp)) {
@@ -116,7 +119,7 @@ class PocketNoTouchyActivity : ComponentActivity() {
     private fun DialogCardPreview() {
         ShoukoM3PreviewTheme(darkTheme = true) {
             Box(modifier = Modifier.background(Color.Black)) {
-                DialogCard()
+                DialogCard(onButtonClicked = {})
             }
         }
     }

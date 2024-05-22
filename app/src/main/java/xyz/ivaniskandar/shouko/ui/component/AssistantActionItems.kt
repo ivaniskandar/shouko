@@ -3,6 +3,7 @@ package xyz.ivaniskandar.shouko.ui.component
 import android.content.ComponentName
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -22,20 +23,30 @@ import java.util.Locale
 private val RowIconModifier = Modifier.size(36.dp)
 
 @Composable
-fun CategoryHeader(title: String, divider: Boolean = false) {
-    if (divider) SoftDivider()
-    Text(
-        text = title.uppercase(Locale.getDefault()),
-        modifier = Modifier.padding(start = 68.dp, top = 20.dp, end = 16.dp, bottom = 8.dp),
-        color = MaterialTheme.colorScheme.primary,
-        style = MaterialTheme.typography.labelMedium,
-    )
+fun CategoryHeader(
+    title: String,
+    modifier: Modifier = Modifier,
+    divider: Boolean = false,
+) {
+    Column(modifier = modifier) {
+        if (divider) SoftDivider()
+        Text(
+            text = title.uppercase(Locale.getDefault()),
+            modifier = Modifier.padding(start = 68.dp, top = 20.dp, end = 16.dp, bottom = 8.dp),
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.labelMedium,
+        )
+    }
 }
 
 @Composable
-fun ApplicationRow(item: ApplicationItem, onClick: (ComponentName) -> Unit) {
+fun ApplicationRow(
+    item: ApplicationItem,
+    modifier: Modifier = Modifier,
+    onClick: (ComponentName) -> Unit,
+) {
     ListItem(
-        modifier = Modifier
+        modifier = modifier
             .clickable(onClick = { onClick.invoke(item.componentName) })
             .fillMaxWidth(),
         headlineContent = { Text(text = item.label) },
@@ -50,9 +61,13 @@ fun ApplicationRow(item: ApplicationItem, onClick: (ComponentName) -> Unit) {
 }
 
 @Composable
-fun ShortcutCreatorRow(item: ShortcutCreatorItem, onClick: (ComponentName) -> Unit) {
+fun ShortcutCreatorRow(
+    item: ShortcutCreatorItem,
+    modifier: Modifier = Modifier,
+    onClick: (ComponentName) -> Unit,
+) {
     ListItem(
-        modifier = Modifier
+        modifier = modifier
             .clickable(onClick = { onClick.invoke(item.componentName) })
             .fillMaxWidth(),
         headlineContent = { Text(text = item.label) },
@@ -71,10 +86,11 @@ fun ShortcutCreatorRow(item: ShortcutCreatorItem, onClick: (ComponentName) -> Un
 fun CommonActionRow(
     iconPainter: Painter,
     label: String,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
     ListItem(
-        modifier = Modifier
+        modifier = modifier
             .clickable(onClick = onClick)
             .fillMaxWidth(),
         headlineContent = { Text(text = label) },
@@ -93,10 +109,11 @@ fun CommonActionRow(
 fun CommonActionRow(
     iconVector: ImageVector,
     label: String,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
     ListItem(
-        modifier = Modifier
+        modifier = modifier
             .clickable(onClick = onClick)
             .padding(vertical = 2.dp)
             .fillMaxWidth(),

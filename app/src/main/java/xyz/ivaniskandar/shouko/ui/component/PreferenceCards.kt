@@ -21,14 +21,15 @@ import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3PreviewTheme
 
 @Composable
-fun BasePreferenceCard(
+private fun BasePreferenceCard(
     title: String,
     description: String,
     buttonLabel: String,
+    modifier: Modifier = Modifier,
     onButtonClicked: () -> Unit,
 ) {
     Card(
-        modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
+        modifier = modifier.padding(horizontal = 20.dp, vertical = 16.dp),
     ) {
         Column(
             modifier = Modifier

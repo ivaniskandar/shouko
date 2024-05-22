@@ -17,8 +17,14 @@ import androidx.compose.ui.unit.dp
 import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3PreviewTheme
 
 @Composable
-fun KeyguardUnlock(onClick: () -> Unit) {
-    Surface(color = MaterialTheme.colorScheme.primaryContainer) {
+fun KeyguardUnlock(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    Surface(
+        modifier = modifier,
+        color = MaterialTheme.colorScheme.primaryContainer,
+    ) {
         Box(
             modifier = Modifier
                 .clickable(onClick = onClick)

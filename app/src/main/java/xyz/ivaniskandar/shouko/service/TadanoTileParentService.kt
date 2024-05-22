@@ -272,6 +272,7 @@ class TadanoTileParentService : Service() {
     }
 
     enum class Type {
-        COFFEE, TEA
+        COFFEE,
+        TEA,
     }
 }

@@ -61,8 +61,15 @@ class TileBoardingActivity : ComponentActivity() {
     }
 
     @Composable
-    fun TileBoardingScreen(type: TadanoTileParentService.Type, onDismissRequest: () -> Unit) {
-        Surface(shape = RoundedCornerShape(28.dp)) {
+    private fun TileBoardingScreen(
+        type: TadanoTileParentService.Type,
+        modifier: Modifier = Modifier,
+        onDismissRequest: () -> Unit,
+    ) {
+        Surface(
+            modifier = modifier,
+            shape = RoundedCornerShape(28.dp),
+        ) {
             Column(
                 modifier = Modifier
                     .padding(16.dp)

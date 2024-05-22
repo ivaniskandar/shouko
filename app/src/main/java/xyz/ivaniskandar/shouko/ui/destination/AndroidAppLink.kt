@@ -64,16 +64,17 @@ import xyz.ivaniskandar.shouko.util.getPackageLabel
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun AndroidAppLinkSettings(
-    context: Context = LocalContext.current,
     contentPadding: PaddingValues,
     navController: NavController,
+    modifier: Modifier = Modifier,
+    context: Context = LocalContext.current,
     onOpenSettings: () -> Unit,
 ) {
     var isDefaultBrowser by remember { mutableStateOf(checkDefaultBrowser(context)) }
     var showEnableInfoDialog by remember { mutableStateOf(false) }
 
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         contentPadding = contentPadding,
     ) {
         item {
@@ -152,10 +153,14 @@ fun AndroidAppLinkSettings(
 }
 
 @Composable
-fun CustomChooserToggle(checked: Boolean, onClick: () -> Unit) {
+fun CustomChooserToggle(
+    checked: Boolean,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
     Card(
         onClick = onClick,
-        modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
+        modifier = modifier.padding(horizontal = 20.dp, vertical = 12.dp),
         shape = RoundedCornerShape(28.dp),
     ) {
         Row(
@@ -186,20 +191,24 @@ private fun CustomChooserTogglePreview() {
     }
 }
 
+/**
+ * @param approved if true, show approved else unapproved
+ */
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun LinkTargetList(
-    approved: Boolean, // if true, show approved else unapproved
-    mainViewModel: MainActivityViewModel = viewModel(),
+    approved: Boolean,
     navController: NavController,
     contentPadding: PaddingValues,
+    modifier: Modifier = Modifier,
+    mainViewModel: MainActivityViewModel = viewModel(),
 ) {
     val items by mainViewModel.linkHandlerList.observeAsState()
     val isRefreshing by mainViewModel.isRefreshingLinkHandlerList.collectAsState()
     SwipeRefresh(
         state = rememberSwipeRefreshState(isRefreshing),
         onRefresh = { mainViewModel.refreshLinkHandlerList() },
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         indicatorPadding = contentPadding,
         indicator = { s, trigger ->
             M3SwipeRefreshIndicator(state = s, refreshTriggerDistance = trigger)
@@ -242,9 +251,13 @@ fun LinkTargetList(
 }
 
 @Composable
-private fun LinkTargetListItem(item: LinkHandlerAppItem, onClick: () -> Unit) {
+private fun LinkTargetListItem(
+    item: LinkHandlerAppItem,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
     ListItem(
-        modifier = Modifier.clickable(onClick = onClick),
+        modifier = modifier.clickable(onClick = onClick),
         leadingContent = {
             Image(
                 bitmap = item.icon,
@@ -286,13 +299,14 @@ private fun LinkTargetListItem(item: LinkHandlerAppItem, onClick: () -> Unit) {
 @Composable
 fun LinkTargetInfoSheet(
     packageName: String,
+    modifier: Modifier = Modifier,
     mainViewModel: MainActivityViewModel = viewModel(),
     onOpenSettings: (String) -> Unit,
 ) {
     val list by mainViewModel.linkHandlerList.observeAsState()
     val item = list!!.find { it.packageName == packageName }!!
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .navigationBarsPadding()
             .padding(start = 20.dp, top = 24.dp, end = 20.dp),

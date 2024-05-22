@@ -26,13 +26,14 @@ import kotlinx.coroutines.launch
 fun TabPager(
     pageTitles: List<String>,
     contentPadding: PaddingValues,
+    modifier: Modifier = Modifier,
     content: @Composable ColumnScope.(page: Int) -> Unit,
 ) {
     val layoutDirection = LocalLayoutDirection.current
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState()
 
-    Column(Modifier.fillMaxSize()) {
+    Column(modifier = modifier.fillMaxSize()) {
         TabRow(
             selectedTabIndex = pagerState.currentPage,
             modifier = Modifier

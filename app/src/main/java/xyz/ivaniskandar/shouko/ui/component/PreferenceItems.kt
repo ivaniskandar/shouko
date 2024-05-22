@@ -25,8 +25,8 @@ import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3PreviewTheme
 
 @Composable
 private fun BasePreference(
-    modifier: Modifier = Modifier,
     title: String,
+    modifier: Modifier = Modifier,
     subtitle: String? = null,
     enabled: Boolean = true,
     widget: @Composable RowScope.() -> Unit = {},
@@ -61,12 +61,13 @@ private fun BasePreference(
 @Composable
 fun Preference(
     title: String,
+    modifier: Modifier = Modifier,
     subtitle: String? = null,
     enabled: Boolean = true,
     onPreferenceClick: () -> Unit,
 ) {
     BasePreference(
-        modifier = Modifier.clickable(enabled = enabled, onClick = onPreferenceClick),
+        modifier = modifier.clickable(enabled = enabled, onClick = onPreferenceClick),
         title = title,
         subtitle = subtitle,
         enabled = enabled,
@@ -76,13 +77,14 @@ fun Preference(
 @Composable
 fun SwitchPreference(
     title: String,
+    modifier: Modifier = Modifier,
     subtitle: String? = null,
     checked: Boolean = false,
     enabled: Boolean = true,
     onCheckedChanged: (Boolean) -> Unit,
 ) {
     BasePreference(
-        modifier = Modifier.clickable(enabled = enabled, onClick = { onCheckedChanged.invoke(!checked) }),
+        modifier = modifier.clickable(enabled = enabled, onClick = { onCheckedChanged.invoke(!checked) }),
         title = title,
         subtitle = subtitle,
         enabled = enabled,

@@ -231,7 +231,7 @@ private fun AppLinkChooserSheet(
         )
     }
     var opened by remember { mutableStateOf(false) }
-    LaunchedEffect(key1 = state.currentValue) {
+    LaunchedEffect(state.currentValue, onSheetHidden) {
         if (!opened) scope.launch { state.show() }
         when (state.currentValue) {
             ModalBottomSheetValue.Hidden -> if (opened) onSheetHidden()
@@ -258,7 +258,10 @@ private fun Scrim(
             Modifier
                 .pointerInput(onDismiss) { detectTapGestures { onDismiss() } }
                 .semantics(mergeDescendants = true) {
-                    onClick { onDismiss(); true }
+                    onClick {
+                        onDismiss()
+                        true
+                    }
                 }
         } else {
             Modifier

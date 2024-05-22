@@ -64,6 +64,7 @@ import xyz.ivaniskandar.shouko.util.setAsAssistantAction
 fun AssistantButtonSettings(
     navController: NavController,
     contentPadding: PaddingValues,
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -71,7 +72,7 @@ fun AssistantButtonSettings(
     val buttonPrefs by prefs.assistButtonFlow.collectAsState(initial = AssistButtonPrefs())
 
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         contentPadding = contentPadding,
     ) {
         item {
@@ -119,9 +120,10 @@ fun AssistantButtonSettings(
 
 @Composable
 fun AssistantActionSelection(
-    mainViewModel: MainActivityViewModel = viewModel(),
     navController: NavController,
     contentPadding: PaddingValues,
+    modifier: Modifier = Modifier,
+    mainViewModel: MainActivityViewModel = viewModel(),
 ) {
     val scope = rememberCoroutineScope()
     val prefs = ShoukoApplication.prefs
@@ -131,6 +133,7 @@ fun AssistantActionSelection(
         stringResource(R.string.tab_title_other),
     )
     TabPager(
+        modifier = modifier,
         pageTitles = titles,
         contentPadding = contentPadding,
     ) { page ->

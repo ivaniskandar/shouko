@@ -44,11 +44,11 @@ import xyz.ivaniskandar.shouko.util.toComponentName
 fun LockscreenShortcutSettings(
     navController: NavController,
     contentPadding: PaddingValues,
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
-    ComponentName.unflattenFromString("")
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         contentPadding = contentPadding,
     ) {
         item {
@@ -83,10 +83,11 @@ fun LockscreenShortcutSettings(
 
 @Composable
 fun LockscreenShortcutSelection(
-    mainViewModel: MainActivityViewModel = viewModel(),
     navController: NavController,
     settingsKey: String,
     contentPadding: PaddingValues,
+    modifier: Modifier = Modifier,
+    mainViewModel: MainActivityViewModel = viewModel(),
 ) {
     val scope = rememberCoroutineScope()
     val titles = listOf(
@@ -94,6 +95,7 @@ fun LockscreenShortcutSelection(
         stringResource(R.string.tab_title_other),
     )
     TabPager(
+        modifier = modifier,
         pageTitles = titles,
         contentPadding = contentPadding,
     ) { page ->

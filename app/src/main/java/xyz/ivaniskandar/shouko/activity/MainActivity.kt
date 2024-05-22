@@ -135,7 +135,9 @@ class MainActivity : ComponentActivity() {
                                             Icon(imageVector = Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = null)
                                         }
                                     }
-                                } else { {} },
+                                } else {
+                                    {}
+                                },
                                 actions = { MainActivityActions(navController = navController) },
                                 scrollBehavior = scrollBehavior,
                             )
@@ -179,7 +181,11 @@ class MainActivity : ComponentActivity() {
                                 AssistantButtonSettings(navController, innerPadding)
                             }
                             composable(Screen.AssistantLaunchSelection.route) {
-                                AssistantActionSelection(viewModel, navController, innerPadding)
+                                AssistantActionSelection(
+                                    navController = navController,
+                                    contentPadding = innerPadding,
+                                    mainViewModel = viewModel,
+                                )
                             }
                             composable(Screen.LockscreenShortcutSettings.route) {
                                 LockscreenShortcutSettings(navController, innerPadding)
