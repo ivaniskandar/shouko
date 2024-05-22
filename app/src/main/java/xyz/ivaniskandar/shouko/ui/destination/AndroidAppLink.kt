@@ -31,6 +31,9 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -48,14 +51,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.activity.MainActivityViewModel
 import xyz.ivaniskandar.shouko.item.LinkHandlerAppItem
 import xyz.ivaniskandar.shouko.ui.ComposeLifecycleCallback
 import xyz.ivaniskandar.shouko.ui.Screen
-import xyz.ivaniskandar.shouko.ui.component.M3SwipeRefreshIndicator
 import xyz.ivaniskandar.shouko.ui.component.Preference
 import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3PreviewTheme
 import xyz.ivaniskandar.shouko.util.checkDefaultBrowser
@@ -205,13 +205,18 @@ fun LinkTargetList(
 ) {
     val items by mainViewModel.linkHandlerList.observeAsState()
     val isRefreshing by mainViewModel.isRefreshingLinkHandlerList.collectAsState()
-    SwipeRefresh(
-        state = rememberSwipeRefreshState(isRefreshing),
-        onRefresh = { mainViewModel.refreshLinkHandlerList() },
+    val state = rememberPullToRefreshState()
+    PullToRefreshBox(
         modifier = modifier.fillMaxSize(),
-        indicatorPadding = contentPadding,
-        indicator = { s, trigger ->
-            M3SwipeRefreshIndicator(state = s, refreshTriggerDistance = trigger)
+        isRefreshing = isRefreshing,
+        onRefresh = { mainViewModel.refreshLinkHandlerList() },
+        state = state,
+        indicator = {
+            PullToRefreshDefaults.Indicator(
+                modifier = Modifier.padding(contentPadding).align(Alignment.TopCenter),
+                isRefreshing = isRefreshing,
+                state = state,
+            )
         },
     ) {
         val filteredItems = items?.filter { if (approved) it.linkHandlingAllowed && it.isApproved else it.isUnapproved }
