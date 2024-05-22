@@ -12,12 +12,14 @@ import android.content.Intent
 import android.content.Intent.ACTION_SCREEN_OFF
 import android.content.Intent.ACTION_SCREEN_ON
 import android.content.IntentFilter
+import android.content.pm.ServiceInfo
 import android.hardware.Sensor
 import android.hardware.Sensor.TYPE_PROXIMITY
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.hardware.SensorManager.SENSOR_DELAY_NORMAL
+import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
 import android.os.PowerManager.FULL_WAKE_LOCK
@@ -129,6 +131,11 @@ class TadanoTileParentService : Service() {
                         .setContentText(getString(R.string.tadano_tile_service_notif_text))
                         .setContentIntent(clickPendingIntent)
                         .build(),
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                        ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
+                    } else {
+                        0
+                    },
                 )
 
                 when (type) {

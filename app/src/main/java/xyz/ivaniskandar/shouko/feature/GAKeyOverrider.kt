@@ -32,6 +32,7 @@ import androidx.compose.material.icons.rounded.AdUnits
 import androidx.compose.material.icons.rounded.Aod
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
@@ -617,7 +618,12 @@ class MuteMicrophoneAction : Action() {
             return
         }
 
-        context.registerReceiver(notificationCancelReceiver, IntentFilter(NOTIFICATION_CANCEL_ACTION))
+        ContextCompat.registerReceiver(
+            context,
+            notificationCancelReceiver,
+            IntentFilter(NOTIFICATION_CANCEL_ACTION),
+            ContextCompat.RECEIVER_NOT_EXPORTED,
+        )
 
         val newChannel = NotificationChannel(
             toPlainString(),
