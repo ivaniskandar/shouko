@@ -11,6 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -154,7 +155,7 @@ fun Home(
                 }
             }
         }
-        Box(modifier = Modifier.matchParentSize(), contentAlignment = Alignment.BottomEnd) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomEnd) {
             Image(
                 painter = painterResource(id = R.drawable.shouko),
                 contentDescription = null,
