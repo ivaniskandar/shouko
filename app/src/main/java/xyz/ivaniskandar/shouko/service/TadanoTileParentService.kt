@@ -30,6 +30,7 @@ import android.provider.Settings
 import android.service.quicksettings.TileService
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
+import androidx.core.content.IntentCompat
 import androidx.core.content.getSystemService
 import com.kieronquinn.monetcompat.core.MonetCompat
 import xyz.ivaniskandar.shouko.R
@@ -116,7 +117,7 @@ class TadanoTileParentService : Service() {
                     channelSettingsIntent,
                     PendingIntent.FLAG_IMMUTABLE,
                 )
-                val type = intent.getSerializableExtra(EXTRA_SERVICE_TYPE) as Type
+                val type = IntentCompat.getSerializableExtra(intent, EXTRA_SERVICE_TYPE, Type::class.java)!!
                 val icon = when (type) {
                     Type.COFFEE -> R.drawable.ic_coffee
                     Type.TEA -> R.drawable.ic_tea
@@ -219,7 +220,7 @@ class TadanoTileParentService : Service() {
         stopSelf()
     }
 
-    @SuppressLint("WakelockTimeout")
+    @SuppressLint("WakelockTimeout", "Wakelock")
     private fun switchTeaWakeLock(acquire: Boolean) {
         if (acquire) {
             if (!teaWakeLock.isHeld) {
@@ -232,7 +233,7 @@ class TadanoTileParentService : Service() {
         }
     }
 
-    @SuppressLint("WakelockTimeout")
+    @SuppressLint("WakelockTimeout", "Wakelock")
     private fun switchCoffeeWakeLock(acquire: Boolean) {
         if (acquire) {
             if (!coffeeWakeLock.isHeld) {

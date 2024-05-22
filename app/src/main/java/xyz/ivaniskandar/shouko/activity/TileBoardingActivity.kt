@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.core.content.IntentCompat
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.service.TadanoTileParentService
 import xyz.ivaniskandar.shouko.service.TadanoTileParentService.Companion.EXTRA_SERVICE_TYPE
@@ -34,7 +35,8 @@ import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3Theme
 class TileBoardingActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val type = intent.getSerializableExtra(EXTRA_SERVICE_TYPE) as? TadanoTileParentService.Type
+        val type = IntentCompat
+            .getSerializableExtra(intent, EXTRA_SERVICE_TYPE, TadanoTileParentService.Type::class.java)
         if (type == null) {
             finish()
         } else {
