@@ -2,6 +2,7 @@ package xyz.ivaniskandar.shouko.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
@@ -9,6 +10,8 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -100,3 +103,13 @@ fun ShoukoM3Theme(
 
     MaterialTheme(colorScheme = colorScheme, typography = ShoukoTypography, content = content)
 }
+
+@Suppress("UnusedReceiverParameter")
+val ColorScheme.green: Color
+    @Composable
+    @ReadOnlyComposable
+    inline get() = if (isSystemInDarkTheme()) {
+        Color(0xFF5BC167)
+    } else {
+        Color(0xFF61C36C)
+    }

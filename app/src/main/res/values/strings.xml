@@ -105,6 +105,12 @@
     <string name="wame_unavailable">WhatsApp not installed</string>
     <string name="wame_failed_clipboard">Newest clipboard item is not a valid phone number</string>
 
+    <string name="prepaid_card_reader_loading">Reading card</string>
+    <string name="prepaid_card_reader_hint">Tap card on the device\'s NFC to start</string>
+    <string name="prepaid_card_history_title">Transaction History</string>
+    <string name="prepaid_card_topup">Top up</string>
+    <string name="prepaid_card_payment">Payment</string>
+
     <string name="mute_microphone_notif_channel_title">Muted microphone reminder</string>
     <string name="mute_microphone_on">Microphone muted</string>
     <string name="mute_microphone_off">Microphone unmuted</string>
