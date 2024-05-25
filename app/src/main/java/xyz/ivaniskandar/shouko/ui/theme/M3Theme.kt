@@ -264,3 +264,13 @@ fun ColorScheme.surfaceColorAtElevation(
     val alpha = ((4.5f * ln(elevation.value + 1)) + 2f) / 100f
     return primary.copy(alpha = alpha).compositeOver(surface)
 }
+
+@Suppress("UnusedReceiverParameter")
+val ColorScheme.green: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = if (isSystemInDarkTheme()) {
+        Color(0xFF5BC167)
+    } else {
+        Color(0xFF61C36C)
+    }
