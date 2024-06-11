@@ -122,6 +122,9 @@ $RECYCLE.BIN/
 
 # Java class files
 
+# Kotlin compiler
+.kotlin/
+
 # Generated files
 bin/
 gen/
