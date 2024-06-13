@@ -63,6 +63,7 @@ import androidx.core.net.toUri
 import androidx.core.view.WindowCompat
 import kotlinx.coroutines.launch
 import xyz.ivaniskandar.shouko.R
+import xyz.ivaniskandar.shouko.feature.LinkCleaner
 import xyz.ivaniskandar.shouko.ui.IconDrawableShadowWrapper
 import xyz.ivaniskandar.shouko.ui.component.SoftDivider
 import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3Theme
@@ -78,15 +79,16 @@ import xyz.ivaniskandar.shouko.util.queryIntentActivitiesCompat
  *
  * To setup, set as default browser and turn off the "Open supported links" settings
  * for every verified link target as needed.
- *
  */
 class LinkTargetChooserActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val cleanedUri = LinkCleaner.cleanLink(this, intent.data.toString())?.toUri()
         val newIntent = Intent(intent).apply {
             component = null
+            data = cleanedUri
             setPackage(null)
         }
         val resolverIntent = packageManager.queryIntentActivitiesCompat(newIntent, PackageManager.MATCH_ALL)
@@ -94,7 +96,7 @@ class LinkTargetChooserActivity : ComponentActivity() {
             .filter { it.packageName != packageName }
 
         if (resolverIntent.size == 1) {
-            start(resolverIntent[0])
+            start(resolverIntent[0], newIntent)
             finish()
         }
 
@@ -117,7 +119,7 @@ class LinkTargetChooserActivity : ComponentActivity() {
             ShoukoM3Theme {
                 AppLinkChooserSheet(
                     targets = mapped,
-                    onItemClick = { start(it) },
+                    onItemClick = { start(it, newIntent) },
                     onItemLongClick = { startAppInfo(it) },
                     onSheetHidden = { finish() },
                 )
@@ -125,7 +127,7 @@ class LinkTargetChooserActivity : ComponentActivity() {
         }
     }
 
-    private fun start(componentName: ComponentName) {
+    private fun start(componentName: ComponentName, intent: Intent) {
         startActivity(
             Intent(Intent.ACTION_VIEW).apply {
                 data = intent.data
