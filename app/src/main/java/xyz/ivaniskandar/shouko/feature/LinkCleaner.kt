@@ -1,6 +1,7 @@
 package xyz.ivaniskandar.shouko.feature
 
 import android.content.Context
+import android.net.Uri
 import android.widget.Toast
 import androidx.core.net.toUri
 import logcat.LogPriority
@@ -18,8 +19,14 @@ object LinkCleaner {
                     return oldLink
                 }
 
+                "google.com" -> {
+                    if (oldUri.path == "/url") {
+                        oldUri = oldUri.getQueryParameter("q").urlDecode()
+                    }
+                }
+
                 "l.facebook.com" -> {
-                    oldUri = URLDecoder.decode(oldUri.getQueryParameter("u"), "UTF-8").toUri()
+                    oldUri = oldUri.getQueryParameter("u").urlDecode()
                 }
 
                 "href.li" -> {
@@ -47,5 +54,9 @@ object LinkCleaner {
             Toast.makeText(context, context.getString(R.string.link_cleaner_failed), Toast.LENGTH_SHORT).show()
             null
         }
+    }
+
+    private fun String?.urlDecode(): Uri {
+        return URLDecoder.decode(this, "UTF-8").toUri()
     }
 }
