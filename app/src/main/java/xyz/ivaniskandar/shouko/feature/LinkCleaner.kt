@@ -12,7 +12,7 @@ object LinkCleaner {
     fun cleanLink(context: Context, oldLink: String): String? {
         return try {
             var oldUri = oldLink.toUri()
-            when (oldUri.host) {
+            when (oldUri.host?.replace("www.", "")) {
                 "youtube.com" -> {
                     // Youtube is clean already
                     return oldLink
@@ -25,13 +25,20 @@ object LinkCleaner {
                 "href.li" -> {
                     oldUri = oldUri.toString().substringAfter("?").toUri()
                 }
+
+                "fxtwitter.com", "fixupx.com", "fixvx.com", "vxtwitter.com" -> {
+                    oldUri = "https://x.com${oldUri.path}".toUri()
+                }
+
+                "phixiv.net" -> {
+                    oldUri = "https://www.pixiv.net${oldUri.path}".toUri()
+                }
             }
             val port = oldUri.port.takeIf { it != -1 }?.let { ":$it" } ?: ""
             val newUri =
                 "${oldUri.scheme}://${oldUri.host}$port${oldUri.path}".toUri().buildUpon()
-            val q = oldUri.getQueryParameter("q")
-            if (q != null) {
-                newUri.appendQueryParameter("q", q)
+            oldUri.getQueryParameter("q")?.let {
+                newUri.appendQueryParameter("q", it)
             }
             newUri.toString()
         } catch (e: Exception) {
