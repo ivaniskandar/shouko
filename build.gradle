@@ -2,8 +2,8 @@
 buildscript {
     ext {
         kotlin_version = "2.0.0"
-        compose_bom_version = '2024.05.00-alpha02'
-        protobuf_version = '3.25.3'
+        compose_bom_version = '2024.06.00-alpha01'
+        protobuf_version = '4.27.2'
     }
     repositories {
         google()
