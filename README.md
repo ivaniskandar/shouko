@@ -61,6 +61,10 @@ Features
 
   This feature needs `WRITE_SECURE_SETTINGS` permission granted manually with ADB or root. A guide to grant this permission is available in the app.
 
+- **APK-DM Installer**
+
+  If a given APK contains a Baseline Profile, it will be transcoded into a DexMetadata (DM) file and installed alongside the APK. This results in a best app performance possible from the first launch, without needing to wait the system to run the background dex optimizer.
+
 Accessibility Service
 ----------
 

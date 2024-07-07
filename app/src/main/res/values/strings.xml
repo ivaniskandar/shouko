@@ -71,7 +71,12 @@
     <string name="coffee_boarding_desc">Look at the photo of your loved one without keeping your finger on the screen. Coffee will be disabled automatically when the screen is turned off.</string>
     <string name="tea_boarding_desc">Listen to music on The Tube with your phone screen locked for free. Just block the proximity sensor and see the magic happens.</string>
     <string name="button_boarding_acknowledgement">Got it</string>
+
     <string name="button_continue">Continue</string>
+    <string name="button_retry">Retry</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_open">Open</string>
+    <string name="button_done">Done</string>
 
     <string name="check_for_update">Check for updates</string>
     <string name="off">Off</string>
@@ -118,4 +123,9 @@
     <string name="approved_link_disabled_text">This app will never automatically open supported links</string>
     <string name="disabled">Disabled</string>
     <string name="open_settings">Open settings</string>
+
+    <string name="apk_installer_title">APK Installer</string>
+    <string name="apk_installer_profile_available">Baseline Profile available</string>
+    <string name="apk_installer_profile_unavailable">Baseline Profile unavailable</string>
+    <string name="apk_installer_success">App installed</string>
 </resources>
