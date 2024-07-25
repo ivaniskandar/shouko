@@ -34,11 +34,23 @@ object LinkCleaner {
                 }
 
                 "fxtwitter.com", "fixupx.com", "fixvx.com", "vxtwitter.com" -> {
-                    oldUri = "https://x.com${oldUri.path}".toUri()
+                    oldUri = oldUri.withHost("x.com")
                 }
 
                 "phixiv.net" -> {
-                    oldUri = "https://www.pixiv.net${oldUri.path}".toUri()
+                    oldUri = oldUri.withHost("www.pixiv.net")
+                }
+
+                "vxreddit.com" -> {
+                    oldUri = oldUri.withHost("www.reddit.com")
+                }
+
+                "ddinstagram.com" -> {
+                    oldUri = oldUri.withHost("instagram.com")
+                }
+
+                "tnktok.com" -> {
+                    oldUri = oldUri.withHost("tiktok.com")
                 }
             }
             val port = oldUri.port.takeIf { it != -1 }?.let { ":$it" } ?: ""
@@ -54,6 +66,10 @@ object LinkCleaner {
             Toast.makeText(context, context.getString(R.string.link_cleaner_failed), Toast.LENGTH_SHORT).show()
             null
         }
+    }
+
+    private fun Uri.withHost(host: String): Uri {
+        return "https://$host$path".toUri()
     }
 
     private fun String?.urlDecode(): Uri {
