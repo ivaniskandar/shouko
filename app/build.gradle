@@ -19,7 +19,7 @@ final def gitCommitHash = { ->
 }
 
 android {
-    compileSdk 34
+    compileSdk 35
     namespace 'xyz.ivaniskandar.shouko'
 
     defaultConfig {
