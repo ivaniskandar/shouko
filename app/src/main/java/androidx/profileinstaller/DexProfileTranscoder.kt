@@ -97,10 +97,13 @@ object DexProfileTranscoder {
     @SuppressLint("ObsoleteSdkInt", "RestrictedApi")
     private fun desiredProfileVersion(): ByteArray? {
         // If SDK is pre or post supported version, we don't want to do anything, so return null.
-        if (Build.VERSION.SDK_INT < ProfileVersion.MIN_SUPPORTED_SDK ||
-            Build.VERSION.SDK_INT > ProfileVersion.MAX_SUPPORTED_SDK
-        ) {
+        if (Build.VERSION.SDK_INT < ProfileVersion.MIN_SUPPORTED_SDK) {
             return null
+        }
+
+        // Profile version V015_S is forward compatible.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            return ProfileVersion.V015_S
         }
 
         return when (Build.VERSION.SDK_INT) {
@@ -133,29 +136,32 @@ object DexProfileTranscoder {
     @SuppressLint("ObsoleteSdkInt", "RestrictedApi")
     private fun requiresProfileMetadata(): Boolean {
         // If SDK is pre-N, we don't want to do anything, so return null.
-        if (Build.VERSION.SDK_INT < ProfileVersion.MIN_SUPPORTED_SDK ||
-            Build.VERSION.SDK_INT > ProfileVersion.MAX_SUPPORTED_SDK
-        ) {
+        if (Build.VERSION.SDK_INT < ProfileVersion.MIN_SUPPORTED_SDK) {
             return false
         }
 
+        // The profiles for S require a typeIdCount. Therefore metadata is required.
+        // Profile version V015_S is forward compatible.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            return true
+        }
+
         return when (Build.VERSION.SDK_INT) {
+            // The profiles for N and N_MR1 used class ids to identify classes instead of type
+            // ids, which is what the V0.1.0 profile encodes, so a metadata file is required in
+            // order to transcode to this profile.
             Build.VERSION_CODES.N,
             Build.VERSION_CODES.N_MR1,
             -> true
 
+            // for all of these versions, the data encoded in the V0.1.0 profile is enough to
+            // losslessly transcode into these other formats.
             Build.VERSION_CODES.O,
             Build.VERSION_CODES.O_MR1,
             Build.VERSION_CODES.P,
             Build.VERSION_CODES.Q,
             Build.VERSION_CODES.R,
             -> false
-
-            Build.VERSION_CODES.S,
-            Build.VERSION_CODES.S_V2,
-            Build.VERSION_CODES.TIRAMISU,
-            Build.VERSION_CODES.UPSIDE_DOWN_CAKE,
-            -> true
 
             else -> false
         }
