@@ -2,7 +2,7 @@
 buildscript {
     ext {
         kotlin_version = "2.0.20"
-        compose_bom_version = '2024.09.00-alpha01'
+        compose_bom_version = '2024.09.00-alpha'
         protobuf_version = '4.28.0'
     }
     repositories {
