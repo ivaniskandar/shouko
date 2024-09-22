@@ -85,7 +85,7 @@ class LinkTargetChooserActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val cleanedUri = LinkCleaner.cleanLink(this, intent.data.toString())?.toUri()
+        val cleanedUri = LinkCleaner.resolveLink(this, intent.data.toString())?.toUri()
         val newIntent = Intent(intent).apply {
             component = null
             data = cleanedUri
@@ -255,6 +255,7 @@ private fun Scrim(
         val alpha by animateFloatAsState(
             targetValue = if (visible) 1f else 0f,
             animationSpec = TweenSpec(),
+            label = "scrim",
         )
         val dismissModifier = if (visible) {
             Modifier

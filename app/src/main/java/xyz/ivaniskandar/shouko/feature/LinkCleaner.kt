@@ -10,49 +10,57 @@ import xyz.ivaniskandar.shouko.R
 import java.net.URLDecoder
 
 object LinkCleaner {
-    fun cleanLink(context: Context, oldLink: String): String? {
+
+    /**
+     * Resolves a link to common redirects.
+     */
+    fun resolveLink(context: Context, link: String): String? {
         return try {
-            var oldUri = oldLink.toUri()
-            when (oldUri.host?.replace("www.", "")) {
-                "youtube.com" -> {
-                    // Youtube is clean already
-                    return oldLink
-                }
+            val uri = link.toUri()
+            return when (uri.host?.replace("www.", "")) {
+                // Youtube is clean already
+                "youtube.com" -> uri
 
                 "google.com" -> {
-                    if (oldUri.path == "/url") {
-                        oldUri = oldUri.getQueryParameter("q").urlDecode()
+                    if (uri.path == "/url") {
+                        uri.getQueryParameter("q").urlDecode()
+                    } else {
+                        uri
                     }
                 }
 
-                "l.facebook.com" -> {
-                    oldUri = oldUri.getQueryParameter("u").urlDecode()
-                }
+                "l.facebook.com" -> uri.getQueryParameter("u").urlDecode()
 
-                "href.li" -> {
-                    oldUri = oldUri.toString().substringAfter("?").toUri()
-                }
+                "href.li" -> uri.toString().substringAfter("?").toUri()
 
                 "fxtwitter.com", "fixupx.com", "fixvx.com", "vxtwitter.com" -> {
-                    oldUri = oldUri.withHost("x.com")
+                    uri.withHost("x.com")
                 }
 
-                "phixiv.net" -> {
-                    oldUri = oldUri.withHost("www.pixiv.net")
-                }
+                "phixiv.net" -> uri.withHost("www.pixiv.net")
 
-                "vxreddit.com" -> {
-                    oldUri = oldUri.withHost("www.reddit.com")
-                }
+                "vxreddit.com" -> uri.withHost("www.reddit.com")
 
-                "ddinstagram.com" -> {
-                    oldUri = oldUri.withHost("instagram.com")
-                }
+                "ddinstagram.com" -> uri.withHost("instagram.com")
 
-                "tnktok.com" -> {
-                    oldUri = oldUri.withHost("tiktok.com")
-                }
-            }
+                "tnktok.com" -> uri.withHost("tiktok.com")
+
+                else -> uri
+            }.toString()
+        } catch (e: Exception) {
+            logcat(LogPriority.ERROR) { e.stackTraceToString() }
+            // Return oldLink
+            Toast.makeText(context, context.getString(R.string.link_cleaner_failed), Toast.LENGTH_SHORT).show()
+            null
+        }
+    }
+
+    /**
+     * Strips a link of typical junk like tracking query params.
+     */
+    fun cleanLink(context: Context, oldLink: String): String? {
+        return try {
+            val oldUri = resolveLink(context, oldLink)?.toUri() ?: return null
             val port = oldUri.port.takeIf { it != -1 }?.let { ":$it" } ?: ""
             val newUri =
                 "${oldUri.scheme}://${oldUri.host}$port${oldUri.path}".toUri().buildUpon()
