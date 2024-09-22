@@ -2,7 +2,7 @@
 buildscript {
     ext {
         kotlin_version = "2.0.20"
-        compose_bom_version = '2024.09.00-alpha'
+        compose_bom_version = '2024.09.02'
         protobuf_version = '4.28.0'
     }
     repositories {
@@ -11,7 +11,7 @@ buildscript {
         maven { url 'https://jitpack.io' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.6.0'
+        classpath 'com.android.tools.build:gradle:8.6.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.google.android.gms:oss-licenses-plugin:0.10.6'
         classpath 'com.diffplug.spotless:spotless-plugin-gradle:6.25.0'
