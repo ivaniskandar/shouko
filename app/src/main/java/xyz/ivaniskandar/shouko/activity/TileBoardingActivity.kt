@@ -55,6 +55,7 @@ class TileBoardingActivity : ComponentActivity() {
             // Start service
             startForegroundService(
                 Intent(this, TadanoTileParentService::class.java).apply {
+                    `package` = packageName
                     action = TadanoTileParentService.ACTION_START_SERVICE
                     putExtra(EXTRA_SERVICE_TYPE, type)
                 },

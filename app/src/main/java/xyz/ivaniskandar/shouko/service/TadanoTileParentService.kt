@@ -147,6 +147,14 @@ class TadanoTileParentService : Service() {
             ACTION_STOP_SERVICE -> stop()
             else -> throw Exception("wtf")
         }
+
+        // Notify tiles
+        sendBroadcast(
+            Intent(intent.action).apply {
+                `package` = packageName
+            },
+        )
+
         return START_STICKY
     }
 

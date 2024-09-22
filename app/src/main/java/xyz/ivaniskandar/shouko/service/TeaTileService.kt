@@ -1,19 +1,30 @@
 package xyz.ivaniskandar.shouko.service
 
 import android.app.PendingIntent
+import android.content.BroadcastReceiver
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.IBinder
 import android.service.quicksettings.Tile.STATE_ACTIVE
 import android.service.quicksettings.Tile.STATE_INACTIVE
 import android.service.quicksettings.TileService
+import androidx.core.content.ContextCompat
 import androidx.core.service.quicksettings.PendingIntentActivityWrapper
 import androidx.core.service.quicksettings.TileServiceCompat
 import xyz.ivaniskandar.shouko.activity.TileBoardingActivity
+import xyz.ivaniskandar.shouko.service.TadanoTileParentService.Companion.ACTION_START_SERVICE
 import xyz.ivaniskandar.shouko.service.TadanoTileParentService.Companion.ACTION_STOP_SERVICE
 import xyz.ivaniskandar.shouko.service.TadanoTileParentService.Companion.EXTRA_SERVICE_TYPE
 
 class TeaTileService : TileService() {
+
+    private val updateReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            updateQsState()
+        }
+    }
 
     override fun onBind(intent: Intent?): IBinder? {
         requestListeningState(this, ComponentName(this, TeaTileService::class.java))
@@ -21,8 +32,16 @@ class TeaTileService : TileService() {
     }
 
     override fun onStartListening() {
-        super.onStartListening()
+        val filter = IntentFilter().apply {
+            addAction(ACTION_START_SERVICE)
+            addAction(ACTION_STOP_SERVICE)
+        }
+        ContextCompat.registerReceiver(this, updateReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED)
         updateQsState()
+    }
+
+    override fun onStopListening() {
+        unregisterReceiver(updateReceiver)
     }
 
     override fun onClick() {
