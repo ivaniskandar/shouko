@@ -16,7 +16,7 @@ class LinkArchiverTargetActivity : ComponentActivity() {
             Intent.ACTION_SEND -> {
                 val oldLink = intent.getStringExtra(Intent.EXTRA_TEXT)
                 if (oldLink != null) {
-                    val newLink = LinkCleaner.cleanLink(this, oldLink)
+                    val newLink = LinkCleaner.resolveLink(this, oldLink)
                     if (newLink != null) {
                         openLink(newLink)
                     }
