@@ -343,7 +343,7 @@ class ApkDmInstallActivity : ComponentActivity() {
         val bundle = ActivityOptions.makeBasic()
             .apply {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    setSplashScreenStyle(SplashScreen.SPLASH_SCREEN_STYLE_ICON)
+                    splashScreenStyle = SplashScreen.SPLASH_SCREEN_STYLE_ICON
                 }
             }
             .toBundle()

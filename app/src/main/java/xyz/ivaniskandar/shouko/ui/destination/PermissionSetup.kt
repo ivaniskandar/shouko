@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.PermDeviceInformation
 import androidx.compose.material3.Card
@@ -27,8 +26,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
@@ -149,25 +148,17 @@ fun PermissionSetupNoRoot(
                 start = startAnnotationIndex,
                 end = endAnnotationIndex,
             )
-            addStringAnnotation(
-                tag = "URL",
-                annotation = stringResource(R.string.setup_adb_link),
+            addLink(
+                url = LinkAnnotation.Url(stringResource(R.string.setup_adb_link)),
                 start = startAnnotationIndex,
                 end = endAnnotationIndex,
             )
         }
-        val uriHandler = LocalUriHandler.current
-        ClickableText(
+        Text(
             text = annotatedString,
             modifier = Modifier.padding(vertical = 24.dp),
             style = MaterialTheme.typography.bodyLarge,
-        ) {
-            annotatedString
-                .getStringAnnotations("URL", it, it)
-                .firstOrNull()?.let { stringAnnotation ->
-                    uriHandler.openUri(stringAnnotation.item)
-                }
-        }
+        )
 
         val context = LocalContext.current
         val adbCommand = "adb shell $command"
