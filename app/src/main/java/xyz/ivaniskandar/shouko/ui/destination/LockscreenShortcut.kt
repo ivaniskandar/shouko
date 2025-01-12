@@ -16,7 +16,6 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -109,7 +108,7 @@ fun LockscreenShortcutSelection(
         val context = LocalContext.current
         when (page) {
             0 -> {
-                val items by mainViewModel.appsList.observeAsState()
+                val items by mainViewModel.appsList.collectAsState()
                 val isRefreshing by mainViewModel.isRefreshingAppsList.collectAsState()
                 val state = rememberPullToRefreshState()
                 PullToRefreshBox(
@@ -125,24 +124,22 @@ fun LockscreenShortcutSelection(
                         )
                     },
                 ) {
-                    if (items != null) {
-                        LazyColumn(
-                            contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding()),
-                        ) {
-                            items(items!!) { item ->
-                                ApplicationRow(
-                                    item = item,
-                                    onClick = {
-                                        scope.launch {
-                                            ShoukoApplication.prefs.setLockscreenAction(
-                                                key = settingsKey,
-                                                value = it.flattenToString(),
-                                            )
-                                            navController.popBackStack()
-                                        }
-                                    },
-                                )
-                            }
+                    LazyColumn(
+                        contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding()),
+                    ) {
+                        items(items) { item ->
+                            ApplicationRow(
+                                item = item,
+                                onClick = {
+                                    scope.launch {
+                                        ShoukoApplication.prefs.setLockscreenAction(
+                                            key = settingsKey,
+                                            value = it.flattenToString(),
+                                        )
+                                        navController.popBackStack()
+                                    }
+                                },
+                            )
                         }
                     }
                 }

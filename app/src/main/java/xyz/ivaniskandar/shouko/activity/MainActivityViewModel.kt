@@ -11,8 +11,6 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.content.getSystemService
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,13 +29,13 @@ class MainActivityViewModel(
     application: Application,
 ) : AndroidViewModel(application) {
     private val _isRefreshingAppsList = MutableStateFlow(true)
-    private val _appsList = MutableLiveData<List<ApplicationItem>>()
+    private val _appsList = MutableStateFlow<List<ApplicationItem>>(emptyList())
 
     private val _isRefreshingShortcutList = MutableStateFlow(true)
-    private val _shortcutList = MutableLiveData<List<ShortcutCreatorItem>>()
+    private val _shortcutList = MutableStateFlow<List<ShortcutCreatorItem>>(emptyList())
 
     private val _isRefreshingLinkHandlerList = MutableStateFlow(true)
-    private val _linkHandlerList = MutableLiveData<List<LinkHandlerAppItem>>()
+    private val _linkHandlerList = MutableStateFlow<List<LinkHandlerAppItem>>(emptyList())
 
     val isRefreshingAppsList: StateFlow<Boolean>
         get() = _isRefreshingAppsList.asStateFlow()
@@ -49,41 +47,41 @@ class MainActivityViewModel(
         get() = _isRefreshingLinkHandlerList.asStateFlow()
 
     /**
-     * LiveData of list containing available launcher intents as [ApplicationItem]
+     * Flow of list containing available launcher intents as [ApplicationItem]
      *
      * @see ApplicationItem
      */
-    val appsList: LiveData<List<ApplicationItem>>
+    val appsList: StateFlow<List<ApplicationItem>>
         get() {
-            if (_appsList.value == null) refreshAppsList()
+            if (_appsList.value.isEmpty()) refreshAppsList()
             return _appsList
         }
 
     /**
-     * LiveData of list containing available intents to create an app shortcut as [ShortcutCreatorItem]
+     * Flow of list containing available intents to create an app shortcut as [ShortcutCreatorItem]
      *
      * @see ShortcutCreatorItem
      */
-    val shortcutList: LiveData<List<ShortcutCreatorItem>>
+    val shortcutList: StateFlow<List<ShortcutCreatorItem>>
         get() {
-            if (_shortcutList.value == null) refreshShortcutCreatorList()
+            if (_shortcutList.value.isEmpty()) refreshShortcutCreatorList()
             return _shortcutList
         }
 
     /**
-     * LiveData of list containing apps that can open a supported link by default as [ApplicationItem]
+     * Flow of list containing apps that can open a supported link by default as [ApplicationItem]
      */
-    val linkHandlerList: LiveData<List<LinkHandlerAppItem>>
+    val linkHandlerList: StateFlow<List<LinkHandlerAppItem>>
         @RequiresApi(Build.VERSION_CODES.S)
         get() {
-            if (_linkHandlerList.value == null) refreshLinkHandlerList()
+            if (_linkHandlerList.value.isEmpty()) refreshLinkHandlerList()
             return _linkHandlerList
         }
 
     fun refreshAppsList() {
         viewModelScope.launch(Dispatchers.Default) {
             _isRefreshingAppsList.emit(true)
-            _appsList.postValue(getAppsList())
+            _appsList.emit(getAppsList())
             _isRefreshingAppsList.emit(false)
         }
     }
@@ -91,7 +89,7 @@ class MainActivityViewModel(
     fun refreshShortcutCreatorList() {
         viewModelScope.launch(Dispatchers.Default) {
             _isRefreshingShortcutList.emit(true)
-            _shortcutList.postValue(getShortcutCreatorList())
+            _shortcutList.emit(getShortcutCreatorList())
             _isRefreshingShortcutList.emit(false)
         }
     }
@@ -100,7 +98,7 @@ class MainActivityViewModel(
     fun refreshLinkHandlerList() {
         viewModelScope.launch(Dispatchers.Default) {
             _isRefreshingLinkHandlerList.emit(true)
-            _linkHandlerList.postValue(getLinkHandlerList())
+            _linkHandlerList.emit(getLinkHandlerList())
             _isRefreshingLinkHandlerList.emit(false)
         }
     }

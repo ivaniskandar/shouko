@@ -37,7 +37,6 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -203,7 +202,7 @@ fun LinkTargetList(
     modifier: Modifier = Modifier,
     mainViewModel: MainActivityViewModel = viewModel(),
 ) {
-    val items by mainViewModel.linkHandlerList.observeAsState()
+    val items by mainViewModel.linkHandlerList.collectAsState()
     val isRefreshing by mainViewModel.isRefreshingLinkHandlerList.collectAsState()
     val state = rememberPullToRefreshState()
     PullToRefreshBox(
@@ -219,21 +218,19 @@ fun LinkTargetList(
             )
         },
     ) {
-        val filteredItems = items?.filter { if (approved) it.linkHandlingAllowed && it.isApproved else it.isUnapproved }
-        val disabledItems = if (approved) items?.filter { !it.linkHandlingAllowed && it.isApproved } else null
+        val filteredItems = items.filter { if (approved) it.linkHandlingAllowed && it.isApproved else it.isUnapproved }
+        val disabledItems = if (approved) items.filter { !it.linkHandlingAllowed && it.isApproved } else null
 
         LazyColumn(
             contentPadding = contentPadding,
         ) {
-            if (filteredItems != null) {
-                items(items = filteredItems, key = { it.packageName }) { item ->
-                    LinkTargetListItem(
-                        item = item,
-                        onClick = {
-                            navController.navigate(Screen.LinkTargetInfoSheet.createRoute(item.packageName))
-                        },
-                    )
-                }
+            items(items = filteredItems, key = { it.packageName }) { item ->
+                LinkTargetListItem(
+                    item = item,
+                    onClick = {
+                        navController.navigate(Screen.LinkTargetInfoSheet.createRoute(item.packageName))
+                    },
+                )
             }
 
             if (!disabledItems.isNullOrEmpty()) {
@@ -314,8 +311,8 @@ fun LinkTargetInfoSheet(
     modifier: Modifier = Modifier,
     mainViewModel: MainActivityViewModel = viewModel(),
 ) {
-    val list by mainViewModel.linkHandlerList.observeAsState()
-    val item = list!!.find { it.packageName == packageName }!!
+    val list by mainViewModel.linkHandlerList.collectAsState()
+    val item = list.find { it.packageName == packageName }!!
     Column(
         modifier = modifier
             .fillMaxWidth()
