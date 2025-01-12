@@ -6,62 +6,37 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
-import androidx.compose.animation.core.TweenSpec
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ModalBottomSheetLayout
-import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.onClick
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.net.toUri
 import androidx.core.view.WindowCompat
-import kotlinx.coroutines.launch
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.feature.LinkCleaner
 import xyz.ivaniskandar.shouko.ui.IconDrawableShadowWrapper
@@ -159,123 +134,50 @@ private fun AppLinkChooserSheet(
     onItemLongClick: (ComponentName) -> Unit,
     onFinish: () -> Unit,
 ) {
-    val state = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
-    val scope = rememberCoroutineScope()
     val haptic = LocalHapticFeedback.current
-
-    Box {
-        Scrim(
-            color = MaterialTheme.colorScheme.scrim.copy(alpha = 0.32f),
-            onDismiss = {
-                scope.launch { state.hide() }
-            },
-            visible = state.targetValue != ModalBottomSheetValue.Hidden,
-        )
-        ModalBottomSheetLayout(
+    ModalBottomSheet(onDismissRequest = onFinish) {
+        Text(
+            text = stringResource(R.string.link_chooser_dialog_title),
             modifier = Modifier
-                .widthIn(max = 640.dp)
-                .align(Alignment.BottomCenter),
-            scrimColor = Color.Transparent,
-            sheetState = state,
-            sheetShape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
-            sheetElevation = 0.dp,
-            sheetBackgroundColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
-            sheetContentColor = MaterialTheme.colorScheme.onSurface,
-            sheetContent = {
-                Text(
-                    text = stringResource(R.string.link_chooser_dialog_title),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp),
-                    color = MaterialTheme.colorScheme.onSurface,
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                SoftDivider(modifier = Modifier.padding(horizontal = 16.dp))
-                LazyColumn(
-                    modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom)),
-                    contentPadding = PaddingValues(vertical = 8.dp),
-                    verticalArrangement = Arrangement.spacedBy(2.dp),
-                ) {
-                    items(targets) { item ->
-                        ListItem(
-                            modifier = Modifier
-                                .combinedClickable(
-                                    onLongClick = {
-                                        scope.launch { state.hide() }
-                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                        onItemLongClick(item.component)
-                                    },
-                                    onClick = {
-                                        scope.launch { state.hide() }
-                                        onItemClick(item.component)
-                                    },
-                                ),
-                            leadingContent = {
-                                Image(
-                                    bitmap = item.icon,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(36.dp),
-                                )
-                            },
-                            headlineContent = {
-                                Text(
-                                    text = item.title,
-                                    style = MaterialTheme.typography.bodyLarge,
-                                )
-                            },
-                            tonalElevation = 1.dp,
-                        )
-                    }
-                }
-            },
-            content = { /* Empty */ },
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            color = MaterialTheme.colorScheme.onSurface,
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.titleMedium,
         )
-    }
-    var opened by remember { mutableStateOf(false) }
-    LaunchedEffect(state.currentValue, onFinish) {
-        if (!opened) scope.launch { state.show() }
-        when (state.currentValue) {
-            ModalBottomSheetValue.Hidden -> if (opened) onFinish()
-            ModalBottomSheetValue.Expanded, ModalBottomSheetValue.HalfExpanded -> opened = true
-        }
-    }
-    BackHandler {
-        scope.launch { state.hide() }
-    }
-}
-
-@Composable
-private fun Scrim(
-    color: Color,
-    onDismiss: () -> Unit,
-    visible: Boolean,
-) {
-    if (color.isSpecified) {
-        val alpha by animateFloatAsState(
-            targetValue = if (visible) 1f else 0f,
-            animationSpec = TweenSpec(),
-            label = "scrim",
-        )
-        val dismissModifier = if (visible) {
-            Modifier
-                .pointerInput(onDismiss) { detectTapGestures { onDismiss() } }
-                .semantics(mergeDescendants = true) {
-                    onClick {
-                        onDismiss()
-                        true
-                    }
-                }
-        } else {
-            Modifier
-        }
-
-        Canvas(
-            Modifier
-                .fillMaxSize()
-                .then(dismissModifier),
+        SoftDivider()
+        LazyColumn(
+            modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom)),
+            contentPadding = PaddingValues(vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            drawRect(color = color, alpha = alpha)
+            items(targets) { item ->
+                ListItem(
+                    modifier = Modifier
+                        .combinedClickable(
+                            onLongClick = {
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                onItemLongClick(item.component)
+                            },
+                            onClick = {
+                                onItemClick(item.component)
+                            },
+                        ),
+                    leadingContent = {
+                        Image(
+                            bitmap = item.icon,
+                            contentDescription = null,
+                            modifier = Modifier.size(36.dp),
+                        )
+                    },
+                    headlineContent = {
+                        Text(
+                            text = item.title,
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                    },
+                )
+            }
         }
     }
 }
