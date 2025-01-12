@@ -10,12 +10,9 @@ plugins {
 
 final def keystorePropertiesFile = rootProject.file("keystore.properties")
 final def gitCommitHash = { ->
-    final def stdout = new ByteArrayOutputStream()
-    exec {
+    providers.exec {
         commandLine 'git', 'rev-parse', '--short', 'HEAD'
-        standardOutput = stdout
-    }
-    stdout.toString().trim()
+    }.standardOutput.asText.get().trim()
 }
 
 android {
