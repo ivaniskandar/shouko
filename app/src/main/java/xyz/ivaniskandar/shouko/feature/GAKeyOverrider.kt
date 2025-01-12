@@ -38,6 +38,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.kieronquinn.monetcompat.core.MonetCompat
 import com.topjohnwu.superuser.CallbackList
 import com.topjohnwu.superuser.Shell
@@ -315,13 +316,15 @@ class GAKeyOverrider(
     }
 
     init {
-        lifecycleOwner.lifecycleScope.launchWhenStarted {
-            ShoukoApplication.prefs.assistButtonFlow.collect {
-                customAction = it.action
-                hideAssistantCue = it.hideAssistantCue
-                updateGAKeyDisabler(!it.enabled)
-                updateOpaOverrider(isReady)
-                logcat { "GAKeyOverrider enabled=${it.action != null} hideCue=${it.hideAssistantCue}" }
+        lifecycleOwner.lifecycleScope.launch {
+            lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                ShoukoApplication.prefs.assistButtonFlow.collect {
+                    customAction = it.action
+                    hideAssistantCue = it.hideAssistantCue
+                    updateGAKeyDisabler(!it.enabled)
+                    updateOpaOverrider(isReady)
+                    logcat { "GAKeyOverrider enabled=${it.action != null} hideCue=${it.hideAssistantCue}" }
+                }
             }
         }
         lifecycleOwner.lifecycle.addObserver(this)

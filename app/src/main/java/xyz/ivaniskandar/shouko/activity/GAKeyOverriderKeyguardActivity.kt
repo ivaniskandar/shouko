@@ -6,7 +6,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.content.getSystemService
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -60,9 +62,11 @@ class GAKeyOverriderKeyguardActivity : ComponentActivity() {
     }
 
     init {
-        lifecycleScope.launchWhenCreated {
-            delay(700)
-            dismissKeyguard()
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                delay(700)
+                dismissKeyguard()
+            }
         }
     }
 }

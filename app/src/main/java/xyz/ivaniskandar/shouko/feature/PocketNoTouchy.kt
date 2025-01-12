@@ -14,8 +14,10 @@ import android.os.Handler
 import android.os.Looper
 import androidx.core.content.getSystemService
 import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import logcat.logcat
@@ -169,10 +171,12 @@ class PocketNoTouchy(
     }
 
     init {
-        lifecycleOwner.lifecycleScope.launchWhenStarted {
-            ShoukoApplication.prefs.preventPocketTouchEnabledFlow.collect {
-                updatePocketNoTouchy(it)
-                logcat { "PocketNoTouchy enabled=$it" }
+        lifecycleOwner.lifecycleScope.launch {
+            lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                ShoukoApplication.prefs.preventPocketTouchEnabledFlow.collect {
+                    updatePocketNoTouchy(it)
+                    logcat { "PocketNoTouchy enabled=$it" }
+                }
             }
         }
         lifecycleOwner.lifecycle.addObserver(this)

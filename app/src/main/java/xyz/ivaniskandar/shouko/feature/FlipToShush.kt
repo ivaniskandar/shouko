@@ -18,8 +18,10 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import androidx.core.content.getSystemService
 import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -305,15 +307,17 @@ class FlipToShush(
     }
 
     init {
-        lifecycleOwner.lifecycleScope.launchWhenStarted {
-            ShoukoApplication.prefs.flipToShushEnabledFlow.collect {
-                val shouldEnable = it && notificationManager.isNotificationPolicyAccessGranted
-                updateFlipToShush(shouldEnable)
-                updateScreenReceiverState(shouldEnable && !isFullTimeListening)
-                if (!shouldEnable) {
-                    switchDndState(false)
+        lifecycleOwner.lifecycleScope.launch {
+            lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                ShoukoApplication.prefs.flipToShushEnabledFlow.collect {
+                    val shouldEnable = it && notificationManager.isNotificationPolicyAccessGranted
+                    updateFlipToShush(shouldEnable)
+                    updateScreenReceiverState(shouldEnable && !isFullTimeListening)
+                    if (!shouldEnable) {
+                        switchDndState(false)
+                    }
+                    logcat { "Flip2Shush enabled=$it" }
                 }
-                logcat { "Flip2Shush enabled=$it" }
             }
         }
         lifecycleOwner.lifecycle.addObserver(this)

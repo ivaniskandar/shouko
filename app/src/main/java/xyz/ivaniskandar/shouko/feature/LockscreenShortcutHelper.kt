@@ -8,8 +8,10 @@ import android.content.IntentFilter
 import android.provider.Settings
 import androidx.core.content.getSystemService
 import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
@@ -102,11 +104,13 @@ class LockscreenShortcutHelper(
 
     init {
         lifecycleOwner.lifecycle.addObserver(this)
-        lifecycleOwner.lifecycleScope.launchWhenStarted {
-            val prefs = ShoukoApplication.prefs
-            prefs.lockscreenLeftAction
-                .combine(prefs.lockscreenRightAction) { a, b -> a != null || b != null }
-                .collect { updateReceiverState(it) }
+        lifecycleOwner.lifecycleScope.launch {
+            lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                val prefs = ShoukoApplication.prefs
+                prefs.lockscreenLeftAction
+                    .combine(prefs.lockscreenRightAction) { a, b -> a != null || b != null }
+                    .collect { updateReceiverState(it) }
+            }
         }
     }
 
