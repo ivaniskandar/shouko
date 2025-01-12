@@ -49,7 +49,7 @@ jobs:
 
       - name: Sign APK
         if: github.repository == 'ivaniskandar/shouko' && github.event_name == 'push'
-        uses: r0adkll/sign-android-release@v1
+        uses: filippoLeporati93/android-release-signer@v1
         id: sign_app
         with:
           releaseDirectory: app/build/outputs/apk/release
