@@ -24,7 +24,10 @@ object DexProfileTranscoder {
      *
      * @return the dex metadata file if successfully created, null otherwise.
      */
-    suspend fun run(context: Context, apkFile: File): File? {
+    suspend fun run(
+        context: Context,
+        apkFile: File,
+    ): File? {
         if (apkFile.extension != "apk") return null
         val desiredVersion = desiredProfileVersion() ?: return null
         val dmFile = File(context.cacheDir, "${apkFile.nameWithoutExtension}.dm")
@@ -34,14 +37,15 @@ object DexProfileTranscoder {
             ZipFile(apkFile).use { zf ->
                 val profSource = zf.getEntry(PROFILE_SOURCE_LOCATION) ?: return@use
                 val profMeta = zf.getEntry(PROFILE_META_LOCATION)
-                var profile = zf.getInputStream(profSource).use { profileStr ->
-                    try {
-                        val baselineVersion = ProfileTranscoder.readHeader(profileStr, ProfileTranscoder.MAGIC_PROF)
-                        ProfileTranscoder.readProfile(profileStr, baselineVersion, apkFile.name)
-                    } catch (e: Exception) {
-                        null
-                    }
-                } ?: return@use
+                var profile =
+                    zf.getInputStream(profSource).use { profileStr ->
+                        try {
+                            val baselineVersion = ProfileTranscoder.readHeader(profileStr, ProfileTranscoder.MAGIC_PROF)
+                            ProfileTranscoder.readProfile(profileStr, baselineVersion, apkFile.name)
+                        } catch (e: Exception) {
+                            null
+                        }
+                    } ?: return@use
                 if (requiresProfileMetadata()) {
                     if (profMeta == null) return@use
                     profile = zf.getInputStream(profMeta).use { metaStr ->
@@ -54,12 +58,13 @@ object DexProfileTranscoder {
                     } ?: return@use
                 }
                 ByteArrayOutputStream().use { os ->
-                    success = try {
-                        ProfileTranscoder.writeHeader(os, desiredVersion)
-                        ProfileTranscoder.transcodeAndWriteBody(os, desiredVersion, profile)
-                    } catch (e: Exception) {
-                        false
-                    }
+                    success =
+                        try {
+                            ProfileTranscoder.writeHeader(os, desiredVersion)
+                            ProfileTranscoder.transcodeAndWriteBody(os, desiredVersion, profile)
+                        } catch (e: Exception) {
+                            false
+                        }
                     if (success) {
                         ZipOutputStream(FileOutputStream(dmFile)).use { zipOut ->
                             try {

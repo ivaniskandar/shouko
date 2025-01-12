@@ -61,10 +61,10 @@ private fun BasePreference(
 @Composable
 fun Preference(
     title: String,
+    onPreferenceClick: () -> Unit,
     modifier: Modifier = Modifier,
     subtitle: String? = null,
     enabled: Boolean = true,
-    onPreferenceClick: () -> Unit,
 ) {
     BasePreference(
         modifier = modifier.clickable(enabled = enabled, onClick = onPreferenceClick),
@@ -77,21 +77,21 @@ fun Preference(
 @Composable
 fun SwitchPreference(
     title: String,
+    onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     subtitle: String? = null,
     checked: Boolean = false,
     enabled: Boolean = true,
-    onCheckedChanged: (Boolean) -> Unit,
 ) {
     BasePreference(
-        modifier = modifier.clickable(enabled = enabled, onClick = { onCheckedChanged.invoke(!checked) }),
+        modifier = modifier.clickable(enabled = enabled, onClick = { onCheckedChange.invoke(!checked) }),
         title = title,
         subtitle = subtitle,
         enabled = enabled,
     ) {
         Switch(
             checked = checked,
-            onCheckedChange = onCheckedChanged,
+            onCheckedChange = onCheckedChange,
             modifier = Modifier.padding(start = 8.dp),
             enabled = enabled,
         )
@@ -107,24 +107,22 @@ private fun PreferenceItemsPreview() {
             Column {
                 var count by remember { mutableIntStateOf(0) }
                 Text(text = "Preference clicked $count time(s)")
-                Preference(title = "Preference", subtitle = "With subtitle") { count += 1 }
-                Preference(title = "Preference") { count += 1 }
+                Preference(title = "Preference", subtitle = "With subtitle", onPreferenceClick = { count += 1 })
+                Preference(title = "Preference", onPreferenceClick = { count += 1 })
 
                 var switch by remember { mutableStateOf(true) }
                 SwitchPreference(
                     title = "Switch preference",
                     subtitle = "With subtitle",
                     checked = switch,
-                ) {
-                    switch = !switch
-                }
+                    onCheckedChange = { switch = !switch },
+                )
 
                 SwitchPreference(
                     title = "Dark theme",
                     checked = darkTheme,
-                ) {
-                    darkTheme = !darkTheme
-                }
+                    onCheckedChange = { darkTheme = !darkTheme },
+                )
             }
         }
     }

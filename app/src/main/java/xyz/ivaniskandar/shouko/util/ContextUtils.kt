@@ -17,29 +17,26 @@ val Context.canReadSystemLogs
 val Context.canWriteSecureSettings: Boolean
     get() = checkSelfPermission(Manifest.permission.WRITE_SECURE_SETTINGS) == PackageManager.PERMISSION_GRANTED
 
-fun Context.isPackageInstalled(packageName: String): Boolean {
-    return try {
-        packageManager.getApplicationInfoCompat(packageName, 0).enabled
-    } catch (e: PackageManager.NameNotFoundException) {
-        false
-    }
+fun Context.isPackageInstalled(packageName: String): Boolean = try {
+    packageManager.getApplicationInfoCompat(packageName, 0).enabled
+} catch (e: PackageManager.NameNotFoundException) {
+    false
 }
 
-fun Context.getPackageLabel(packageName: String): String {
-    return try {
-        val ai = packageManager.getApplicationInfoCompat(packageName, 0)
-        packageManager.getApplicationLabel(ai).toString()
-    } catch (e: PackageManager.NameNotFoundException) {
-        "null"
-    }
+fun Context.getPackageLabel(packageName: String): String = try {
+    val ai = packageManager.getApplicationInfoCompat(packageName, 0)
+    packageManager.getApplicationLabel(ai).toString()
+} catch (e: PackageManager.NameNotFoundException) {
+    "null"
 }
 
 fun checkDefaultBrowser(context: Context): Boolean {
     val i = Intent(Intent.ACTION_VIEW, "http://example.com".toUri())
-    val default = context.packageManager
-        .resolveActivityCompat(i, PackageManager.MATCH_DEFAULT_ONLY)
-        ?.activityInfo
-        ?.packageName
+    val default =
+        context.packageManager
+            .resolveActivityCompat(i, PackageManager.MATCH_DEFAULT_ONLY)
+            ?.activityInfo
+            ?.packageName
     return default == context.packageName
 }
 
@@ -48,15 +45,20 @@ fun openDefaultAppsSettings(context: Context) {
 }
 
 @RequiresApi(Build.VERSION_CODES.S)
-fun openOpenByDefaultSettings(context: Context, packageName: String) {
-    var i = Intent(
-        Settings.ACTION_APP_OPEN_BY_DEFAULT_SETTINGS,
-        "package:$packageName".toUri(),
-    )
+fun openOpenByDefaultSettings(
+    context: Context,
+    packageName: String,
+) {
+    var i =
+        Intent(
+            Settings.ACTION_APP_OPEN_BY_DEFAULT_SETTINGS,
+            "package:$packageName".toUri(),
+        )
     if (Build.MANUFACTURER == "samsung" || context.packageManager.resolveActivityCompat(i, 0) == null) {
         // Back off to App Info
-        i = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, "package:$packageName".toUri())
-            .highlightSettingsTo("preferred_settings")
+        i =
+            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, "package:$packageName".toUri())
+                .highlightSettingsTo("preferred_settings")
     }
     try {
         context.startActivity(i)

@@ -100,7 +100,6 @@ class GAKeyOverrider(
     private val lifecycleOwner: LifecycleOwner,
     private val service: AccessibilityService,
 ) : DefaultLifecycleObserver {
-
     private val keyguardManager: KeyguardManager = service.getSystemService()!!
     private val audioManager: AudioManager = service.getSystemService()!!
 
@@ -111,14 +110,18 @@ class GAKeyOverrider(
         get() = customAction != null && service.canReadSystemLogs
 
     // When this observer is registered, the assistant button will always be disabled.
-    private val gaKeyDisabler = object : ContentObserver(Handler(Looper.getMainLooper())) {
-        override fun onChange(selfChange: Boolean, uri: Uri?) {
-            super.onChange(selfChange, uri)
-            if (uri?.lastPathSegment == GA_KEY_DISABLED_GLOBAL_SETTING_KEY) {
-                isButtonSystemDisabled = true
+    private val gaKeyDisabler =
+        object : ContentObserver(Handler(Looper.getMainLooper())) {
+            override fun onChange(
+                selfChange: Boolean,
+                uri: Uri?,
+            ) {
+                super.onChange(selfChange, uri)
+                if (uri?.lastPathSegment == GA_KEY_DISABLED_GLOBAL_SETTING_KEY) {
+                    isButtonSystemDisabled = true
+                }
             }
         }
-    }
     private var isGAKeyDisablerRegistered = false
     private var isButtonSystemDisabled: Boolean
         get() = Settings.Global.getInt(service.contentResolver, GA_KEY_DISABLED_GLOBAL_SETTING_KEY) == 1
@@ -128,42 +131,46 @@ class GAKeyOverrider(
 
     private var assistButtonPressHandled = true
 
-    private val logcatCallback = object : CallbackList<String>() {
-        override fun onAddElement(e: String) {
-            val check = ASSIST_BUTTON_LOG_TRIGGER.find { e.contains(it) } != null
-            if (check) {
-                logcat { "Assistant Button event detected" }
-                if (customAction is DigitalAssistantAction && DigitalAssistantAction.isAssistantGoogle(service)) {
-                    // Why even
-                    return
-                }
-                if (service.isPackageInstalled(GOOGLE_PACKAGE_NAME) && service.isPackageInstalled(GOOGLE_ASSISTANT_PACKAGE_NAME)) {
-                    assistButtonPressHandled = false
-                } else {
-                    runGAKeyAction(false)
-                }
-                if (hideAssistantCue) {
-                    muteMusicStream(true)
+    private val logcatCallback =
+        object : CallbackList<String>() {
+            override fun onAddElement(e: String) {
+                val check = ASSIST_BUTTON_LOG_TRIGGER.find { e.contains(it) } != null
+                if (check) {
+                    logcat { "Assistant Button event detected" }
+                    if (customAction is DigitalAssistantAction && DigitalAssistantAction.isAssistantGoogle(service)) {
+                        // Why even
+                        return
+                    }
+                    if (service.isPackageInstalled(GOOGLE_PACKAGE_NAME) && service.isPackageInstalled(GOOGLE_ASSISTANT_PACKAGE_NAME)) {
+                        assistButtonPressHandled = false
+                    } else {
+                        runGAKeyAction(false)
+                    }
+                    if (hideAssistantCue) {
+                        muteMusicStream(true)
+                    }
                 }
             }
         }
-    }
 
     private var audioPlaybackCallbackRegistered = false
     private var volumeBeforeMuted: Int? = null
-    private val audioPlaybackCallback = object : AudioManager.AudioPlaybackCallback() {
-        override fun onPlaybackConfigChanged(configs: MutableList<AudioPlaybackConfiguration>) {
-            super.onPlaybackConfigChanged(configs)
-            val assistantCuePlaying = configs.map { it.audioAttributes.usage }
-                .contains(AudioAttributes.USAGE_ASSISTANCE_NAVIGATION_GUIDANCE)
-            if (!assistantCuePlaying) {
-                lifecycleOwner.lifecycleScope.launch {
-                    delay(500)
-                    muteMusicStream(false)
+    private val audioPlaybackCallback =
+        object : AudioManager.AudioPlaybackCallback() {
+            override fun onPlaybackConfigChanged(configs: MutableList<AudioPlaybackConfiguration>) {
+                super.onPlaybackConfigChanged(configs)
+                val assistantCuePlaying =
+                    configs
+                        .map { it.audioAttributes.usage }
+                        .contains(AudioAttributes.USAGE_ASSISTANCE_NAVIGATION_GUIDANCE)
+                if (!assistantCuePlaying) {
+                    lifecycleOwner.lifecycleScope.launch {
+                        delay(500)
+                        muteMusicStream(false)
+                    }
                 }
             }
         }
-    }
 
     override fun onDestroy(owner: LifecycleOwner) {
         updateGAKeyDisabler(false)
@@ -171,7 +178,8 @@ class GAKeyOverrider(
     }
 
     fun onAccessibilityEvent(event: AccessibilityEvent?) {
-        if (!assistButtonPressHandled && event?.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED &&
+        if (!assistButtonPressHandled &&
+            event?.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED &&
             event.packageName == GOOGLE_PACKAGE_NAME
         ) {
             logcat { "Opa on foreground after Assist Button event" }
@@ -271,9 +279,10 @@ class GAKeyOverrider(
                     is IntentAction, is DigitalAssistantAction -> {
                         if (withOpa) delay(500)
                         logcat { "Starting keyguard launch activity" }
-                        val i = Intent(service, GAKeyOverriderKeyguardActivity::class.java).apply {
-                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        }
+                        val i =
+                            Intent(service, GAKeyOverriderKeyguardActivity::class.java).apply {
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            }
                         service.startActivity(i)
                     }
                     else -> {
@@ -319,19 +328,21 @@ class GAKeyOverrider(
     }
 
     companion object {
-        private val ASSIST_BUTTON_LOG_TRIGGER = arrayOf(
-            "WindowManager: startAssist launchMode=1",
-            "WindowManager: startAssist launchMode=-1",
-            "GAKeyEventHandler: launchAssistGuideActivity",
-            "GAKeyEventHandler: launchDefaultAssistSettings",
-        )
+        private val ASSIST_BUTTON_LOG_TRIGGER =
+            arrayOf(
+                "WindowManager: startAssist launchMode=1",
+                "WindowManager: startAssist launchMode=-1",
+                "GAKeyEventHandler: launchAssistGuideActivity",
+                "GAKeyEventHandler: launchDefaultAssistSettings",
+            )
         const val GOOGLE_PACKAGE_NAME = "com.google.android.googlequicksearchbox"
         const val GOOGLE_ASSISTANT_PACKAGE_NAME = "com.google.android.apps.googleassistant"
 
         private const val GA_KEY_DISABLED_GLOBAL_SETTING_KEY = "somc.game_enhancer_gab_key_disabled"
 
         // Only supports Xperia 5 II, Xperia 10 III, Xperia 5 III, Xperia 1 III, Xperia 1 IV
-        val isSupported = DeviceModel.isPDX206 || DeviceModel.isPDX213 || DeviceModel.isPDX214 || DeviceModel.isPDX215 || DeviceModel.isPDX223
+        val isSupported =
+            DeviceModel.isPDX206 || DeviceModel.isPDX213 || DeviceModel.isPDX214 || DeviceModel.isPDX215 || DeviceModel.isPDX223
     }
 }
 
@@ -339,22 +350,18 @@ class GAKeyOverrider(
  * Intent launching action. Device needs to be in unlocked state
  * before launching the custom action.
  */
-class IntentAction(private val intent: Intent) : Action() {
+class IntentAction(
+    private val intent: Intent,
+) : Action() {
     override fun runAction(context: Context) {
         context.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
     }
 
-    override fun getLabel(context: Context): String {
-        return context.getString(R.string.intent_action_label, intent.loadLabel(context))
-    }
+    override fun getLabel(context: Context): String = context.getString(R.string.intent_action_label, intent.loadLabel(context))
 
-    override fun toPlainString(): String {
-        return PLAIN_STRING_PREFIX + intent.toUri(0)
-    }
+    override fun toPlainString(): String = PLAIN_STRING_PREFIX + intent.toUri(0)
 
-    override fun toString(): String {
-        return "IntentAction(${toPlainString()})"
-    }
+    override fun toString(): String = "IntentAction(${toPlainString()})"
 
     companion object {
         const val PLAIN_STRING_PREFIX = "IntentAction::"
@@ -380,7 +387,9 @@ class IntentAction(private val intent: Intent) : Action() {
  *
  * @see KeyEvent
  */
-class MediaKeyAction(private val key: Key) : Action() {
+class MediaKeyAction(
+    private val key: Key,
+) : Action() {
     override fun runAction(context: Context) {
         context.getSystemService<AudioManager>()?.run {
             dispatchMediaKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, key.code))
@@ -388,19 +397,17 @@ class MediaKeyAction(private val key: Key) : Action() {
         }
     }
 
-    override fun getLabel(context: Context): String {
-        return context.getString(R.string.media_key_action_label, context.getString(key.labelResId))
-    }
+    override fun getLabel(context: Context): String = context.getString(R.string.media_key_action_label, context.getString(key.labelResId))
 
-    override fun toPlainString(): String {
-        return PLAIN_STRING_PREFIX + key.name
-    }
+    override fun toPlainString(): String = PLAIN_STRING_PREFIX + key.name
 
-    override fun toString(): String {
-        return "MediaKeyAction(${key.name})"
-    }
+    override fun toString(): String = "MediaKeyAction(${key.name})"
 
-    enum class Key(val code: Int, val labelResId: Int, val iconResId: Int) {
+    enum class Key(
+        val code: Int,
+        val labelResId: Int,
+        val iconResId: Int,
+    ) {
         PLAY(KeyEvent.KEYCODE_MEDIA_PLAY, R.string.media_key_play, R.drawable.ic_play),
         PAUSE(KeyEvent.KEYCODE_MEDIA_PAUSE, R.string.media_key_pause, R.drawable.ic_pause),
         PLAY_PAUSE(KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, R.string.media_key_play_pause, R.drawable.ic_play_pause),
@@ -431,13 +438,17 @@ class FlashlightAction : Action() {
     private var flashCameraId: String? = null
     private var flashlightEnabled = false
 
-    private val torchCallback = object : CameraManager.TorchCallback() {
-        override fun onTorchModeChanged(cameraId: String, enabled: Boolean) {
-            if (cameraId == flashCameraId) {
-                flashlightEnabled = enabled
+    private val torchCallback =
+        object : CameraManager.TorchCallback() {
+            override fun onTorchModeChanged(
+                cameraId: String,
+                enabled: Boolean,
+            ) {
+                if (cameraId == flashCameraId) {
+                    flashlightEnabled = enabled
+                }
             }
         }
-    }
 
     @Synchronized
     override fun runAction(context: Context) {
@@ -453,17 +464,11 @@ class FlashlightAction : Action() {
         }
     }
 
-    override fun getLabel(context: Context): String {
-        return context.getString(R.string.flashlight_action_label)
-    }
+    override fun getLabel(context: Context): String = context.getString(R.string.flashlight_action_label)
 
-    override fun toPlainString(): String {
-        return PLAIN_STRING
-    }
+    override fun toPlainString(): String = PLAIN_STRING
 
-    override fun toString(): String {
-        return toPlainString()
-    }
+    override fun toString(): String = toPlainString()
 
     private fun getCameraId(cameraManager: CameraManager): String? {
         for (id in cameraManager.cameraIdList) {
@@ -480,9 +485,7 @@ class FlashlightAction : Action() {
     companion object {
         const val PLAIN_STRING = "FlashlightAction"
 
-        fun isSupported(context: Context): Boolean {
-            return context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)
-        }
+        fun isSupported(context: Context): Boolean = context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)
     }
 }
 
@@ -498,13 +501,9 @@ class ScreenshotAction : Action() {
         }
     }
 
-    override fun getLabel(context: Context): String {
-        return context.getString(R.string.screenshot_action_label)
-    }
+    override fun getLabel(context: Context): String = context.getString(R.string.screenshot_action_label)
 
-    override fun toPlainString(): String {
-        return PLAIN_STRING
-    }
+    override fun toPlainString(): String = PLAIN_STRING
 
     companion object {
         const val PLAIN_STRING = "ScreenshotAction"
@@ -514,7 +513,9 @@ class ScreenshotAction : Action() {
 /**
  * Expands status bar panel
  */
-class StatusBarAction(private val type: PanelType) : Action() {
+class StatusBarAction(
+    private val type: PanelType,
+) : Action() {
     override fun runAction(context: Context) {
         try {
             StatusBarManager::class.java
@@ -525,15 +526,15 @@ class StatusBarAction(private val type: PanelType) : Action() {
         }
     }
 
-    override fun getLabel(context: Context): String {
-        return context.getString(type.labelResId)
-    }
+    override fun getLabel(context: Context): String = context.getString(type.labelResId)
 
-    override fun toPlainString(): String {
-        return PLAIN_STRING_PREFIX + type.name
-    }
+    override fun toPlainString(): String = PLAIN_STRING_PREFIX + type.name
 
-    enum class PanelType(val method: String, val labelResId: Int, val iconVector: ImageVector) {
+    enum class PanelType(
+        val method: String,
+        val labelResId: Int,
+        val iconVector: ImageVector,
+    ) {
         NOTIFICATION("expandNotificationsPanel", R.string.statusbar_action_notifications, Icons.Rounded.Aod),
         QS("expandSettingsPanel", R.string.statusbar_action_qs, Icons.Rounded.AdUnits),
     }
@@ -559,23 +560,20 @@ class StatusBarAction(private val type: PanelType) : Action() {
 class RingerModeAction : Action() {
     override fun runAction(context: Context) {
         val am = context.getSystemService<AudioManager>()!!
-        am.ringerMode = if (am.ringerMode == AudioManager.RINGER_MODE_NORMAL) {
-            AudioManager.RINGER_MODE_VIBRATE
-        } else {
-            AudioManager.RINGER_MODE_NORMAL
-        }
+        am.ringerMode =
+            if (am.ringerMode == AudioManager.RINGER_MODE_NORMAL) {
+                AudioManager.RINGER_MODE_VIBRATE
+            } else {
+                AudioManager.RINGER_MODE_NORMAL
+            }
         if (am.ringerMode == AudioManager.RINGER_MODE_NORMAL) {
             am.playSoundEffect(AudioManager.FX_KEYPRESS_STANDARD, -1F)
         }
     }
 
-    override fun getLabel(context: Context): String {
-        return context.getString(R.string.ringer_mode_action_label)
-    }
+    override fun getLabel(context: Context): String = context.getString(R.string.ringer_mode_action_label)
 
-    override fun toPlainString(): String {
-        return PLAIN_STRING
-    }
+    override fun toPlainString(): String = PLAIN_STRING
 
     companion object {
         const val PLAIN_STRING = "RingerModeAction"
@@ -594,22 +592,24 @@ class MuteMicrophoneAction : Action() {
         switchMuteMicrophone(context)
     }
 
-    override fun getLabel(context: Context): String {
-        return context.getString(R.string.mute_microphone_action_label)
-    }
+    override fun getLabel(context: Context): String = context.getString(R.string.mute_microphone_action_label)
 
-    override fun toPlainString(): String {
-        return PLAIN_STRING
-    }
+    override fun toPlainString(): String = PLAIN_STRING
 
-    private fun switchMuteMicrophone(context: Context, mute: Boolean? = null) {
+    private fun switchMuteMicrophone(
+        context: Context,
+        mute: Boolean? = null,
+    ) {
         val am = context.getSystemService<AudioManager>() ?: return
         am.isMicrophoneMute = mute ?: !am.isMicrophoneMute
         showReminderNotification(context, am.isMicrophoneMute)
         showToast(context, am.isMicrophoneMute)
     }
 
-    private fun showReminderNotification(context: Context, show: Boolean) {
+    private fun showReminderNotification(
+        context: Context,
+        show: Boolean,
+    ) {
         val nm = context.getSystemService<NotificationManager>() ?: return
 
         if (!show) {
@@ -625,45 +625,53 @@ class MuteMicrophoneAction : Action() {
             ContextCompat.RECEIVER_NOT_EXPORTED,
         )
 
-        val newChannel = NotificationChannel(
-            toPlainString(),
-            context.getString(R.string.mute_microphone_notif_channel_title),
-            NotificationManager.IMPORTANCE_DEFAULT,
-        ).apply {
-            setSound(null, null)
-            enableVibration(false)
-            setShowBadge(false)
-            enableLights(false)
-        }
+        val newChannel =
+            NotificationChannel(
+                toPlainString(),
+                context.getString(R.string.mute_microphone_notif_channel_title),
+                NotificationManager.IMPORTANCE_DEFAULT,
+            ).apply {
+                setSound(null, null)
+                enableVibration(false)
+                setShowBadge(false)
+                enableLights(false)
+            }
         nm.createNotificationChannel(newChannel)
 
-        val notification = NotificationCompat.Builder(context, toPlainString())
-            .setShowWhen(false)
-            .setOngoing(true)
-            .setSmallIcon(R.drawable.ic_mic_off)
-            .setColor(MonetCompat.getInstance().getAccentColor(context))
-            .setContentTitle(context.getString(R.string.mute_microphone_on))
-            .addAction(
-                R.drawable.ic_mic_off,
-                context.getString(R.string.mute_microphone_action_cancel),
-                PendingIntent.getBroadcast(
-                    context,
-                    NOTIFICATION_ID,
-                    Intent(NOTIFICATION_CANCEL_ACTION),
-                    PendingIntent.FLAG_IMMUTABLE,
-                ),
-            )
-            .build()
+        val notification =
+            NotificationCompat
+                .Builder(context, toPlainString())
+                .setShowWhen(false)
+                .setOngoing(true)
+                .setSmallIcon(R.drawable.ic_mic_off)
+                .setColor(MonetCompat.getInstance().getAccentColor(context))
+                .setContentTitle(context.getString(R.string.mute_microphone_on))
+                .addAction(
+                    R.drawable.ic_mic_off,
+                    context.getString(R.string.mute_microphone_action_cancel),
+                    PendingIntent.getBroadcast(
+                        context,
+                        NOTIFICATION_ID,
+                        Intent(NOTIFICATION_CANCEL_ACTION),
+                        PendingIntent.FLAG_IMMUTABLE,
+                    ),
+                ).build()
         nm.notify(NOTIFICATION_ID, notification)
     }
 
-    private fun showToast(context: Context, mute: Boolean) {
+    private fun showToast(
+        context: Context,
+        mute: Boolean,
+    ) {
         val id = if (mute) R.string.mute_microphone_on else R.string.mute_microphone_off
         Toast.makeText(context, id, Toast.LENGTH_SHORT).show()
     }
 
     private inner class CancelActionReceiver : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
+        override fun onReceive(
+            context: Context,
+            intent: Intent,
+        ) {
             switchMuteMicrophone(context, false)
         }
     }
@@ -677,13 +685,13 @@ class MuteMicrophoneAction : Action() {
 }
 
 class DigitalAssistantAction : Action() {
-
     override fun runAction(context: Context) {
         val assistantComponent = getCurrentAssistantComponent(context)
-        val intent = Intent(Intent.ACTION_VOICE_COMMAND).apply {
-            component = assistantComponent
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
+        val intent =
+            Intent(Intent.ACTION_VOICE_COMMAND).apply {
+                component = assistantComponent
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
 
         try {
             context.startActivity(intent)
@@ -691,20 +699,14 @@ class DigitalAssistantAction : Action() {
         }
     }
 
-    override fun getLabel(context: Context): String {
-        return context.getString(R.string.digital_assistant_action_label)
-    }
+    override fun getLabel(context: Context): String = context.getString(R.string.digital_assistant_action_label)
 
-    override fun toPlainString(): String {
-        return PLAIN_STRING
-    }
+    override fun toPlainString(): String = PLAIN_STRING
 
     companion object {
         const val PLAIN_STRING = "DigitalAssistantAction"
 
-        fun isAssistantGoogle(context: Context): Boolean {
-            return getCurrentAssistantComponent(context)?.packageName == GOOGLE_PACKAGE_NAME
-        }
+        fun isAssistantGoogle(context: Context): Boolean = getCurrentAssistantComponent(context)?.packageName == GOOGLE_PACKAGE_NAME
 
         private fun getCurrentAssistantComponent(context: Context): ComponentName? {
             var setting = Settings.Secure.getString(context.contentResolver, "assistant")
@@ -724,13 +726,9 @@ class DoNothingAction : Action() {
         // do nothing duh.
     }
 
-    override fun getLabel(context: Context): String {
-        return context.getString(R.string.do_nothing)
-    }
+    override fun getLabel(context: Context): String = context.getString(R.string.do_nothing)
 
-    override fun toPlainString(): String {
-        return PLAIN_STRING
-    }
+    override fun toPlainString(): String = PLAIN_STRING
 
     companion object {
         const val PLAIN_STRING = "DoNothingAction"
@@ -742,43 +740,43 @@ class DoNothingAction : Action() {
  */
 sealed class Action {
     abstract fun runAction(context: Context)
+
     abstract fun getLabel(context: Context): String
+
     abstract fun toPlainString(): String
 
     companion object {
-        fun fromPlainString(string: String): Action? {
-            return when {
-                string.startsWith(IntentAction.PLAIN_STRING_PREFIX) -> {
-                    IntentAction.fromPlainString(string)
-                }
-                string.startsWith(MediaKeyAction.PLAIN_STRING_PREFIX) -> {
-                    MediaKeyAction.fromPlainString(string)
-                }
-                string == FlashlightAction.PLAIN_STRING -> {
-                    FlashlightAction()
-                }
-                string == ScreenshotAction.PLAIN_STRING -> {
-                    ScreenshotAction()
-                }
-                string.startsWith(StatusBarAction.PLAIN_STRING_PREFIX) -> {
-                    StatusBarAction.fromPlainString(string)
-                }
-                string == RingerModeAction.PLAIN_STRING -> {
-                    RingerModeAction()
-                }
-                string == MuteMicrophoneAction.PLAIN_STRING -> {
-                    MuteMicrophoneAction()
-                }
-                string == DigitalAssistantAction.PLAIN_STRING -> {
-                    DigitalAssistantAction()
-                }
-                string == DoNothingAction.PLAIN_STRING -> {
-                    DoNothingAction()
-                }
-                else -> {
-                    logcat(LogPriority.ERROR) { "Unrecognized string: $string" }
-                    null
-                }
+        fun fromPlainString(string: String): Action? = when {
+            string.startsWith(IntentAction.PLAIN_STRING_PREFIX) -> {
+                IntentAction.fromPlainString(string)
+            }
+            string.startsWith(MediaKeyAction.PLAIN_STRING_PREFIX) -> {
+                MediaKeyAction.fromPlainString(string)
+            }
+            string == FlashlightAction.PLAIN_STRING -> {
+                FlashlightAction()
+            }
+            string == ScreenshotAction.PLAIN_STRING -> {
+                ScreenshotAction()
+            }
+            string.startsWith(StatusBarAction.PLAIN_STRING_PREFIX) -> {
+                StatusBarAction.fromPlainString(string)
+            }
+            string == RingerModeAction.PLAIN_STRING -> {
+                RingerModeAction()
+            }
+            string == MuteMicrophoneAction.PLAIN_STRING -> {
+                MuteMicrophoneAction()
+            }
+            string == DigitalAssistantAction.PLAIN_STRING -> {
+                DigitalAssistantAction()
+            }
+            string == DoNothingAction.PLAIN_STRING -> {
+                DoNothingAction()
+            }
+            else -> {
+                logcat(LogPriority.ERROR) { "Unrecognized string: $string" }
+                null
             }
         }
     }

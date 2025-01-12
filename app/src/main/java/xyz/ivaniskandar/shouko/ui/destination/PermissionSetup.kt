@@ -51,8 +51,8 @@ fun PermissionSetup(
     title: String,
     permissionName: String,
     isRootAvailable: Boolean,
+    onFinishSetup: () -> Unit,
     modifier: Modifier = Modifier,
-    onPermissionGranted: () -> Unit,
 ) {
     val context = LocalContext.current
     Column(
@@ -83,7 +83,7 @@ fun PermissionSetup(
     }
 
     // Permission listener
-    LaunchedEffect(true, onPermissionGranted) {
+    LaunchedEffect(true, onFinishSetup) {
         launch(Dispatchers.Default) {
             while (context.checkSelfPermission(permissionName) != PackageManager.PERMISSION_GRANTED) {
                 logcat { "Waiting for $permissionName permission" }
@@ -92,7 +92,7 @@ fun PermissionSetup(
             }
             launch(Dispatchers.Main) {
                 logcat { "$permissionName permission granted. Calling callback..." }
-                onPermissionGranted()
+                onFinishSetup()
             }
         }
     }
@@ -204,7 +204,7 @@ private fun ReadLogsPermissionSetupRootPreview() {
                 title = stringResource(id = R.string.read_logs_permission_setup_title),
                 permissionName = Manifest.permission.READ_LOGS,
                 isRootAvailable = true,
-                onPermissionGranted = {},
+                onFinishSetup = {},
             )
         }
     }
@@ -220,7 +220,7 @@ private fun ReadLogsPermissionSetupNoRootPreview() {
                 title = stringResource(id = R.string.read_logs_permission_setup_title),
                 permissionName = Manifest.permission.READ_LOGS,
                 isRootAvailable = false,
-                onPermissionGranted = {},
+                onFinishSetup = {},
             )
         }
     }
@@ -236,7 +236,7 @@ private fun WriteSettingsPermissionSetupNoRootPreview() {
                 title = stringResource(id = R.string.write_secure_settings_permission_setup_title),
                 permissionName = Manifest.permission.WRITE_SECURE_SETTINGS,
                 isRootAvailable = false,
-                onPermissionGranted = {},
+                onFinishSetup = {},
             )
         }
     }

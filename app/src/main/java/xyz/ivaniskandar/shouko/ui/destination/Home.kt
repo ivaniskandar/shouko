@@ -55,11 +55,14 @@ fun Home(
     Box(modifier = modifier) {
         LazyColumn(contentPadding = contentPadding) {
             item {
-                AccessibilityServiceCard(visible = !TadanoAccessibilityService.isActive) {
-                    val serviceCn = ComponentName(context, TadanoAccessibilityService::class.java).flattenToString()
-                    val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).highlightSettingsTo(serviceCn)
-                    context.startActivity(intent)
-                }
+                AccessibilityServiceCard(
+                    visible = !TadanoAccessibilityService.isActive,
+                    onButtonClick = {
+                        val serviceCn = ComponentName(context, TadanoAccessibilityService::class.java).flattenToString()
+                        val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).highlightSettingsTo(serviceCn)
+                        context.startActivity(intent)
+                    },
+                )
             }
             if (GAKeyOverrider.isSupported) {
                 item {
@@ -74,9 +77,8 @@ fun Home(
                             }
                         },
                         enabled = TadanoAccessibilityService.isActive,
-                    ) {
-                        navController.navigate(Screen.AssistantButtonSettings.route)
-                    }
+                        onPreferenceClick = { navController.navigate(Screen.AssistantButtonSettings.route) },
+                    )
                 }
             }
             item {
@@ -103,24 +105,25 @@ fun Home(
                     subtitle = subtitle,
                     checked = flipToShushEnabled,
                     enabled = TadanoAccessibilityService.isActive,
-                ) {
-                    if (it) {
-                        val isGrantedDndAccess = context.getSystemService<NotificationManager>()!!
-                            .isNotificationPolicyAccessGranted
-                        if (!isGrantedDndAccess) {
-                            Toast.makeText(
-                                context,
-                                context.getString(R.string.allow_dnd_access_toast),
-                                Toast.LENGTH_SHORT,
-                            ).show()
-                            val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
-                                .highlightSettingsTo(context.packageName)
-                            dndAccessCheck.launch(intent)
-                            return@SwitchPreference
+                    onCheckedChange = {
+                        if (it) {
+                            val isGrantedDndAccess = context.getSystemService<NotificationManager>()!!
+                                .isNotificationPolicyAccessGranted
+                            if (!isGrantedDndAccess) {
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.allow_dnd_access_toast),
+                                    Toast.LENGTH_SHORT,
+                                ).show()
+                                val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
+                                    .highlightSettingsTo(context.packageName)
+                                dndAccessCheck.launch(intent)
+                                return@SwitchPreference
+                            }
                         }
-                    }
-                    scope.launch { prefs.setFlipToShushEnabled(it) }
-                }
+                        scope.launch { prefs.setFlipToShushEnabled(it) }
+                    },
+                )
             }
             item {
                 val preventPocketTouch by prefs.preventPocketTouchEnabledFlow.collectAsState(initial = false)
@@ -129,18 +132,20 @@ fun Home(
                     subtitle = stringResource(R.string.pocket_no_touchy_desc),
                     checked = preventPocketTouch,
                     enabled = TadanoAccessibilityService.isActive,
-                ) {
-                    scope.launch { prefs.setPreventPocketTouchEnabled(it) }
-                }
+                    onCheckedChange = {
+                        scope.launch { prefs.setPreventPocketTouchEnabled(it) }
+                    },
+                )
             }
             item {
                 Preference(
                     title = stringResource(R.string.lockscreen_shortcut_title),
                     subtitle = stringResource(R.string.lockscreen_shortcut_desc),
                     enabled = TadanoAccessibilityService.isActive,
-                ) {
-                    navController.navigate(Screen.LockscreenShortcutSettings.route)
-                }
+                    onPreferenceClick = {
+                        navController.navigate(Screen.LockscreenShortcutSettings.route)
+                    },
+                )
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -149,9 +154,10 @@ fun Home(
                     Preference(
                         title = stringResource(R.string.android_app_link_title),
                         subtitle = stringResource(id = R.string.android_app_link_subtitle),
-                    ) {
-                        navController.navigate(Screen.AndroidAppLinkSettings.route)
-                    }
+                        onPreferenceClick = {
+                            navController.navigate(Screen.AndroidAppLinkSettings.route)
+                        },
+                    )
                 }
             }
         }

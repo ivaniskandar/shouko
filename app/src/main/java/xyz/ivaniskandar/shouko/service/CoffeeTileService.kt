@@ -19,12 +19,15 @@ import xyz.ivaniskandar.shouko.service.TadanoTileParentService.Companion.ACTION_
 import xyz.ivaniskandar.shouko.service.TadanoTileParentService.Companion.EXTRA_SERVICE_TYPE
 
 class CoffeeTileService : TileService() {
-
-    private val updateReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            updateQsState()
+    private val updateReceiver =
+        object : BroadcastReceiver() {
+            override fun onReceive(
+                context: Context,
+                intent: Intent,
+            ) {
+                updateQsState()
+            }
         }
-    }
 
     override fun onBind(intent: Intent?): IBinder? {
         requestListeningState(this, ComponentName(this, CoffeeTileService::class.java))
@@ -32,10 +35,11 @@ class CoffeeTileService : TileService() {
     }
 
     override fun onStartListening() {
-        val filter = IntentFilter().apply {
-            addAction(ACTION_START_SERVICE)
-            addAction(ACTION_STOP_SERVICE)
-        }
+        val filter =
+            IntentFilter().apply {
+                addAction(ACTION_START_SERVICE)
+                addAction(ACTION_STOP_SERVICE)
+            }
         ContextCompat.registerReceiver(this, updateReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED)
         updateQsState()
     }
@@ -60,21 +64,23 @@ class CoffeeTileService : TileService() {
 
     private fun updateQsState() {
         with(qsTile) {
-            state = if (TadanoTileParentService.isCoffeeActive) {
-                STATE_ACTIVE
-            } else {
-                STATE_INACTIVE
-            }
+            state =
+                if (TadanoTileParentService.isCoffeeActive) {
+                    STATE_ACTIVE
+                } else {
+                    STATE_INACTIVE
+                }
             updateTile()
         }
     }
 
     private fun switchService(start: Boolean) {
         if (start) {
-            val i = Intent(this, TileBoardingActivity::class.java).apply {
-                putExtra(EXTRA_SERVICE_TYPE, TadanoTileParentService.Type.COFFEE)
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
+            val i =
+                Intent(this, TileBoardingActivity::class.java).apply {
+                    putExtra(EXTRA_SERVICE_TYPE, TadanoTileParentService.Type.COFFEE)
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
             val pendingIntent = PendingIntentActivityWrapper(this, 42, i, PendingIntent.FLAG_UPDATE_CURRENT, false)
             TileServiceCompat.startActivityAndCollapse(this, pendingIntent)
         } else {

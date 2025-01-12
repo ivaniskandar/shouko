@@ -7,16 +7,16 @@ spotless {
         targetExclude('bin/**/*.kt')
 
         ktlint()
-            .customRuleSets(["io.nlopez.compose.rules:ktlint:0.4.1"])
+            .customRuleSets(["io.nlopez.compose.rules:ktlint:0.4.22"])
             .editorConfigOverride("ktlint_function_naming_ignore_when_annotated_with":"Composable")
         trimTrailingWhitespace()
-        indentWithSpaces()
+        leadingTabsToSpaces()
         endWithNewline()
     }
 
     format 'xml', {
         target '**/*.xml'
-        indentWithSpaces()
+        leadingTabsToSpaces()
         trimTrailingWhitespace()
         endWithNewline()
     }

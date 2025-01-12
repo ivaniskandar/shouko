@@ -11,6 +11,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.navigationBars
@@ -159,11 +160,12 @@ class MainActivity : ComponentActivity() {
                                     title = stringResource(id = R.string.read_logs_permission_setup_title),
                                     permissionName = Manifest.permission.READ_LOGS,
                                     isRootAvailable = rootAvailable,
-                                ) {
-                                    finishAffinity()
-                                    startActivity(intent)
-                                    exitProcess(0)
-                                }
+                                    onFinishSetup = {
+                                        finishAffinity()
+                                        startActivity(intent)
+                                        exitProcess(0)
+                                    },
+                                )
                             }
                             composable(Screen.SecureSettingsSetup.route) {
                                 PermissionSetup(
@@ -171,11 +173,12 @@ class MainActivity : ComponentActivity() {
                                     title = stringResource(id = R.string.write_secure_settings_permission_setup_title),
                                     permissionName = Manifest.permission.WRITE_SECURE_SETTINGS,
                                     isRootAvailable = rootAvailable,
-                                ) {
-                                    finishAffinity()
-                                    startActivity(intent)
-                                    exitProcess(0)
-                                }
+                                    onFinishSetup = {
+                                        finishAffinity()
+                                        startActivity(intent)
+                                        exitProcess(0)
+                                    },
+                                )
                             }
                             composable(Screen.AssistantButtonSettings.route) {
                                 AssistantButtonSettings(navController, innerPadding)
@@ -210,16 +213,17 @@ class MainActivity : ComponentActivity() {
                                     AndroidAppLinkSettings(
                                         navController = navController,
                                         contentPadding = innerPadding,
-                                    ) {
-                                        val roleManager = getSystemService<RoleManager>()
-                                        if (roleManager?.isRoleHeld(RoleManager.ROLE_BROWSER) == true) {
-                                            openDefaultAppsSettings(this@MainActivity)
-                                        } else if (roleManager != null) {
-                                            val i = roleManager.createRequestRoleIntent(RoleManager.ROLE_BROWSER)
-                                            @Suppress("DEPRECATION") // we don't care about results here
-                                            startActivityForResult(i, 286444)
-                                        }
-                                    }
+                                        onOpenSettings = {
+                                            val roleManager = getSystemService<RoleManager>()
+                                            if (roleManager?.isRoleHeld(RoleManager.ROLE_BROWSER) == true) {
+                                                openDefaultAppsSettings(this@MainActivity)
+                                            } else if (roleManager != null) {
+                                                val i = roleManager.createRequestRoleIntent(RoleManager.ROLE_BROWSER)
+                                                @Suppress("DEPRECATION") // we don't care about results here
+                                                startActivityForResult(i, 286444)
+                                            }
+                                        },
+                                    )
                                 }
                                 composable(Screen.ApprovedLinkTargetList.route) {
                                     LinkTargetList(
@@ -247,10 +251,11 @@ class MainActivity : ComponentActivity() {
                                         LinkTargetInfoSheet(
                                             packageName = packageName,
                                             mainViewModel = viewModel,
-                                        ) {
-                                            openOpenByDefaultSettings(this@MainActivity, packageName)
-                                            navController.popBackStack()
-                                        }
+                                            onOpenSettings = {
+                                                openOpenByDefaultSettings(this@MainActivity, packageName)
+                                                navController.popBackStack()
+                                            },
+                                        )
                                     }
                                 }
                             }
@@ -263,33 +268,32 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-private fun getAppBarTitle(navController: NavController, navBackStackEntry: NavBackStackEntry?): String {
-    return if (navBackStackEntry?.destination is BottomSheetNavigator.Destination) {
-        // Keep previous destination title when showing bottom sheet
-        getAppBarTitle(navController = navController, navBackStackEntry = navController.previousBackStackEntry)
-    } else {
-        when (navBackStackEntry?.destination?.route) {
-            Screen.AssistantButtonSettings.route -> stringResource(id = R.string.assistant_button_title)
-            Screen.AssistantLaunchSelection.route -> stringResource(id = R.string.assistant_launch_selection_title)
-            Screen.ReadLogsSetup.route, Screen.SecureSettingsSetup.route -> ""
-            Screen.LockscreenShortcutSettings.route -> stringResource(id = R.string.lockscreen_shortcut_title)
-            Screen.LockscreenShortcutSelection.route -> {
-                when (navBackStackEntry.arguments?.getString("key")) {
-                    LOCKSCREEN_RIGHT_BUTTON -> stringResource(id = R.string.lockscreen_shortcut_right)
-                    LOCKSCREEN_LEFT_BUTTON -> stringResource(id = R.string.lockscreen_shortcut_left)
-                    else -> stringResource(id = R.string.lockscreen_shortcut_title)
-                }
+private fun getAppBarTitle(navController: NavController, navBackStackEntry: NavBackStackEntry?): String = if (navBackStackEntry?.destination is BottomSheetNavigator.Destination) {
+    // Keep previous destination title when showing bottom sheet
+    getAppBarTitle(navController = navController, navBackStackEntry = navController.previousBackStackEntry)
+} else {
+    when (navBackStackEntry?.destination?.route) {
+        Screen.AssistantButtonSettings.route -> stringResource(id = R.string.assistant_button_title)
+        Screen.AssistantLaunchSelection.route -> stringResource(id = R.string.assistant_launch_selection_title)
+        Screen.ReadLogsSetup.route, Screen.SecureSettingsSetup.route -> ""
+        Screen.LockscreenShortcutSettings.route -> stringResource(id = R.string.lockscreen_shortcut_title)
+        Screen.LockscreenShortcutSelection.route -> {
+            when (navBackStackEntry.arguments?.getString("key")) {
+                LOCKSCREEN_RIGHT_BUTTON -> stringResource(id = R.string.lockscreen_shortcut_right)
+                LOCKSCREEN_LEFT_BUTTON -> stringResource(id = R.string.lockscreen_shortcut_left)
+                else -> stringResource(id = R.string.lockscreen_shortcut_title)
             }
-            Screen.AndroidAppLinkSettings.route -> stringResource(id = R.string.android_app_link_title)
-            Screen.ApprovedLinkTargetList.route -> stringResource(id = R.string.approved_link_target_title)
-            Screen.UnapprovedLinkTargetList.route -> stringResource(id = R.string.unapproved_link_target_title)
-            else -> stringResource(id = R.string.app_name)
         }
+        Screen.AndroidAppLinkSettings.route -> stringResource(id = R.string.android_app_link_title)
+        Screen.ApprovedLinkTargetList.route -> stringResource(id = R.string.approved_link_target_title)
+        Screen.UnapprovedLinkTargetList.route -> stringResource(id = R.string.unapproved_link_target_title)
+        else -> stringResource(id = R.string.app_name)
     }
 }
 
+@Suppress("UnusedReceiverParameter")
 @Composable
-private fun MainActivityActions(
+private fun RowScope.MainActivityActions(
     navController: NavController,
 ) {
     val context = LocalContext.current

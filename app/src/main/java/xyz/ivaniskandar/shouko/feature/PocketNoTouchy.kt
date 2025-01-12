@@ -44,7 +44,6 @@ class PocketNoTouchy(
     lifecycleOwner: LifecycleOwner,
     private val service: AccessibilityService,
 ) : DefaultLifecycleObserver {
-
     private val sensorManager: SensorManager = service.getSystemService()!!
     private val audioManager: AudioManager = service.getSystemService()!!
 
@@ -54,76 +53,87 @@ class PocketNoTouchy(
     private var isScreenOnReceiverRegistered = false
     private var isListeningSensor = false
 
-    private val proximityEventListener: SensorEventListener = object : SensorEventListener {
-        override fun onSensorChanged(event: SensorEvent?) {
-            if (event?.sensor?.type == Sensor.TYPE_PROXIMITY) {
-                isProximityNear.set(event.values[0] == 0F)
+    private val proximityEventListener: SensorEventListener =
+        object : SensorEventListener {
+            override fun onSensorChanged(event: SensorEvent?) {
+                if (event?.sensor?.type == Sensor.TYPE_PROXIMITY) {
+                    isProximityNear.set(event.values[0] == 0F)
 
-                handler.removeCallbacks(activityDelayedRunnable)
-                if (isProximityNear.get()) {
-                    // Delay show activity
-                    handler.postDelayed(activityDelayedRunnable, ACTIVITY_DELAY_DURATION)
-                } else {
-                    handler.post(activityDelayedRunnable)
+                    handler.removeCallbacks(activityDelayedRunnable)
+                    if (isProximityNear.get()) {
+                        // Delay show activity
+                        handler.postDelayed(activityDelayedRunnable, ACTIVITY_DELAY_DURATION)
+                    } else {
+                        handler.post(activityDelayedRunnable)
+                    }
+
+                    handler.removeCallbacks(proximityDelayedRunnable)
+                    handler.postDelayed(proximityDelayedRunnable, PROXIMITY_LISTEN_DURATION)
                 }
+            }
 
-                handler.removeCallbacks(proximityDelayedRunnable)
-                handler.postDelayed(proximityDelayedRunnable, PROXIMITY_LISTEN_DURATION)
+            override fun onAccuracyChanged(
+                sensor: Sensor?,
+                accuracy: Int,
+            ) {
+                // Couldn't care less.
             }
         }
 
-        override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-            // Couldn't care less.
-        }
-    }
-
-    private val screenOnReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            when (intent.action) {
-                Intent.ACTION_SCREEN_ON -> {
-                    if (!isInCall) {
-                        logcat { "Screen on event and not in call, listening to proximity" }
-                        isListeningSensor = true
-                        sensorManager.registerListener(
-                            proximityEventListener,
-                            sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY),
-                            SensorManager.SENSOR_DELAY_UI,
-                        )
-                    } else {
-                        logcat { "Screen on event but in call, do nothing..." }
+    private val screenOnReceiver =
+        object : BroadcastReceiver() {
+            override fun onReceive(
+                context: Context,
+                intent: Intent,
+            ) {
+                when (intent.action) {
+                    Intent.ACTION_SCREEN_ON -> {
+                        if (!isInCall) {
+                            logcat { "Screen on event and not in call, listening to proximity" }
+                            isListeningSensor = true
+                            sensorManager.registerListener(
+                                proximityEventListener,
+                                sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY),
+                                SensorManager.SENSOR_DELAY_UI,
+                            )
+                        } else {
+                            logcat { "Screen on event but in call, do nothing..." }
+                        }
+                    }
+                    Intent.ACTION_SCREEN_OFF -> {
+                        ignoreCheck()
                     }
                 }
-                Intent.ACTION_SCREEN_OFF -> {
-                    ignoreCheck()
-                }
             }
         }
-    }
-    private val proximityDelayedRunnable = Runnable {
-        if (isProximityNear.get()) {
-            // Turn off screen when timeout and proximity is still in near position
-            logcat { "Proximity still near after timeout, locking screen..." }
-            sensorManager.unregisterListener(proximityEventListener)
-            service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN)
-        } else {
-            logcat { "Proximity still far after timeout, stop listening..." }
-            sensorManager.unregisterListener(proximityEventListener)
+    private val proximityDelayedRunnable =
+        Runnable {
+            if (isProximityNear.get()) {
+                // Turn off screen when timeout and proximity is still in near position
+                logcat { "Proximity still near after timeout, locking screen..." }
+                sensorManager.unregisterListener(proximityEventListener)
+                service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN)
+            } else {
+                logcat { "Proximity still far after timeout, stop listening..." }
+                sensorManager.unregisterListener(proximityEventListener)
+            }
         }
-    }
 
-    private val activityDelayedRunnable = Runnable {
-        logcat { "Updating ${PocketNoTouchyActivity::class.simpleName} visible state ${isProximityNear.get()}" }
-        PocketNoTouchyActivity.updateState(service, isProximityNear.get())
-    }
+    private val activityDelayedRunnable =
+        Runnable {
+            logcat { "Updating ${PocketNoTouchyActivity::class.simpleName} visible state ${isProximityNear.get()}" }
+            PocketNoTouchyActivity.updateState(service, isProximityNear.get())
+        }
 
     private val isInCall: Boolean
-        get() = when (audioManager.mode) {
-            AudioManager.MODE_IN_CALL,
-            AudioManager.MODE_IN_COMMUNICATION,
-            AudioManager.MODE_RINGTONE,
-            -> true
-            else -> false
-        }
+        get() =
+            when (audioManager.mode) {
+                AudioManager.MODE_IN_CALL,
+                AudioManager.MODE_IN_COMMUNICATION,
+                AudioManager.MODE_RINGTONE,
+                -> true
+                else -> false
+            }
 
     override fun onDestroy(owner: LifecycleOwner) {
         updatePocketNoTouchy(false)
@@ -143,10 +153,11 @@ class PocketNoTouchy(
         if (state) {
             if (!isScreenOnReceiverRegistered) {
                 logcat { "Enabling screen on event receiver" }
-                val screenEventFilter = IntentFilter().apply {
-                    addAction(Intent.ACTION_SCREEN_ON)
-                    addAction(Intent.ACTION_SCREEN_OFF)
-                }
+                val screenEventFilter =
+                    IntentFilter().apply {
+                        addAction(Intent.ACTION_SCREEN_ON)
+                        addAction(Intent.ACTION_SCREEN_OFF)
+                    }
                 service.registerReceiver(screenOnReceiver, screenEventFilter)
                 isScreenOnReceiverRegistered = true
             }

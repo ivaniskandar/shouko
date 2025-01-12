@@ -121,7 +121,7 @@ class LinkTargetChooserActivity : ComponentActivity() {
                     targets = mapped,
                     onItemClick = { start(it, newIntent) },
                     onItemLongClick = { startAppInfo(it) },
-                    onSheetHidden = { finish() },
+                    onFinish = { finish() },
                 )
             }
         }
@@ -157,7 +157,7 @@ private fun AppLinkChooserSheet(
     targets: List<Target>,
     onItemClick: (ComponentName) -> Unit,
     onItemLongClick: (ComponentName) -> Unit,
-    onSheetHidden: () -> Unit,
+    onFinish: () -> Unit,
 ) {
     val state = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     val scope = rememberCoroutineScope()
@@ -233,10 +233,10 @@ private fun AppLinkChooserSheet(
         )
     }
     var opened by remember { mutableStateOf(false) }
-    LaunchedEffect(state.currentValue, onSheetHidden) {
+    LaunchedEffect(state.currentValue, onFinish) {
         if (!opened) scope.launch { state.show() }
         when (state.currentValue) {
-            ModalBottomSheetValue.Hidden -> if (opened) onSheetHidden()
+            ModalBottomSheetValue.Hidden -> if (opened) onFinish()
             ModalBottomSheetValue.Expanded, ModalBottomSheetValue.HalfExpanded -> opened = true
         }
     }

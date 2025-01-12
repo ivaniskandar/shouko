@@ -18,8 +18,8 @@ import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3PreviewTheme
 
 @Composable
 fun KeyguardUnlock(
-    modifier: Modifier = Modifier,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Surface(
         modifier = modifier,
@@ -45,6 +45,6 @@ fun KeyguardUnlock(
 @Composable
 private fun KeyguardUnlockPreview() {
     ShoukoM3PreviewTheme {
-        KeyguardUnlock {}
+        KeyguardUnlock(onClick = {})
     }
 }

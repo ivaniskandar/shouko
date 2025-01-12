@@ -29,7 +29,7 @@ class GAKeyOverriderKeyguardActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             ShoukoM3Theme {
-                KeyguardUnlock { dismissKeyguard() }
+                KeyguardUnlock(onClick = { dismissKeyguard() })
             }
         }
     }
@@ -39,14 +39,18 @@ class GAKeyOverriderKeyguardActivity : ComponentActivity() {
         finish()
     }
 
-    @Suppress("BlockingMethodInNonBlockingContext")
     private fun dismissKeyguard() {
         getSystemService<KeyguardManager>()?.requestDismissKeyguard(
             this,
             object : KeyguardManager.KeyguardDismissCallback() {
                 override fun onDismissSucceeded() {
                     lifecycleScope.launch {
-                        val action = runBlocking { ShoukoApplication.prefs.assistButtonFlow.first().action }
+                        val action =
+                            runBlocking {
+                                ShoukoApplication.prefs.assistButtonFlow
+                                    .first()
+                                    .action
+                            }
                         action?.runAction(this@GAKeyOverriderKeyguardActivity)
                         finish()
                     }

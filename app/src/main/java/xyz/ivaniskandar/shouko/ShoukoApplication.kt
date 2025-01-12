@@ -73,7 +73,6 @@ private val Context.preferencesStore: DataStore<Preferences> by dataStore(
 )
 
 class ShoukoApplication : Application() {
-
     override fun onCreate() {
         super.onCreate()
         AndroidLogcatLogger.installOnDebuggableApp(this, minPriority = LogPriority.VERBOSE)
@@ -85,7 +84,8 @@ class ShoukoApplication : Application() {
 
         // Prepare Shell builder
         Shell.setDefaultBuilder(
-            Shell.Builder.create()
+            Shell.Builder
+                .create()
                 .setFlags(Shell.FLAG_REDIRECT_STDERR or if (!isRootAvailable) Shell.FLAG_NON_ROOT_SHELL else 0)
                 .setTimeout(10),
         )
@@ -100,11 +100,12 @@ class ShoukoApplication : Application() {
         }
 
         // Enable app link chooser on S
-        val state = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-        } else {
-            PackageManager.COMPONENT_ENABLED_STATE_DISABLED
-        }
+        val state =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+            } else {
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+            }
         packageManager.setComponentEnabledSetting(
             ComponentName(this, LinkTargetChooserActivity::class.java),
             state,

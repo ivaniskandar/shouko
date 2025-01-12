@@ -25,8 +25,8 @@ private fun BasePreferenceCard(
     title: String,
     description: String,
     buttonLabel: String,
+    onButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
-    onButtonClicked: () -> Unit,
 ) {
     Card(
         modifier = modifier.padding(horizontal = 20.dp, vertical = 16.dp),
@@ -48,7 +48,7 @@ private fun BasePreferenceCard(
             )
             Spacer(modifier = Modifier.height(24.dp))
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
-                TextButton(onClick = onButtonClicked) {
+                TextButton(onClick = onButtonClick) {
                     Text(text = buttonLabel)
                 }
             }
@@ -57,37 +57,46 @@ private fun BasePreferenceCard(
 }
 
 @Composable
-fun AccessibilityServiceCard(visible: Boolean = true, onButtonClicked: () -> Unit) {
+fun AccessibilityServiceCard(
+    onButtonClick: () -> Unit,
+    visible: Boolean = true,
+) {
     if (visible) {
         BasePreferenceCard(
             title = stringResource(id = R.string.accessibility_service_prompt_title),
             description = stringResource(id = R.string.accessibility_service_prompt_desc),
             buttonLabel = stringResource(id = R.string.button_open_settings),
-            onButtonClicked = onButtonClicked,
+            onButtonClick = onButtonClick,
         )
     }
 }
 
 @Composable
-fun ReadLogsCard(visible: Boolean = true, onButtonClicked: () -> Unit) {
+fun ReadLogsCard(
+    onButtonClick: () -> Unit,
+    visible: Boolean = true,
+) {
     if (visible) {
         BasePreferenceCard(
             title = stringResource(id = R.string.logs_permission_prompt_title),
             description = stringResource(id = R.string.logs_permission_prompt_desc),
             buttonLabel = stringResource(id = R.string.button_grant_permission),
-            onButtonClicked = onButtonClicked,
+            onButtonClick = onButtonClick,
         )
     }
 }
 
 @Composable
-fun WriteSettingsCard(visible: Boolean = true, onButtonClicked: () -> Unit) {
+fun WriteSettingsCard(
+    onButtonClick: () -> Unit,
+    visible: Boolean = true,
+) {
     if (visible) {
         BasePreferenceCard(
             title = stringResource(id = R.string.write_secure_settings_permission_prompt_title),
             description = stringResource(id = R.string.write_secure_settings_permission_prompt_desc),
             buttonLabel = stringResource(id = R.string.button_grant_permission),
-            onButtonClicked = onButtonClicked,
+            onButtonClick = onButtonClick,
         )
     }
 }
@@ -98,9 +107,9 @@ private fun PreferenceCardsPreview() {
     ShoukoM3PreviewTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             Column {
-                AccessibilityServiceCard {}
-                ReadLogsCard {}
-                WriteSettingsCard {}
+                AccessibilityServiceCard(onButtonClick = {})
+                ReadLogsCard(onButtonClick = {})
+                WriteSettingsCard(onButtonClick = {})
             }
         }
     }

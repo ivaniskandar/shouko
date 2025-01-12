@@ -66,8 +66,8 @@ class TileBoardingActivity : ComponentActivity() {
     @Composable
     private fun TileBoardingScreen(
         type: TadanoTileParentService.Type,
-        modifier: Modifier = Modifier,
         onDismissRequest: () -> Unit,
+        modifier: Modifier = Modifier,
     ) {
         Surface(
             modifier = modifier,

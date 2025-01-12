@@ -78,23 +78,24 @@ fun AssistantButtonSettings(
         contentPadding = contentPadding,
     ) {
         item {
-            ReadLogsCard(visible = !context.canReadSystemLogs) {
-                navController.navigate(Screen.ReadLogsSetup.route)
-            }
+            ReadLogsCard(
+                visible = !context.canReadSystemLogs,
+                onButtonClick = { navController.navigate(Screen.ReadLogsSetup.route) },
+            )
         }
         item {
-            WriteSettingsCard(visible = !context.canWriteSecureSettings) {
-                navController.navigate(Screen.SecureSettingsSetup.route)
-            }
+            WriteSettingsCard(
+                visible = !context.canWriteSecureSettings,
+                onButtonClick = { navController.navigate(Screen.SecureSettingsSetup.route) },
+            )
         }
         item {
             SwitchPreference(
                 title = stringResource(id = R.string.assistant_button_title),
                 checked = buttonPrefs.enabled,
                 enabled = context.canWriteSecureSettings,
-            ) {
-                scope.launch { prefs.setAssistButtonEnabled(it) }
-            }
+                onCheckedChange = { scope.launch { prefs.setAssistButtonEnabled(it) } },
+            )
         }
         item {
             Preference(
@@ -102,9 +103,8 @@ fun AssistantButtonSettings(
                 subtitle = buttonPrefs.action?.getLabel(context)
                     ?: stringResource(id = R.string.assistant_action_select_default_value),
                 enabled = buttonPrefs.enabled && context.canReadSystemLogs,
-            ) {
-                navController.navigate(Screen.AssistantLaunchSelection.route)
-            }
+                onPreferenceClick = { navController.navigate(Screen.AssistantLaunchSelection.route) },
+            )
         }
         item {
             SwitchPreference(
@@ -112,9 +112,7 @@ fun AssistantButtonSettings(
                 subtitle = stringResource(R.string.hide_assistant_cue_desc),
                 checked = buttonPrefs.hideAssistantCue,
                 enabled = buttonPrefs.enabled && buttonPrefs.action != null,
-                onCheckedChanged = {
-                    scope.launch { prefs.setHideAssistantCue(it) }
-                },
+                onCheckedChange = { scope.launch { prefs.setHideAssistantCue(it) } },
             )
         }
     }
@@ -162,16 +160,19 @@ fun AssistantActionSelection(
                             contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding()),
                         ) {
                             items(items!!) { item ->
-                                ApplicationRow(item = item) {
-                                    scope.launch {
-                                        val intent = Intent().apply {
-                                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                            component = it
+                                ApplicationRow(
+                                    item = item,
+                                    onClick = {
+                                        scope.launch {
+                                            val intent = Intent().apply {
+                                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                                component = it
+                                            }
+                                            prefs.setAssistButtonAction(IntentAction(intent))
+                                            navController.popBackStack()
                                         }
-                                        prefs.setAssistButtonAction(IntentAction(intent))
-                                        navController.popBackStack()
-                                    }
-                                }
+                                    },
+                                )
                             }
                         }
                     }
@@ -217,12 +218,15 @@ fun AssistantActionSelection(
                             contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding()),
                         ) {
                             items(items!!) { item ->
-                                ShortcutCreatorRow(item = item) {
-                                    val i = Intent(Intent.ACTION_CREATE_SHORTCUT).apply {
-                                        component = it
-                                    }
-                                    createShortcut.launch(i)
-                                }
+                                ShortcutCreatorRow(
+                                    item = item,
+                                    onClick = {
+                                        val i = Intent(Intent.ACTION_CREATE_SHORTCUT).apply {
+                                            component = it
+                                        }
+                                        createShortcut.launch(i)
+                                    },
+                                )
                             }
                         }
                     }

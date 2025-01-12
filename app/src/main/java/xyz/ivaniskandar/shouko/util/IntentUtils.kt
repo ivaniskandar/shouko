@@ -32,10 +32,11 @@ suspend fun Intent.setAsAssistantAction(prefs: PreferencesRepository) {
     }
     val name = getStringExtra(Intent.EXTRA_SHORTCUT_NAME)
     logcat { "Preparing to save intent action with label $name" }
-    val intent = Intent(getParcelableExtra(Intent.EXTRA_SHORTCUT_INTENT)).apply {
-        // For UI
-        putExtra(Intent.EXTRA_SHORTCUT_NAME, name)
-    }
+    val intent =
+        Intent(getParcelableExtra(Intent.EXTRA_SHORTCUT_INTENT)).apply {
+            // For UI
+            putExtra(Intent.EXTRA_SHORTCUT_NAME, name)
+        }
     prefs.setAssistButtonAction(IntentAction(intent))
 }
 
@@ -62,7 +63,10 @@ fun Intent.loadLabel(context: Context): String {
 /**
  * Returns true if intent extra class type for [key] is the same with [type].
  */
-private fun <T> Intent?.isValidExtraType(key: String, type: Class<T>): Boolean {
+private fun <T> Intent?.isValidExtraType(
+    key: String,
+    type: Class<T>,
+): Boolean {
     @Suppress("DEPRECATION") // https://issuetracker.google.com/issues/240585930
     return type.isInstance(this?.getParcelableExtra(key))
 }
@@ -83,10 +87,11 @@ fun Intent.highlightSettingsTo(string: String): Intent {
  * Returns a chooser intent for the specified text string
  */
 fun createShareTextIntent(text: String): Intent {
-    val sendIntent: Intent = Intent().apply {
-        action = Intent.ACTION_SEND
-        putExtra(Intent.EXTRA_TEXT, text)
-        type = "text/plain"
-    }
+    val sendIntent: Intent =
+        Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, text)
+            type = "text/plain"
+        }
     return Intent.createChooser(sendIntent, null)
 }

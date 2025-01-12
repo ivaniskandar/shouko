@@ -28,7 +28,6 @@ import xyz.ivaniskandar.shouko.util.isPackageInstalled
  * from the available App Shortcut.
  */
 class WaMeActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (!isPackageInstalled(WA_PACKAGE_NAME)) {
@@ -38,35 +37,37 @@ class WaMeActivity : ComponentActivity() {
         }
         when (intent.action) {
             Intent.ACTION_VIEW, Intent.ACTION_DIAL -> handle(PhoneNumberUtils.getNumberFromIntent(intent, this))
-            WA_ME_CLIPBOARD -> setContent {
-                ShoukoM3Theme {
-                    Dialog(onDismissRequest = {}, content = {})
-                }
-                SideEffect {
-                    val cm = getSystemService<ClipboardManager>()
-                    if (cm == null) {
-                        finish()
-                        return@SideEffect
+            WA_ME_CLIPBOARD ->
+                setContent {
+                    ShoukoM3Theme {
+                        Dialog(onDismissRequest = {}, content = {})
                     }
-                    val copiedPhoneNumber = cm.primaryClip?.getItemAt(0)?.text ?: ""
-                    if (!Patterns.PHONE.matcher(copiedPhoneNumber).matches()) {
-                        Toast.makeText(applicationContext, R.string.wame_failed_clipboard, Toast.LENGTH_SHORT).show()
-                        finish()
-                        return@SideEffect
+                    SideEffect {
+                        val cm = getSystemService<ClipboardManager>()
+                        if (cm == null) {
+                            finish()
+                            return@SideEffect
+                        }
+                        val copiedPhoneNumber = cm.primaryClip?.getItemAt(0)?.text ?: ""
+                        if (!Patterns.PHONE.matcher(copiedPhoneNumber).matches()) {
+                            Toast.makeText(applicationContext, R.string.wame_failed_clipboard, Toast.LENGTH_SHORT).show()
+                            finish()
+                            return@SideEffect
+                        }
+                        handle(copiedPhoneNumber)
                     }
-                    handle(copiedPhoneNumber)
                 }
-            }
         }
     }
 
     private fun handle(number: CharSequence) {
         val stripped = number.filter { it.isDigit() }
-        val waIntent = Intent(Intent.ACTION_VIEW).apply {
-            data = "$WA_ME_LINK$stripped".toUri()
-            `package` = WA_PACKAGE_NAME
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
+        val waIntent =
+            Intent(Intent.ACTION_VIEW).apply {
+                data = "$WA_ME_LINK$stripped".toUri()
+                `package` = WA_PACKAGE_NAME
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
         startActivity(waIntent)
         finish()
     }

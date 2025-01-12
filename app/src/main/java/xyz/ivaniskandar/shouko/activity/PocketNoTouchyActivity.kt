@@ -57,9 +57,11 @@ class PocketNoTouchyActivity : ComponentActivity() {
                         .background(Color.Black),
                     contentAlignment = Alignment.Center,
                 ) {
-                    DialogCard {
-                        lifecycleScope.launch { PocketNoTouchy.ignoreCheckFlow.emit(Unit) }
-                    }
+                    DialogCard(
+                        onButtonClick = {
+                            lifecycleScope.launch { PocketNoTouchy.ignoreCheckFlow.emit(Unit) }
+                        },
+                    )
                 }
             }
             val systemUiController = rememberSystemUiController()
@@ -86,8 +88,8 @@ class PocketNoTouchyActivity : ComponentActivity() {
 
     @Composable
     private fun DialogCard(
+        onButtonClick: () -> Unit,
         modifier: Modifier = Modifier,
-        onButtonClicked: () -> Unit,
     ) {
         OutlinedCard(
             modifier = modifier.padding(24.dp),
@@ -106,7 +108,7 @@ class PocketNoTouchyActivity : ComponentActivity() {
                 )
                 Spacer(modifier = Modifier.height(24.dp))
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
-                    TextButton(onClick = onButtonClicked) {
+                    TextButton(onClick = onButtonClick) {
                         Text(text = stringResource(id = R.string.no_touchy_dialog_ignore_button))
                     }
                 }
@@ -119,7 +121,7 @@ class PocketNoTouchyActivity : ComponentActivity() {
     private fun DialogCardPreview() {
         ShoukoM3PreviewTheme(darkTheme = true) {
             Box(modifier = Modifier.background(Color.Black)) {
-                DialogCard(onButtonClicked = {})
+                DialogCard(onButtonClick = {})
             }
         }
     }

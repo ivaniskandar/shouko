@@ -19,7 +19,9 @@ import xyz.ivaniskandar.shouko.feature.PocketNoTouchy
  *
  * @see xyz.ivaniskandar.shouko.feature
  */
-class TadanoAccessibilityService : AccessibilityService(), LifecycleOwner {
+class TadanoAccessibilityService :
+    AccessibilityService(),
+    LifecycleOwner {
     private val dispatcher = ServiceLifecycleDispatcher(this)
 
     /**
@@ -57,7 +59,11 @@ class TadanoAccessibilityService : AccessibilityService(), LifecycleOwner {
         logcat { "onCreate" }
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+    override fun onStartCommand(
+        intent: Intent?,
+        flags: Int,
+        startId: Int,
+    ): Int {
         dispatcher.onServicePreSuperOnStart()
         logcat { "onStartCommand" }
         return super.onStartCommand(intent, flags, startId)

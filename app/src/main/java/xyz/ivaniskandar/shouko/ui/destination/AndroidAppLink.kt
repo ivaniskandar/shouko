@@ -66,9 +66,9 @@ import xyz.ivaniskandar.shouko.util.getPackageLabel
 fun AndroidAppLinkSettings(
     contentPadding: PaddingValues,
     navController: NavController,
+    onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
     context: Context = LocalContext.current,
-    onOpenSettings: () -> Unit,
 ) {
     var isDefaultBrowser by remember { mutableStateOf(checkDefaultBrowser(context)) }
     var showEnableInfoDialog by remember { mutableStateOf(false) }
@@ -155,8 +155,8 @@ fun AndroidAppLinkSettings(
 @Composable
 fun CustomChooserToggle(
     checked: Boolean,
-    modifier: Modifier = Modifier,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Card(
         onClick = onClick,
@@ -187,7 +187,7 @@ fun CustomChooserToggle(
 @Composable
 private fun CustomChooserTogglePreview() {
     ShoukoM3PreviewTheme {
-        CustomChooserToggle(checked = true) {}
+        CustomChooserToggle(checked = true, onClick = {})
     }
 }
 
@@ -227,9 +227,12 @@ fun LinkTargetList(
         ) {
             if (filteredItems != null) {
                 items(items = filteredItems, key = { it.packageName }) { item ->
-                    LinkTargetListItem(item = item) {
-                        navController.navigate(Screen.LinkTargetInfoSheet.createRoute(item.packageName))
-                    }
+                    LinkTargetListItem(
+                        item = item,
+                        onClick = {
+                            navController.navigate(Screen.LinkTargetInfoSheet.createRoute(item.packageName))
+                        },
+                    )
                 }
             }
 
@@ -244,9 +247,12 @@ fun LinkTargetList(
                 }
 
                 items(items = disabledItems, key = { it.packageName }) { item ->
-                    LinkTargetListItem(item = item) {
-                        navController.navigate(Screen.LinkTargetInfoSheet.createRoute(item.packageName))
-                    }
+                    LinkTargetListItem(
+                        item = item,
+                        onClick = {
+                            navController.navigate(Screen.LinkTargetInfoSheet.createRoute(item.packageName))
+                        },
+                    )
                 }
             }
         }
@@ -258,8 +264,8 @@ fun LinkTargetList(
 @Composable
 private fun LinkTargetListItem(
     item: LinkHandlerAppItem,
-    modifier: Modifier = Modifier,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     ListItem(
         modifier = modifier.clickable(onClick = onClick),
@@ -304,9 +310,9 @@ private fun LinkTargetListItem(
 @Composable
 fun LinkTargetInfoSheet(
     packageName: String,
+    onOpenSettings: (String) -> Unit,
     modifier: Modifier = Modifier,
     mainViewModel: MainActivityViewModel = viewModel(),
-    onOpenSettings: (String) -> Unit,
 ) {
     val list by mainViewModel.linkHandlerList.observeAsState()
     val item = list!!.find { it.packageName == packageName }!!

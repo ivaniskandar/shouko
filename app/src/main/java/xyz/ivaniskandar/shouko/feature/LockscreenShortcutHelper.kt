@@ -40,37 +40,41 @@ class LockscreenShortcutHelper(
     private val context: Context,
 ) : DefaultLifecycleObserver {
     private var receiverRegistered = false
-    private val receiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            if (!context.canWriteSecureSettings) {
-                return
-            }
-            val keyguardLocked = context.getSystemService<KeyguardManager>()!!.isKeyguardLocked
-            val screenOn = intent.action != Intent.ACTION_SCREEN_OFF
-            if (screenOn && keyguardLocked) {
-                lifecycleOwner.lifecycleScope.launch {
-                    delay(75) // 5 II camera button action fix
-                    logcat { "Set camera lockscreen shortcuts to custom ${intent.action}" }
-                    // Keyguard is showing
-                    val prefs = ShoukoApplication.prefs
-                    Settings.Secure.putString(
-                        context.contentResolver,
-                        LOCKSCREEN_LEFT_BUTTON,
-                        prefs.lockscreenLeftAction.first(),
-                    )
-                    Settings.Secure.putString(
-                        context.contentResolver,
-                        LOCKSCREEN_RIGHT_BUTTON,
-                        prefs.lockscreenRightAction.first(),
-                    )
+    private val receiver =
+        object : BroadcastReceiver() {
+            override fun onReceive(
+                context: Context,
+                intent: Intent,
+            ) {
+                if (!context.canWriteSecureSettings) {
+                    return
                 }
-            } else {
-                logcat { "Set lockscreen shortcuts to system default" }
-                Settings.Secure.putString(context.contentResolver, LOCKSCREEN_LEFT_BUTTON, null)
-                Settings.Secure.putString(context.contentResolver, LOCKSCREEN_RIGHT_BUTTON, null)
+                val keyguardLocked = context.getSystemService<KeyguardManager>()!!.isKeyguardLocked
+                val screenOn = intent.action != Intent.ACTION_SCREEN_OFF
+                if (screenOn && keyguardLocked) {
+                    lifecycleOwner.lifecycleScope.launch {
+                        delay(75) // 5 II camera button action fix
+                        logcat { "Set camera lockscreen shortcuts to custom ${intent.action}" }
+                        // Keyguard is showing
+                        val prefs = ShoukoApplication.prefs
+                        Settings.Secure.putString(
+                            context.contentResolver,
+                            LOCKSCREEN_LEFT_BUTTON,
+                            prefs.lockscreenLeftAction.first(),
+                        )
+                        Settings.Secure.putString(
+                            context.contentResolver,
+                            LOCKSCREEN_RIGHT_BUTTON,
+                            prefs.lockscreenRightAction.first(),
+                        )
+                    }
+                } else {
+                    logcat { "Set lockscreen shortcuts to system default" }
+                    Settings.Secure.putString(context.contentResolver, LOCKSCREEN_LEFT_BUTTON, null)
+                    Settings.Secure.putString(context.contentResolver, LOCKSCREEN_RIGHT_BUTTON, null)
+                }
             }
         }
-    }
 
     override fun onDestroy(owner: LifecycleOwner) {
         updateReceiverState(false)
@@ -80,11 +84,12 @@ class LockscreenShortcutHelper(
         if (state) {
             if (!receiverRegistered) {
                 logcat { "Registering receiver" }
-                val filter = IntentFilter().apply {
-                    addAction(Intent.ACTION_SCREEN_OFF)
-                    addAction(Intent.ACTION_SCREEN_ON)
-                    priority = 999
-                }
+                val filter =
+                    IntentFilter().apply {
+                        addAction(Intent.ACTION_SCREEN_OFF)
+                        addAction(Intent.ACTION_SCREEN_ON)
+                        priority = 999
+                    }
                 context.registerReceiver(receiver, filter)
                 receiverRegistered = true
             }

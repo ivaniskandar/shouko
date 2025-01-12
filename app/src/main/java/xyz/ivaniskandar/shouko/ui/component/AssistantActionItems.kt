@@ -42,8 +42,8 @@ fun CategoryHeader(
 @Composable
 fun ApplicationRow(
     item: ApplicationItem,
-    modifier: Modifier = Modifier,
     onClick: (ComponentName) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     ListItem(
         modifier = modifier
@@ -63,8 +63,8 @@ fun ApplicationRow(
 @Composable
 fun ShortcutCreatorRow(
     item: ShortcutCreatorItem,
-    modifier: Modifier = Modifier,
     onClick: (ComponentName) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     ListItem(
         modifier = modifier
@@ -86,8 +86,8 @@ fun ShortcutCreatorRow(
 fun CommonActionRow(
     iconPainter: Painter,
     label: String,
-    modifier: Modifier = Modifier,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     ListItem(
         modifier = modifier
@@ -109,8 +109,8 @@ fun CommonActionRow(
 fun CommonActionRow(
     iconVector: ImageVector,
     label: String,
-    modifier: Modifier = Modifier,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     ListItem(
         modifier = modifier

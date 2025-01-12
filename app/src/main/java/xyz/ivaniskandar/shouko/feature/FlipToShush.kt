@@ -50,17 +50,19 @@ class FlipToShush(
     private val lifecycleOwner: LifecycleOwner,
     private val service: AccessibilityService,
 ) : DefaultLifecycleObserver {
-
     private val sensorManager: SensorManager = service.getSystemService()!!
     private val notificationManager: NotificationManager = service.getSystemService()!!
     private val vibrator: Vibrator = service.getSystemService()!!
-    private val sensorWakeLock = service.getSystemService<PowerManager>()!!
-        .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Shouko::FlipToShushSensor")
+    private val sensorWakeLock =
+        service
+            .getSystemService<PowerManager>()!!
+            .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Shouko::FlipToShushSensor")
 
     private val isFullTimeListening = supportFullTimeListening(service)
 
-    private val shushOnVibrationEffect = VibrationEffect
-        .createWaveform(longArrayOf(16L, 150L, 14L, 250L, 12L), intArrayOf(200, 0, 150, 0, 100), -1)
+    private val shushOnVibrationEffect =
+        VibrationEffect
+            .createWaveform(longArrayOf(16L, 150L, 14L, 250L, 12L), intArrayOf(200, 0, 150, 0, 100), -1)
     private val shushOffVibrationEffect = VibrationEffect.createOneShot(20, 255)
 
     private var deviceInclination = 0.0
@@ -74,62 +76,74 @@ class FlipToShush(
         get() = deviceInclination >= 170
 
     private var accelerometerListenerRegistered = false
-    private val accelerometerEventListener = object : SensorEventListener {
-        override fun onSensorChanged(event: SensorEvent?) {
-            when (event?.sensor?.type) {
-                SOMC_WAKEUP_ACCELEROMETER, Sensor.TYPE_ACCELEROMETER -> {
-                    // Calculate inclination
-                    // From https://stackoverflow.com/a/15149421/13755568
-                    val (x, y, z) = event.values
-                    val nG = sqrt(x.pow(2) + y.pow(2) + z.pow(2)).toDouble()
-                    deviceInclination = Math.toDegrees(acos(z / nG))
+    private val accelerometerEventListener =
+        object : SensorEventListener {
+            override fun onSensorChanged(event: SensorEvent?) {
+                when (event?.sensor?.type) {
+                    SOMC_WAKEUP_ACCELEROMETER, Sensor.TYPE_ACCELEROMETER -> {
+                        // Calculate inclination
+                        // From https://stackoverflow.com/a/15149421/13755568
+                        val (x, y, z) = event.values
+                        val nG = sqrt(x.pow(2) + y.pow(2) + z.pow(2)).toDouble()
+                        deviceInclination = Math.toDegrees(acos(z / nG))
+                    }
                 }
             }
-        }
 
-        override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-            // Couldn't care less.
+            override fun onAccuracyChanged(
+                sensor: Sensor?,
+                accuracy: Int,
+            ) {
+                // Couldn't care less.
+            }
         }
-    }
 
     private var proximityListenerRegistered = false
-    private val proximityEventListener = object : SensorEventListener {
-        override fun onSensorChanged(event: SensorEvent?) {
-            when (event?.sensor?.type) {
-                Sensor.TYPE_PROXIMITY -> {
-                    isProximityNear = event.values[0] == 0F
+    private val proximityEventListener =
+        object : SensorEventListener {
+            override fun onSensorChanged(event: SensorEvent?) {
+                when (event?.sensor?.type) {
+                    Sensor.TYPE_PROXIMITY -> {
+                        isProximityNear = event.values[0] == 0F
 
-                    // Cancel previous job
-                    shushCheckerJob?.cancel()
-                    unshushCheckerJob?.cancel()
+                        // Cancel previous job
+                        shushCheckerJob?.cancel()
+                        unshushCheckerJob?.cancel()
 
-                    // Route to start shush
-                    if (!isDndOnByService && isDoNotDisturbOff && isProximityNear) {
-                        shushCheckerJob = startCheckForShush()
-                    }
+                        // Route to start shush
+                        if (!isDndOnByService && isDoNotDisturbOff && isProximityNear) {
+                            shushCheckerJob = startCheckForShush()
+                        }
 
-                    // Route to end shush
-                    if (isDndOnByService && !isProximityNear) {
-                        unshushCheckerJob = startCheckForUnshush()
+                        // Route to end shush
+                        if (isDndOnByService && !isProximityNear) {
+                            unshushCheckerJob = startCheckForUnshush()
+                        }
                     }
                 }
             }
-        }
 
-        override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-            // Couldn't care less.
-        }
-    }
-
-    private var screenEventReceiverRegistered = false
-    private val screenEventReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            when (intent?.action) {
-                Intent.ACTION_SCREEN_ON -> updateFlipToShush(true)
-                Intent.ACTION_SCREEN_OFF -> updateFlipToShush(false)
+            override fun onAccuracyChanged(
+                sensor: Sensor?,
+                accuracy: Int,
+            ) {
+                // Couldn't care less.
             }
         }
-    }
+
+    private var screenEventReceiverRegistered = false
+    private val screenEventReceiver =
+        object : BroadcastReceiver() {
+            override fun onReceive(
+                context: Context?,
+                intent: Intent?,
+            ) {
+                when (intent?.action) {
+                    Intent.ACTION_SCREEN_ON -> updateFlipToShush(true)
+                    Intent.ACTION_SCREEN_OFF -> updateFlipToShush(false)
+                }
+            }
+        }
 
     private var shushCheckerJob: Job? = null
     private var unshushCheckerJob: Job? = null
@@ -144,10 +158,11 @@ class FlipToShush(
         if (state) {
             if (!screenEventReceiverRegistered) {
                 logcat { "Registering screen listener" }
-                val filter = IntentFilter().apply {
-                    addAction(Intent.ACTION_SCREEN_ON)
-                    addAction(Intent.ACTION_SCREEN_OFF)
-                }
+                val filter =
+                    IntentFilter().apply {
+                        addAction(Intent.ACTION_SCREEN_ON)
+                        addAction(Intent.ACTION_SCREEN_OFF)
+                    }
                 service.registerReceiver(screenEventReceiver, filter)
                 screenEventReceiverRegistered = true
             }
@@ -167,7 +182,10 @@ class FlipToShush(
         }
     }
 
-    private fun registerSensors(proximity: Boolean, accelerometer: Boolean) {
+    private fun registerSensors(
+        proximity: Boolean,
+        accelerometer: Boolean,
+    ) {
         if (proximity) {
             if (!proximityListenerRegistered) {
                 val sensor = sensorManager.getProximity()
@@ -202,25 +220,26 @@ class FlipToShush(
     }
 
     private fun switchDndState(state: Boolean) {
-        isDndOnByService = if (state) {
-            if (!isDndOnByService) {
-                logcat { "Shush state on" }
-                notificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_PRIORITY)
-                vibrator.vibrate(shushOnVibrationEffect)
-                service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN)
-                true
+        isDndOnByService =
+            if (state) {
+                if (!isDndOnByService) {
+                    logcat { "Shush state on" }
+                    notificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_PRIORITY)
+                    vibrator.vibrate(shushOnVibrationEffect)
+                    service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN)
+                    true
+                } else {
+                    logcat { "User DND is active, shush state unchanged" }
+                    false
+                }
             } else {
-                logcat { "User DND is active, shush state unchanged" }
+                if (isDndOnByService) {
+                    logcat { "Shush state off" }
+                    notificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL)
+                    vibrator.vibrate(shushOffVibrationEffect)
+                }
                 false
             }
-        } else {
-            if (isDndOnByService) {
-                logcat { "Shush state off" }
-                notificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL)
-                vibrator.vibrate(shushOffVibrationEffect)
-            }
-            false
-        }
     }
 
     private fun startCheckForShush() = lifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
@@ -351,8 +370,6 @@ class FlipToShush(
             return sensor
         }
 
-        fun supportFullTimeListening(context: Context): Boolean {
-            return context.getSystemService<SensorManager>()?.getProximity()?.isWakeUpSensor == true
-        }
+        fun supportFullTimeListening(context: Context): Boolean = context.getSystemService<SensorManager>()?.getProximity()?.isWakeUpSensor == true
     }
 }

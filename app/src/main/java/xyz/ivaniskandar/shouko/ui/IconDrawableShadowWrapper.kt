@@ -18,15 +18,17 @@ class IconDrawableShadowWrapper {
     private val mShadowCache = SparseArray<Bitmap>()
 
     fun run(drawable: Drawable): Drawable {
-        val toDo = if (drawable !is AdaptiveIconDrawable) {
-            val bg = ColorDrawable(Color.WHITE)
-            val fg = AdaptiveForegroundDrawable().apply {
-                this.drawable = drawable
+        val toDo =
+            if (drawable !is AdaptiveIconDrawable) {
+                val bg = ColorDrawable(Color.WHITE)
+                val fg =
+                    AdaptiveForegroundDrawable().apply {
+                        this.drawable = drawable
+                    }
+                AdaptiveIconDrawable(bg, fg)
+            } else {
+                drawable
             }
-            AdaptiveIconDrawable(bg, fg)
-        } else {
-            drawable
-        }
         val shadow = getShadowBitmap(toDo)
         return ShadowDrawable(shadow, toDo)
     }
@@ -49,9 +51,10 @@ class IconDrawableShadowWrapper {
 
         Canvas(shadow).apply {
             translate(blur + keyShadowDistance / 2, blur)
-            val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                color = Color.TRANSPARENT
-            }
+            val paint =
+                Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                    color = Color.TRANSPARENT
+                }
 
             // Draw ambient shadow
             paint.setShadowLayer(blur, 0f, 0f, AMBIENT_SHADOW_ALPHA shl 24)
@@ -81,9 +84,7 @@ class IconDrawableShadowWrapper {
             mState = state
         }
 
-        override fun getConstantState(): ConstantState {
-            return mState
-        }
+        override fun getConstantState(): ConstantState = mState
 
         override fun draw(canvas: Canvas) {
             canvas.apply {
@@ -106,13 +107,10 @@ class IconDrawableShadowWrapper {
             val mChildState: ConstantState?,
         ) : ConstantState() {
             val mPaint = Paint(Paint.FILTER_BITMAP_FLAG)
-            override fun newDrawable(): Drawable {
-                return ShadowDrawable(this)
-            }
 
-            override fun getChangingConfigurations(): Int {
-                return mChildState!!.changingConfigurations
-            }
+            override fun newDrawable(): Drawable = ShadowDrawable(this)
+
+            override fun getChangingConfigurations(): Int = mChildState!!.changingConfigurations
         }
     }
 

@@ -11,25 +11,28 @@ import xyz.ivaniskandar.shouko.feature.Action
 import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper
 import java.io.IOException
 
-class PreferencesRepository(private val preferencesStore: DataStore<Preferences>) {
-
-    private val preferencesFlow: Flow<Preferences> = preferencesStore.data
-        .catch { exception ->
-            if (exception is IOException) {
-                logcat(priority = LogPriority.ERROR) { "Error reading preferences." }
-                emit(Preferences.getDefaultInstance())
-            } else {
-                throw exception
+class PreferencesRepository(
+    private val preferencesStore: DataStore<Preferences>,
+) {
+    private val preferencesFlow: Flow<Preferences> =
+        preferencesStore.data
+            .catch { exception ->
+                if (exception is IOException) {
+                    logcat(priority = LogPriority.ERROR) { "Error reading preferences." }
+                    emit(Preferences.getDefaultInstance())
+                } else {
+                    throw exception
+                }
             }
-        }
 
-    val assistButtonFlow: Flow<AssistButtonPrefs> = preferencesFlow.map {
-        AssistButtonPrefs(
-            it.assistButtonEnabled,
-            Action.fromPlainString(it.assistButtonAction),
-            it.hideAssistantCue,
-        )
-    }
+    val assistButtonFlow: Flow<AssistButtonPrefs> =
+        preferencesFlow.map {
+            AssistButtonPrefs(
+                it.assistButtonEnabled,
+                Action.fromPlainString(it.assistButtonAction),
+                it.hideAssistantCue,
+            )
+        }
 
     val preventPocketTouchEnabledFlow: Flow<Boolean> = preferencesFlow.map { it.preventPocketTouchEnabled }
     val flipToShushEnabledFlow: Flow<Boolean> = preferencesFlow.map { it.flipToShushEnabled }
@@ -37,22 +40,29 @@ class PreferencesRepository(private val preferencesStore: DataStore<Preferences>
     val coffeeBoardingDone: Flow<Boolean> = preferencesFlow.map { it.coffeeBoardingDone }
     val teaBoardingDone: Flow<Boolean> = preferencesFlow.map { it.teaBoardingDone }
 
-    val lockscreenLeftAction: Flow<String?> = preferencesFlow.map {
-        it.lockscreenLeftAction.takeIf { action -> action.isNotEmpty() }
-    }
-    val lockscreenRightAction: Flow<String?> = preferencesFlow.map {
-        it.lockscreenRightAction.takeIf { action -> action.isNotEmpty() }
-    }
+    val lockscreenLeftAction: Flow<String?> =
+        preferencesFlow.map {
+            it.lockscreenLeftAction.takeIf { action -> action.isNotEmpty() }
+        }
+    val lockscreenRightAction: Flow<String?> =
+        preferencesFlow.map {
+            it.lockscreenRightAction.takeIf { action -> action.isNotEmpty() }
+        }
 
-    suspend fun setLockscreenAction(key: String, value: String?) {
+    suspend fun setLockscreenAction(
+        key: String,
+        value: String?,
+    ) {
         val newValue = value ?: ""
         preferencesStore.updateDataSilently {
-            it.toBuilder().apply {
-                when (key) {
-                    LockscreenShortcutHelper.LOCKSCREEN_LEFT_BUTTON -> lockscreenLeftAction = newValue
-                    LockscreenShortcutHelper.LOCKSCREEN_RIGHT_BUTTON -> lockscreenRightAction = newValue
-                }
-            }.build()
+            it
+                .toBuilder()
+                .apply {
+                    when (key) {
+                        LockscreenShortcutHelper.LOCKSCREEN_LEFT_BUTTON -> lockscreenLeftAction = newValue
+                        LockscreenShortcutHelper.LOCKSCREEN_RIGHT_BUTTON -> lockscreenRightAction = newValue
+                    }
+                }.build()
         }
     }
 

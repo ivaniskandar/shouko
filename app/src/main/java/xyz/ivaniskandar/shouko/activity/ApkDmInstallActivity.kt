@@ -61,51 +61,54 @@ import java.io.File
  * the need for the system's bg-dexopt job to optimize the installed APK.
  */
 class ApkDmInstallActivity : ComponentActivity() {
-
     private var state by mutableStateOf<State>(State.Loading)
     private var sessionId = 0
 
-    private val packageActionReceiver = object : BroadcastReceiver() {
-        @SuppressLint("UnsafeIntentLaunch")
-        override fun onReceive(context: Context, intent: Intent) {
-            when (intent.getIntExtra(PackageInstaller.EXTRA_STATUS, PackageInstaller.STATUS_FAILURE)) {
-                PackageInstaller.STATUS_PENDING_USER_ACTION -> {
-                    val userAction = IntentCompat.getParcelableExtra(intent, Intent.EXTRA_INTENT, Intent::class.java)
-                    if (userAction == null) {
-                        finish()
-                        return
+    private val packageActionReceiver =
+        object : BroadcastReceiver() {
+            @SuppressLint("UnsafeIntentLaunch")
+            override fun onReceive(
+                context: Context,
+                intent: Intent,
+            ) {
+                when (intent.getIntExtra(PackageInstaller.EXTRA_STATUS, PackageInstaller.STATUS_FAILURE)) {
+                    PackageInstaller.STATUS_PENDING_USER_ACTION -> {
+                        val userAction = IntentCompat.getParcelableExtra(intent, Intent.EXTRA_INTENT, Intent::class.java)
+                        if (userAction == null) {
+                            finish()
+                            return
+                        }
+                        userAction.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        startActivity(userAction)
                     }
-                    userAction.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    startActivity(userAction)
-                }
 
-                PackageInstaller.STATUS_SUCCESS -> {
-                    if (state is State.Ready) {
-                        state = (state as State.Ready).copy(installing = false, installed = true, error = null)
+                    PackageInstaller.STATUS_SUCCESS -> {
+                        if (state is State.Ready) {
+                            state = (state as State.Ready).copy(installing = false, installed = true, error = null)
+                        }
                     }
-                }
 
-                PackageInstaller.STATUS_FAILURE,
-                PackageInstaller.STATUS_FAILURE_BLOCKED,
-                PackageInstaller.STATUS_FAILURE_ABORTED,
-                PackageInstaller.STATUS_FAILURE_INVALID,
-                PackageInstaller.STATUS_FAILURE_CONFLICT,
-                PackageInstaller.STATUS_FAILURE_STORAGE,
-                PackageInstaller.STATUS_FAILURE_INCOMPATIBLE,
-                PackageInstaller.STATUS_FAILURE_TIMEOUT,
-                -> {
-                    val reason = intent.getStringExtra(PackageInstaller.EXTRA_STATUS_MESSAGE)
-                    if (state is State.Ready) {
-                        state = (state as State.Ready).copy(installing = false, installed = false, error = reason)
+                    PackageInstaller.STATUS_FAILURE,
+                    PackageInstaller.STATUS_FAILURE_BLOCKED,
+                    PackageInstaller.STATUS_FAILURE_ABORTED,
+                    PackageInstaller.STATUS_FAILURE_INVALID,
+                    PackageInstaller.STATUS_FAILURE_CONFLICT,
+                    PackageInstaller.STATUS_FAILURE_STORAGE,
+                    PackageInstaller.STATUS_FAILURE_INCOMPATIBLE,
+                    PackageInstaller.STATUS_FAILURE_TIMEOUT,
+                    -> {
+                        val reason = intent.getStringExtra(PackageInstaller.EXTRA_STATUS_MESSAGE)
+                        if (state is State.Ready) {
+                            state = (state as State.Ready).copy(installing = false, installed = false, error = reason)
+                        }
                     }
-                }
 
-                else -> {
-                    // Do nothing
+                    else -> {
+                        // Do nothing
+                    }
                 }
             }
         }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -150,11 +153,13 @@ class ApkDmInstallActivity : ComponentActivity() {
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                     modifier = Modifier.padding(16.dp),
                                 ) {
-                                    val icon = remember {
-                                        state.info.applicationInfo?.loadIcon(packageManager)
-                                            ?.toBitmapOrNull()
-                                            ?.asImageBitmap()
-                                    }
+                                    val icon =
+                                        remember {
+                                            state.info.applicationInfo
+                                                ?.loadIcon(packageManager)
+                                                ?.toBitmapOrNull()
+                                                ?.asImageBitmap()
+                                        }
                                     val iconModifier = Modifier.size(72.dp)
                                     if (icon != null) {
                                         Image(
@@ -167,15 +172,20 @@ class ApkDmInstallActivity : ComponentActivity() {
                                     }
 
                                     Text(
-                                        text = state.info.applicationInfo?.loadLabel(packageManager).toString(),
+                                        text =
+                                        state.info.applicationInfo
+                                            ?.loadLabel(packageManager)
+                                            .toString(),
                                         style = MaterialTheme.typography.titleLarge,
                                         modifier = Modifier.padding(top = 8.dp, bottom = 4.dp),
                                     )
 
                                     Text(
-                                        text = if (!state.installed) {
+                                        text =
+                                        if (!state.installed) {
                                             state.error ?: stringResource(
-                                                id = if (state.dmFile != null) {
+                                                id =
+                                                if (state.dmFile != null) {
                                                     R.string.apk_installer_profile_available
                                                 } else {
                                                     R.string.apk_installer_profile_unavailable
@@ -201,8 +211,10 @@ class ApkDmInstallActivity : ComponentActivity() {
                                             modifier = Modifier.fillMaxWidth(),
                                         ) {
                                             Text(
-                                                text = stringResource(
-                                                    id = if (state.error != null) {
+                                                text =
+                                                stringResource(
+                                                    id =
+                                                    if (state.error != null) {
                                                         R.string.button_retry
                                                     } else {
                                                         R.string.button_continue
@@ -288,16 +300,17 @@ class ApkDmInstallActivity : ComponentActivity() {
         return tempApkFile.takeIf { it.exists() }
     }
 
-    private fun makeInfo(file: File): PackageInfo? {
-        return packageManager.getPackageArchiveInfo(file.absolutePath, 0)?.also {
-            it.applicationInfo?.apply {
-                sourceDir = file.absolutePath
-                publicSourceDir = file.absolutePath
-            }
+    private fun makeInfo(file: File): PackageInfo? = packageManager.getPackageArchiveInfo(file.absolutePath, 0)?.also {
+        it.applicationInfo?.apply {
+            sourceDir = file.absolutePath
+            publicSourceDir = file.absolutePath
         }
     }
 
-    private fun startInstall(apkFile: File, dmFile: File?) {
+    private fun startInstall(
+        apkFile: File,
+        dmFile: File?,
+    ) {
         val packageInstaller = packageManager.packageInstaller
 
         val installParams = PackageInstaller.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL)
@@ -327,12 +340,14 @@ class ApkDmInstallActivity : ComponentActivity() {
                 ContextCompat.RECEIVER_NOT_EXPORTED,
             )
 
-            val intentSender = PendingIntent.getBroadcast(
-                this,
-                sessionId,
-                Intent(INSTALL_ACTION).setPackage(packageName),
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_MUTABLE else 0,
-            ).intentSender
+            val intentSender =
+                PendingIntent
+                    .getBroadcast(
+                        this,
+                        sessionId,
+                        Intent(INSTALL_ACTION).setPackage(packageName),
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_MUTABLE else 0,
+                    ).intentSender
             session.commit(intentSender)
         }
     }
@@ -340,19 +355,21 @@ class ApkDmInstallActivity : ComponentActivity() {
     private fun launchInstalledPackageAndFinishActivity() {
         val pkgName = (state as? State.Ready)?.info?.packageName ?: return
         val launcher = packageManager.getLaunchIntentForPackage(pkgName) ?: return
-        val bundle = ActivityOptions.makeBasic()
-            .apply {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    splashScreenStyle = SplashScreen.SPLASH_SCREEN_STYLE_ICON
-                }
-            }
-            .toBundle()
+        val bundle =
+            ActivityOptions
+                .makeBasic()
+                .apply {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        splashScreenStyle = SplashScreen.SPLASH_SCREEN_STYLE_ICON
+                    }
+                }.toBundle()
         startActivity(launcher, bundle)
         finish()
     }
 
     private sealed interface State {
         data object Loading : State
+
         data class Ready(
             val info: PackageInfo,
             val apkFile: File,

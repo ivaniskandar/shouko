@@ -9,7 +9,6 @@ import logcat.logcat
 import xyz.ivaniskandar.shouko.feature.LinkCleaner
 
 class LinkArchiverTargetActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         when (val action = intent.action) {

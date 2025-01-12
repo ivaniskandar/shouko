@@ -54,9 +54,12 @@ fun LockscreenShortcutSettings(
         contentPadding = contentPadding,
     ) {
         item {
-            WriteSettingsCard(visible = !context.canWriteSecureSettings) {
-                navController.navigate(Screen.SecureSettingsSetup.route)
-            }
+            WriteSettingsCard(
+                visible = !context.canWriteSecureSettings,
+                onButtonClick = {
+                    navController.navigate(Screen.SecureSettingsSetup.route)
+                },
+            )
         }
         item {
             Preference(
@@ -65,9 +68,10 @@ fun LockscreenShortcutSettings(
                     ?.toComponentName()?.loadLabel(context)
                     ?: stringResource(id = R.string.assistant_action_select_default_value),
                 enabled = context.canWriteSecureSettings,
-            ) {
-                navController.navigate(Screen.LockscreenShortcutSelection.createRoute(LOCKSCREEN_LEFT_BUTTON))
-            }
+                onPreferenceClick = {
+                    navController.navigate(Screen.LockscreenShortcutSelection.createRoute(LOCKSCREEN_LEFT_BUTTON))
+                },
+            )
         }
         item {
             Preference(
@@ -76,9 +80,10 @@ fun LockscreenShortcutSettings(
                     ?.toComponentName()?.loadLabel(context)
                     ?: stringResource(id = R.string.assistant_action_select_default_value),
                 enabled = context.canWriteSecureSettings,
-            ) {
-                navController.navigate(Screen.LockscreenShortcutSelection.createRoute(LOCKSCREEN_RIGHT_BUTTON))
-            }
+                onPreferenceClick = {
+                    navController.navigate(Screen.LockscreenShortcutSelection.createRoute(LOCKSCREEN_RIGHT_BUTTON))
+                },
+            )
         }
     }
 }
@@ -125,12 +130,18 @@ fun LockscreenShortcutSelection(
                             contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding()),
                         ) {
                             items(items!!) { item ->
-                                ApplicationRow(item = item) {
-                                    scope.launch {
-                                        ShoukoApplication.prefs.setLockscreenAction(settingsKey, it.flattenToString())
-                                        navController.popBackStack()
-                                    }
-                                }
+                                ApplicationRow(
+                                    item = item,
+                                    onClick = {
+                                        scope.launch {
+                                            ShoukoApplication.prefs.setLockscreenAction(
+                                                key = settingsKey,
+                                                value = it.flattenToString(),
+                                            )
+                                            navController.popBackStack()
+                                        }
+                                    },
+                                )
                             }
                         }
                     }

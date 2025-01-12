@@ -8,15 +8,17 @@ import java.io.InputStream
 import java.io.OutputStream
 
 class PreferencesSerializer : Serializer<Preferences> {
-    override val defaultValue: Preferences = Preferences.newBuilder()
-        .setAssistButtonEnabled(true)
-        .setAssistButtonAction("")
-        .setHideAssistantCue(false)
-        .setPreventPocketTouchEnabled(false)
-        .setFlipToShushEnabled(false)
-        .setCoffeeBoardingDone(false)
-        .setTeaBoardingDone(false)
-        .build()
+    override val defaultValue: Preferences =
+        Preferences
+            .newBuilder()
+            .setAssistButtonEnabled(true)
+            .setAssistButtonAction("")
+            .setHideAssistantCue(false)
+            .setPreventPocketTouchEnabled(false)
+            .setFlipToShushEnabled(false)
+            .setCoffeeBoardingDone(false)
+            .setTeaBoardingDone(false)
+            .build()
 
     @Suppress("BlockingMethodInNonBlockingContext")
     override suspend fun readFrom(input: InputStream): Preferences {
@@ -28,5 +30,8 @@ class PreferencesSerializer : Serializer<Preferences> {
     }
 
     @Suppress("BlockingMethodInNonBlockingContext")
-    override suspend fun writeTo(t: Preferences, output: OutputStream) = t.writeTo(output)
+    override suspend fun writeTo(
+        t: Preferences,
+        output: OutputStream,
+    ) = t.writeTo(output)
 }

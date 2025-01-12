@@ -10,11 +10,13 @@ import xyz.ivaniskandar.shouko.R
 import java.net.URLDecoder
 
 object LinkCleaner {
-
     /**
      * Resolves a link to common redirects.
      */
-    fun resolveLink(context: Context, link: String): String? {
+    fun resolveLink(
+        context: Context,
+        link: String,
+    ): String? {
         return try {
             val uri = link.toUri()
             return when (uri.host?.replace("www.", "")) {
@@ -58,7 +60,10 @@ object LinkCleaner {
     /**
      * Strips a link of typical junk like tracking query params.
      */
-    fun cleanLink(context: Context, oldLink: String): String? {
+    fun cleanLink(
+        context: Context,
+        oldLink: String,
+    ): String? {
         return try {
             val oldUri = resolveLink(context, oldLink)?.toUri() ?: return null
             val port = oldUri.port.takeIf { it != -1 }?.let { ":$it" } ?: ""
@@ -76,11 +81,7 @@ object LinkCleaner {
         }
     }
 
-    private fun Uri.withHost(host: String): Uri {
-        return "https://$host$path".toUri()
-    }
+    private fun Uri.withHost(host: String): Uri = "https://$host$path".toUri()
 
-    private fun String?.urlDecode(): Uri {
-        return URLDecoder.decode(this, "UTF-8").toUri()
-    }
+    private fun String?.urlDecode(): Uri = URLDecoder.decode(this, "UTF-8").toUri()
 }

@@ -61,70 +61,91 @@ class TadanoTileParentService : Service() {
         getSystemService<PowerManager>()!!.newWakeLock(PROXIMITY_SCREEN_OFF_WAKE_LOCK, "Shouko::Tea")
     }
 
-    private val teaScreenActionReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            when (intent.action) {
-                ACTION_SCREEN_ON -> switchProximityListener(true)
-                ACTION_SCREEN_OFF -> switchProximityListener(false)
-            }
-        }
-    }
-    private val coffeeScreenOffReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            stop()
-        }
-    }
-
-    private val proximitySensorListener = object : SensorEventListener {
-        override fun onSensorChanged(event: SensorEvent?) {
-            if (event?.sensor?.type == TYPE_PROXIMITY) {
-                val distance = event.values[0]
-                if (distance == 0f) {
-                    vibrator.vibrate(VibrationEffect.createOneShot(21, 255))
-                    switchTeaWakeLock(true)
-                } else {
-                    switchTeaWakeLock(false)
+    private val teaScreenActionReceiver =
+        object : BroadcastReceiver() {
+            override fun onReceive(
+                context: Context,
+                intent: Intent,
+            ) {
+                when (intent.action) {
+                    ACTION_SCREEN_ON -> switchProximityListener(true)
+                    ACTION_SCREEN_OFF -> switchProximityListener(false)
                 }
             }
         }
-
-        override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {
-            // Couldn't care less.
+    private val coffeeScreenOffReceiver =
+        object : BroadcastReceiver() {
+            override fun onReceive(
+                context: Context,
+                intent: Intent,
+            ) {
+                stop()
+            }
         }
-    }
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+    private val proximitySensorListener =
+        object : SensorEventListener {
+            override fun onSensorChanged(event: SensorEvent?) {
+                if (event?.sensor?.type == TYPE_PROXIMITY) {
+                    val distance = event.values[0]
+                    if (distance == 0f) {
+                        vibrator.vibrate(VibrationEffect.createOneShot(21, 255))
+                        switchTeaWakeLock(true)
+                    } else {
+                        switchTeaWakeLock(false)
+                    }
+                }
+            }
+
+            override fun onAccuracyChanged(
+                sensor: Sensor,
+                accuracy: Int,
+            ) {
+                // Couldn't care less.
+            }
+        }
+
+    override fun onStartCommand(
+        intent: Intent,
+        flags: Int,
+        startId: Int,
+    ): Int {
         when (intent.action) {
             ACTION_START_SERVICE -> {
                 getSystemService(NotificationManager::class.java)!!.run {
-                    val channel = NotificationChannel(
-                        CHANNEL_GENERAL,
-                        getString(R.string.tadano_tile_service_notif_title),
-                        NotificationManager.IMPORTANCE_LOW,
-                    ).apply {
-                        description = getString(R.string.tadano_tile_service_notif_channel_desc)
-                        setSound(null, null)
-                    }
+                    val channel =
+                        NotificationChannel(
+                            CHANNEL_GENERAL,
+                            getString(R.string.tadano_tile_service_notif_title),
+                            NotificationManager.IMPORTANCE_LOW,
+                        ).apply {
+                            description = getString(R.string.tadano_tile_service_notif_channel_desc)
+                            setSound(null, null)
+                        }
                     createNotificationChannel(channel)
                 }
-                val channelSettingsIntent = Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).apply {
-                    putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
-                    putExtra(Settings.EXTRA_CHANNEL_ID, CHANNEL_GENERAL)
-                }
-                val clickPendingIntent = PendingIntent.getActivity(
-                    this,
-                    FOREGROUND_SERVICE_ID,
-                    channelSettingsIntent,
-                    PendingIntent.FLAG_IMMUTABLE,
-                )
+                val channelSettingsIntent =
+                    Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).apply {
+                        putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+                        putExtra(Settings.EXTRA_CHANNEL_ID, CHANNEL_GENERAL)
+                    }
+                val clickPendingIntent =
+                    PendingIntent.getActivity(
+                        this,
+                        FOREGROUND_SERVICE_ID,
+                        channelSettingsIntent,
+                        PendingIntent.FLAG_IMMUTABLE,
+                    )
                 val type = IntentCompat.getSerializableExtra(intent, EXTRA_SERVICE_TYPE, Type::class.java)!!
-                val icon = when (type) {
-                    Type.COFFEE -> R.drawable.ic_coffee
-                    Type.TEA -> R.drawable.ic_tea
-                }
+                val icon =
+                    when (type) {
+                        Type.COFFEE -> R.drawable.ic_coffee
+                        Type.TEA -> R.drawable.ic_tea
+                    }
                 startForeground(
                     FOREGROUND_SERVICE_ID,
-                    NotificationCompat.Builder(this, CHANNEL_GENERAL)
+                    NotificationCompat
+                        .Builder(this, CHANNEL_GENERAL)
                         .setShowWhen(false)
                         .setSmallIcon(icon)
                         .setColor(MonetCompat.getInstance().getAccentColor(this))
@@ -169,11 +190,12 @@ class TadanoTileParentService : Service() {
             if (isCoffeeActive) {
                 switchCoffeeMode(false)
             }
-            val filter = IntentFilter().apply {
-                addAction(ACTION_SCREEN_OFF)
-                addAction(ACTION_SCREEN_ON)
-                priority = 999
-            }
+            val filter =
+                IntentFilter().apply {
+                    addAction(ACTION_SCREEN_OFF)
+                    addAction(ACTION_SCREEN_ON)
+                    priority = 999
+                }
             registerReceiver(teaScreenActionReceiver, filter)
             isTeaReceiverRegistered = true
 
@@ -199,10 +221,11 @@ class TadanoTileParentService : Service() {
             if (isTeaActive) {
                 switchTeaMode(false)
             }
-            val filter = IntentFilter().apply {
-                addAction(ACTION_SCREEN_OFF)
-                priority = 999
-            }
+            val filter =
+                IntentFilter().apply {
+                    addAction(ACTION_SCREEN_OFF)
+                    priority = 999
+                }
             registerReceiver(coffeeScreenOffReceiver, filter)
             isCoffeeReceiverRegistered = true
 

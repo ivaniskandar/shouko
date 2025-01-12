@@ -19,7 +19,6 @@ import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3Theme
 import xyz.ivaniskandar.shouko.util.shareLink
 
 class LinkCleanerTargetActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         when (val action = intent.action) {
@@ -66,9 +65,7 @@ class LinkCleanerTargetActivity : ComponentActivity() {
         }
     }
 
-    private fun CharSequence?.isValidUrl(): Boolean {
-        return this != null && Patterns.WEB_URL.matcher(this).matches()
-    }
+    private fun CharSequence?.isValidUrl(): Boolean = this != null && Patterns.WEB_URL.matcher(this).matches()
 
     companion object {
         private const val ACTION_CLEAN_CLIPBOARD = "shouko.action.CLEAN_CLIPBOARD"

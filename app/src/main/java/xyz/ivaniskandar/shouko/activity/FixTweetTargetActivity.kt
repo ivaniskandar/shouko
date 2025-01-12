@@ -12,7 +12,6 @@ import xyz.ivaniskandar.shouko.feature.LinkCleaner
 import xyz.ivaniskandar.shouko.util.shareLink
 
 class FixTweetTargetActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         when (val action = intent.action) {
@@ -41,11 +40,12 @@ class FixTweetTargetActivity : ComponentActivity() {
     private fun handle(link: String): String? {
         val uri = Uri.parse(link)
         val builder = uri.buildUpon()
-        val newHost = when (uri.authority) {
-            "twitter.com" -> "fxtwitter.com"
-            "x.com" -> "fixupx.com"
-            else -> return null
-        }
+        val newHost =
+            when (uri.authority) {
+                "twitter.com" -> "fxtwitter.com"
+                "x.com" -> "fixupx.com"
+                else -> return null
+            }
         builder.authority(newHost)
         return builder.build().toString()
     }
