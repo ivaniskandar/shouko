@@ -19,7 +19,6 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,8 +26,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.feature.PocketNoTouchy
@@ -49,6 +48,10 @@ class PocketNoTouchyActivity : ComponentActivity() {
         // Set full screen
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
+        // Hide system bars
+        WindowCompat.getInsetsController(window, window.decorView)
+            .hide(WindowInsetsCompat.Type.systemBars())
+
         setContent {
             ShoukoM3Theme(darkTheme = true) {
                 Box(
@@ -63,10 +66,6 @@ class PocketNoTouchyActivity : ComponentActivity() {
                         },
                     )
                 }
-            }
-            val systemUiController = rememberSystemUiController()
-            SideEffect {
-                systemUiController.isSystemBarsVisible = false
             }
         }
     }
