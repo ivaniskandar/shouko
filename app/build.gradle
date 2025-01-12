@@ -31,6 +31,11 @@ android {
         resourceConfigurations += ['en', 'ja', 'ru', 'de']
     }
 
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
     buildTypes {
         debug {
             minifyEnabled true
@@ -125,14 +130,9 @@ protobuf {
     }
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
-
 kotlin {
     compilerOptions {
-        jvmTarget = JvmTarget.JVM_1_8
+        jvmTarget = JvmTarget.JVM_17
 
         freeCompilerArgs.addAll(
                 "-opt-in=androidx.compose.material.ExperimentalMaterialApi",
