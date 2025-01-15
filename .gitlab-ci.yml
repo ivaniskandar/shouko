@@ -41,7 +41,7 @@ spotlessCheck:
     policy: pull-push
   variables:
     SECURE_FILES_DOWNLOAD_PATH: "."
-  script:
+  before_script:
     - curl --silent "https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer" | bash
 
 assembleDebug:
