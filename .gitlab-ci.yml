@@ -1,0 +1,83 @@
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_COMMIT_TAG =~ /^v\d.*/
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+stages:
+  - check
+  - build
+  - release
+
+variables:
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.vfs.watch=false"
+  GRADLE_USER_HOME: .gradle/
+  NAMICOMI_DISABLE_PREBUILD_SPOTLESSAPPLY: true
+
+default:
+  image: cimg/android:2025.01.1-ndk
+  cache: &gradle-cache
+    key:
+      files:
+        - gradle/wrapper/gradle-wrapper.properties
+    paths:
+      - .gradle/caches/
+      - .gradle/notifications/
+      - .gradle/wrapper/
+    policy: pull
+
+spotlessCheck:
+  stage: check
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+  script:
+    - ./gradlew spotlessCheck
+
+.buildProject:
+  interruptible: true
+  stage: build
+  cache:
+    <<: *gradle-cache
+    policy: pull-push
+  variables:
+    SECURE_FILES_DOWNLOAD_PATH: "."
+  script:
+    - curl --silent "https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer" | bash
+
+assembleDebug:
+  extends: .buildProject
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never
+    - when: on_success
+  script:
+    - ./gradlew assembleDebug
+  artifacts:
+    expose_as: "outputs"
+    paths:
+      - app/build/outputs/apk/debug
+
+bundleRelease:
+  extends: .buildProject
+  rules:
+    - if: $CI_COMMIT_TAG
+  script:
+    - ./gradlew bundleRelease
+  artifacts:
+    expose_as: "outputs"
+    paths:
+      - app/build/outputs/bundle/release
+
+createRelease:
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  needs:
+    - job: bundleRelease
+      artifacts: true
+  rules:
+    - if: $CI_COMMIT_TAG
+  script:
+    - echo "creating release for $CI_COMMIT_TAG"
+  release:
+    tag_name: '$CI_COMMIT_TAG'
+    description: '$CI_COMMIT_TAG'

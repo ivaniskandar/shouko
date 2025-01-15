@@ -35,8 +35,6 @@ android {
 
     buildTypes {
         debug {
-            minifyEnabled true
-            shrinkResources true
             proguardFiles 'proguard-base.pro', 'proguard-rules.pro'
         }
         release {
