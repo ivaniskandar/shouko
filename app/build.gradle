@@ -23,7 +23,7 @@ android {
         applicationId "xyz.ivaniskandar.shouko"
         minSdkVersion 29
         targetSdkVersion 35
-        versionCode 9
+        versionCode 10
         versionName "0.8.0"
         resourceConfigurations += ['en', 'ja', 'ru', 'de']
     }
