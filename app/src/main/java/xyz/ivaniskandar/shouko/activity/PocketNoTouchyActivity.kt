@@ -31,7 +31,6 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.feature.PocketNoTouchy
-import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3PreviewTheme
 import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3Theme
 
 /**
@@ -118,7 +117,7 @@ class PocketNoTouchyActivity : ComponentActivity() {
     @Preview
     @Composable
     private fun DialogCardPreview() {
-        ShoukoM3PreviewTheme(darkTheme = true) {
+        ShoukoM3Theme(darkTheme = true) {
             Box(modifier = Modifier.background(Color.Black)) {
                 DialogCard(onButtonClick = {})
             }

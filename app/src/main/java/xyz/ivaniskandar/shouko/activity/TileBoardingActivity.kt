@@ -29,7 +29,6 @@ import androidx.core.content.IntentCompat
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.service.TadanoTileParentService
 import xyz.ivaniskandar.shouko.service.TadanoTileParentService.Companion.EXTRA_SERVICE_TYPE
-import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3PreviewTheme
 import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3Theme
 
 class TileBoardingActivity : ComponentActivity() {
@@ -130,7 +129,7 @@ class TileBoardingActivity : ComponentActivity() {
     @Preview
     @Composable
     private fun APreview() {
-        ShoukoM3PreviewTheme {
+        ShoukoM3Theme {
             TileBoardingScreen(type = TadanoTileParentService.Type.COFFEE, onDismissRequest = {})
         }
     }

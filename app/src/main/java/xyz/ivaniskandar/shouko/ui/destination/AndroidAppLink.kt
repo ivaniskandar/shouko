@@ -56,7 +56,7 @@ import xyz.ivaniskandar.shouko.item.LinkHandlerAppItem
 import xyz.ivaniskandar.shouko.ui.ComposeLifecycleCallback
 import xyz.ivaniskandar.shouko.ui.Screen
 import xyz.ivaniskandar.shouko.ui.component.Preference
-import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3PreviewTheme
+import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3Theme
 import xyz.ivaniskandar.shouko.util.checkDefaultBrowser
 import xyz.ivaniskandar.shouko.util.getPackageLabel
 
@@ -185,7 +185,7 @@ fun CustomChooserToggle(
 @Preview
 @Composable
 private fun CustomChooserTogglePreview() {
-    ShoukoM3PreviewTheme {
+    ShoukoM3Theme {
         CustomChooserToggle(checked = true, onClick = {})
     }
 }

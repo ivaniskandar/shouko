@@ -39,7 +39,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.kieronquinn.monetcompat.core.MonetCompat
 import com.topjohnwu.superuser.CallbackList
 import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.Dispatchers
@@ -647,7 +646,6 @@ class MuteMicrophoneAction : Action() {
                 .setShowWhen(false)
                 .setOngoing(true)
                 .setSmallIcon(R.drawable.ic_mic_off)
-                .setColor(MonetCompat.getInstance().getAccentColor(context))
                 .setContentTitle(context.getString(R.string.mute_microphone_on))
                 .addAction(
                     R.drawable.ic_mic_off,

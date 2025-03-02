@@ -42,7 +42,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import logcat.logcat
 import xyz.ivaniskandar.shouko.R
-import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3PreviewTheme
+import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3Theme
 import xyz.ivaniskandar.shouko.util.createShareTextIntent
 
 @Composable
@@ -197,7 +197,7 @@ fun PermissionSetupNoRoot(
 @Preview
 @Composable
 private fun ReadLogsPermissionSetupRootPreview() {
-    ShoukoM3PreviewTheme {
+    ShoukoM3Theme {
         Surface(color = MaterialTheme.colorScheme.background) {
             PermissionSetup(
                 contentPadding = PaddingValues(),
@@ -213,7 +213,7 @@ private fun ReadLogsPermissionSetupRootPreview() {
 @Preview
 @Composable
 private fun ReadLogsPermissionSetupNoRootPreview() {
-    ShoukoM3PreviewTheme {
+    ShoukoM3Theme {
         Surface(color = MaterialTheme.colorScheme.background) {
             PermissionSetup(
                 contentPadding = PaddingValues(),
@@ -229,7 +229,7 @@ private fun ReadLogsPermissionSetupNoRootPreview() {
 @Preview
 @Composable
 private fun WriteSettingsPermissionSetupNoRootPreview() {
-    ShoukoM3PreviewTheme {
+    ShoukoM3Theme {
         Surface(color = MaterialTheme.colorScheme.background) {
             PermissionSetup(
                 contentPadding = PaddingValues(),

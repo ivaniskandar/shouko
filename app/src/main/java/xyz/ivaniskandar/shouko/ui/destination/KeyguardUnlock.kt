@@ -14,7 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3PreviewTheme
+import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3Theme
 
 @Composable
 fun KeyguardUnlock(
@@ -44,7 +44,7 @@ fun KeyguardUnlock(
 @Preview
 @Composable
 private fun KeyguardUnlockPreview() {
-    ShoukoM3PreviewTheme {
+    ShoukoM3Theme {
         KeyguardUnlock(onClick = {})
     }
 }

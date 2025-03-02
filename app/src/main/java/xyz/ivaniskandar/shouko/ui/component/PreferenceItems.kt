@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3PreviewTheme
+import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3Theme
 
 @Composable
 private fun BasePreference(
@@ -102,7 +102,7 @@ fun SwitchPreference(
 @Composable
 private fun PreferenceItemsPreview() {
     var darkTheme by remember { mutableStateOf(false) }
-    ShoukoM3PreviewTheme(darkTheme = darkTheme) {
+    ShoukoM3Theme(darkTheme = darkTheme) {
         Surface(color = MaterialTheme.colorScheme.background) {
             Column {
                 var count by remember { mutableIntStateOf(0) }

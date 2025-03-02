@@ -32,7 +32,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.IntentCompat
 import androidx.core.content.getSystemService
-import com.kieronquinn.monetcompat.core.MonetCompat
 import xyz.ivaniskandar.shouko.R
 
 /**
@@ -148,7 +147,6 @@ class TadanoTileParentService : Service() {
                         .Builder(this, CHANNEL_GENERAL)
                         .setShowWhen(false)
                         .setSmallIcon(icon)
-                        .setColor(MonetCompat.getInstance().getAccentColor(this))
                         .setContentTitle(getString(R.string.tadano_tile_service_notif_title))
                         .setContentText(getString(R.string.tadano_tile_service_notif_text))
                         .setContentIntent(clickPendingIntent)

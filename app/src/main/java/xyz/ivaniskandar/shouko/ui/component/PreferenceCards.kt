@@ -18,7 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import xyz.ivaniskandar.shouko.R
-import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3PreviewTheme
+import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3Theme
 
 @Composable
 private fun BasePreferenceCard(
@@ -104,7 +104,7 @@ fun WriteSettingsCard(
 @Preview
 @Composable
 private fun PreferenceCardsPreview() {
-    ShoukoM3PreviewTheme {
+    ShoukoM3Theme {
         Surface(color = MaterialTheme.colorScheme.background) {
             Column {
                 AccessibilityServiceCard(onButtonClick = {})

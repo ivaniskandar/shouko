@@ -12,7 +12,6 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
 import androidx.datastore.migrations.SharedPreferencesMigration
 import androidx.datastore.migrations.SharedPreferencesView
-import com.kieronquinn.monetcompat.core.MonetCompat
 import com.topjohnwu.superuser.Shell
 import logcat.AndroidLogcatLogger
 import logcat.LogPriority
@@ -76,11 +75,6 @@ class ShoukoApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         AndroidLogcatLogger.installOnDebuggableApp(this, minPriority = LogPriority.VERBOSE)
-
-        // Setup monet
-        MonetCompat.setup(this).apply {
-            updateMonetColors()
-        }
 
         // Prepare Shell builder
         Shell.setDefaultBuilder(
