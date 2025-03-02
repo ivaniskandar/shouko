@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_VIEW
 import android.content.pm.PackageManager
+import androidx.core.content.IntentCompat
 import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import logcat.LogPriority
@@ -32,11 +33,11 @@ suspend fun Intent.setAsAssistantAction(prefs: PreferencesRepository) {
     }
     val name = getStringExtra(Intent.EXTRA_SHORTCUT_NAME)
     logcat { "Preparing to save intent action with label $name" }
-    val intent =
-        Intent(getParcelableExtra(Intent.EXTRA_SHORTCUT_INTENT)).apply {
-            // For UI
-            putExtra(Intent.EXTRA_SHORTCUT_NAME, name)
-        }
+    val extra = IntentCompat.getParcelableExtra(this, Intent.EXTRA_SHORTCUT_INTENT, Intent::class.java)
+    val intent = Intent(extra).apply {
+        // For UI
+        putExtra(Intent.EXTRA_SHORTCUT_NAME, name)
+    }
     prefs.setAssistButtonAction(IntentAction(intent))
 }
 
@@ -63,13 +64,10 @@ fun Intent.loadLabel(context: Context): String {
 /**
  * Returns true if intent extra class type for [key] is the same with [type].
  */
-private fun <T> Intent?.isValidExtraType(
+private inline fun <reified T> Intent.isValidExtraType(
     key: String,
     type: Class<T>,
-): Boolean {
-    @Suppress("DEPRECATION") // https://issuetracker.google.com/issues/240585930
-    return type.isInstance(this?.getParcelableExtra(key))
-}
+): Boolean = type.isInstance(IntentCompat.getParcelableExtra(this, key, T::class.java))
 
 /**
  * Undocumented feature to highlight an item in system settings.
