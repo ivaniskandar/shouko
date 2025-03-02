@@ -20,9 +20,6 @@ object LinkCleaner {
         return try {
             val uri = link.toUri()
             return when (uri.host?.replace("www.", "")) {
-                // Youtube is clean already
-                "youtube.com" -> uri
-
                 "google.com" -> {
                     if (uri.path == "/url") {
                         uri.getQueryParameter("q").urlDecode()
@@ -66,6 +63,14 @@ object LinkCleaner {
     ): String? {
         return try {
             val oldUri = resolveLink(context, oldLink)?.toUri() ?: return null
+
+            if (oldUri.isYouTube) {
+                val builder = oldUri.buildUpon().clearQuery()
+                oldUri.getQueryParameter("v")?.let { builder.appendQueryParameter("v", it) }
+                oldUri.getQueryParameter("t")?.let { builder.appendQueryParameter("t", it) }
+                return builder.toString()
+            }
+
             val port = oldUri.port.takeIf { it != -1 }?.let { ":$it" } ?: ""
             val newUri =
                 "${oldUri.scheme}://${oldUri.host}$port${oldUri.path}".toUri().buildUpon()
@@ -82,6 +87,9 @@ object LinkCleaner {
     }
 
     private fun Uri.withHost(host: String): Uri = "https://$host$path".toUri()
+
+    private val Uri.isYouTube: Boolean
+        inline get() = host?.endsWith("youtube.com") == true || host?.endsWith("youtu.be") == true
 
     private fun String?.urlDecode(): Uri = URLDecoder.decode(this, "UTF-8").toUri()
 }
