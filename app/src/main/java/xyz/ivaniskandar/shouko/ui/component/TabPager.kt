@@ -3,8 +3,6 @@ package xyz.ivaniskandar.shouko.ui.component
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
@@ -14,10 +12,13 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
 @Composable
@@ -27,19 +28,24 @@ fun TabPager(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.(page: Int) -> Unit,
 ) {
-    val layoutDirection = LocalLayoutDirection.current
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { pageTitles.size })
 
+    val tabRowPadding = remember {
+        object : PaddingValues {
+            override fun calculateLeftPadding(layoutDirection: LayoutDirection): Dp = contentPadding.calculateLeftPadding(layoutDirection)
+
+            override fun calculateRightPadding(layoutDirection: LayoutDirection): Dp = contentPadding.calculateRightPadding(layoutDirection)
+
+            override fun calculateTopPadding(): Dp = contentPadding.calculateTopPadding()
+
+            override fun calculateBottomPadding(): Dp = 0.dp
+        }
+    }
     Column(modifier = modifier.fillMaxSize()) {
         TabRow(
             selectedTabIndex = pagerState.currentPage,
-            modifier = Modifier
-                .padding(
-                    start = contentPadding.calculateStartPadding(layoutDirection),
-                    top = contentPadding.calculateTopPadding(),
-                    end = contentPadding.calculateEndPadding(layoutDirection),
-                ),
+            modifier = Modifier.padding(tabRowPadding),
         ) {
             pageTitles.forEachIndexed { index, title ->
                 Tab(

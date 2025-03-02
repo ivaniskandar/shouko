@@ -1,8 +1,6 @@
 package xyz.ivaniskandar.shouko.ui.component
 
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.contentColorFor
@@ -10,7 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 
 /**
@@ -39,14 +38,16 @@ fun Scaffold(
         containerColor = containerColor,
         contentColor = contentColor,
     ) { padding ->
-        val direction = LocalLayoutDirection.current
-        val newContentPadding = remember(contentPadding, padding) {
-            PaddingValues(
-                start = contentPadding.calculateStartPadding(direction) + padding.calculateStartPadding(direction),
-                top = contentPadding.calculateTopPadding() + padding.calculateTopPadding(),
-                end = contentPadding.calculateEndPadding(direction) + padding.calculateEndPadding(direction),
-                bottom = contentPadding.calculateBottomPadding() + padding.calculateBottomPadding(),
-            )
+        val newContentPadding = remember {
+            object : PaddingValues {
+                override fun calculateBottomPadding(): Dp = contentPadding.calculateBottomPadding() + padding.calculateBottomPadding()
+
+                override fun calculateLeftPadding(layoutDirection: LayoutDirection): Dp = contentPadding.calculateLeftPadding(layoutDirection) + padding.calculateLeftPadding(layoutDirection)
+
+                override fun calculateRightPadding(layoutDirection: LayoutDirection): Dp = contentPadding.calculateRightPadding(layoutDirection) + padding.calculateRightPadding(layoutDirection)
+
+                override fun calculateTopPadding(): Dp = contentPadding.calculateTopPadding() + padding.calculateTopPadding()
+            }
         }
         content(newContentPadding)
     }
