@@ -52,13 +52,14 @@ fun LockscreenShortcutSettings(
         modifier = modifier.fillMaxSize(),
         contentPadding = contentPadding,
     ) {
-        item {
-            WriteSettingsCard(
-                visible = !context.canWriteSecureSettings,
-                onButtonClick = {
-                    navController.navigate(Screen.SecureSettingsSetup.route)
-                },
-            )
+        if (!context.canWriteSecureSettings) {
+            item {
+                WriteSettingsCard(
+                    onButtonClick = {
+                        navController.navigate(Screen.SecureSettingsSetup.route)
+                    },
+                )
+            }
         }
         item {
             Preference(

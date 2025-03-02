@@ -76,17 +76,19 @@ fun AssistantButtonSettings(
         modifier = modifier.fillMaxSize(),
         contentPadding = contentPadding,
     ) {
-        item {
-            ReadLogsCard(
-                visible = !context.canReadSystemLogs,
-                onButtonClick = { navController.navigate(Screen.ReadLogsSetup.route) },
-            )
+        if (!context.canReadSystemLogs) {
+            item {
+                ReadLogsCard(
+                    onButtonClick = { navController.navigate(Screen.ReadLogsSetup.route) },
+                )
+            }
         }
-        item {
-            WriteSettingsCard(
-                visible = !context.canWriteSecureSettings,
-                onButtonClick = { navController.navigate(Screen.SecureSettingsSetup.route) },
-            )
+        if (!context.canWriteSecureSettings) {
+            item {
+                WriteSettingsCard(
+                    onButtonClick = { navController.navigate(Screen.SecureSettingsSetup.route) },
+                )
+            }
         }
         item {
             SwitchPreference(

@@ -59,46 +59,43 @@ private fun BasePreferenceCard(
 @Composable
 fun AccessibilityServiceCard(
     onButtonClick: () -> Unit,
-    visible: Boolean = true,
+    modifier: Modifier = Modifier,
 ) {
-    if (visible) {
-        BasePreferenceCard(
-            title = stringResource(id = R.string.accessibility_service_prompt_title),
-            description = stringResource(id = R.string.accessibility_service_prompt_desc),
-            buttonLabel = stringResource(id = R.string.button_open_settings),
-            onButtonClick = onButtonClick,
-        )
-    }
+    BasePreferenceCard(
+        title = stringResource(id = R.string.accessibility_service_prompt_title),
+        description = stringResource(id = R.string.accessibility_service_prompt_desc),
+        buttonLabel = stringResource(id = R.string.button_open_settings),
+        onButtonClick = onButtonClick,
+        modifier = modifier,
+    )
 }
 
 @Composable
 fun ReadLogsCard(
     onButtonClick: () -> Unit,
-    visible: Boolean = true,
+    modifier: Modifier = Modifier,
 ) {
-    if (visible) {
-        BasePreferenceCard(
-            title = stringResource(id = R.string.logs_permission_prompt_title),
-            description = stringResource(id = R.string.logs_permission_prompt_desc),
-            buttonLabel = stringResource(id = R.string.button_grant_permission),
-            onButtonClick = onButtonClick,
-        )
-    }
+    BasePreferenceCard(
+        title = stringResource(id = R.string.logs_permission_prompt_title),
+        description = stringResource(id = R.string.logs_permission_prompt_desc),
+        buttonLabel = stringResource(id = R.string.button_grant_permission),
+        onButtonClick = onButtonClick,
+        modifier = modifier,
+    )
 }
 
 @Composable
 fun WriteSettingsCard(
     onButtonClick: () -> Unit,
-    visible: Boolean = true,
+    modifier: Modifier = Modifier,
 ) {
-    if (visible) {
-        BasePreferenceCard(
-            title = stringResource(id = R.string.write_secure_settings_permission_prompt_title),
-            description = stringResource(id = R.string.write_secure_settings_permission_prompt_desc),
-            buttonLabel = stringResource(id = R.string.button_grant_permission),
-            onButtonClick = onButtonClick,
-        )
-    }
+    BasePreferenceCard(
+        title = stringResource(id = R.string.write_secure_settings_permission_prompt_title),
+        description = stringResource(id = R.string.write_secure_settings_permission_prompt_desc),
+        buttonLabel = stringResource(id = R.string.button_grant_permission),
+        onButtonClick = onButtonClick,
+        modifier = modifier,
+    )
 }
 
 @Preview

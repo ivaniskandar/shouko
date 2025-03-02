@@ -54,15 +54,16 @@ fun Home(
     val buttonPrefs by prefs.assistButtonFlow.collectAsState(initial = AssistButtonPrefs())
     Box(modifier = modifier) {
         LazyColumn(contentPadding = contentPadding) {
-            item {
-                AccessibilityServiceCard(
-                    visible = !TadanoAccessibilityService.isActive,
-                    onButtonClick = {
-                        val serviceCn = ComponentName(context, TadanoAccessibilityService::class.java).flattenToString()
-                        val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).highlightSettingsTo(serviceCn)
-                        context.startActivity(intent)
-                    },
-                )
+            if (!TadanoAccessibilityService.isActive) {
+                item {
+                    AccessibilityServiceCard(
+                        onButtonClick = {
+                            val serviceCn = ComponentName(context, TadanoAccessibilityService::class.java).flattenToString()
+                            val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).highlightSettingsTo(serviceCn)
+                            context.startActivity(intent)
+                        },
+                    )
+                }
             }
             if (GAKeyOverrider.isSupported) {
                 item {
