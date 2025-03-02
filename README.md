@@ -1,4 +1,4 @@
-# Shouko / XPERI+ [![CI](https://github.com/ivaniskandar/shouko/actions/workflows/android-master.yml/badge.svg?branch=master&event=push)](https://github.com/ivaniskandar/shouko/actions/workflows/android-master.yml) [![Latest release](https://img.shields.io/github/v/release/ivaniskandar/shouko?label=download)](https://github.com/ivaniskandar/shouko/releases/latest)
+# Shouko / XPERI+ [![CI](https://github.com/ivaniskandar/shouko/actions/workflows/android-master.yml/badge.svg?branch=master&event=push)](https://github.com/ivaniskandar/shouko/actions/workflows/android-master.yml) [![Latest release](https://img.shields.io/badge/download-canary-orange)](https://nightly.link/ivaniskandar/shouko/workflows/android-master/master/shouko-canary.zip)
 
 Xpand the feature set of your Xperia! <sub>and *xperience* more</sub>
 
