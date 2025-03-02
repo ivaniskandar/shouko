@@ -78,9 +78,9 @@ This app features generally works on all devices unless specified otherwise. Som
 Download
 ----------
 
-Get the app on the [latest release page](https://github.com/ivaniskandar/shouko/releases/latest).
+~~Get the app on the [latest release page](https://github.com/ivaniskandar/shouko/releases/latest).~~ I don't make "release" anymore, get the canary build instead.
 
-Canary build to try new features/fixes is also available [here](https://github.com/ivaniskandar/shouko/actions/workflows/android-master.yml).
+Canary build to try new features/fixes is also available [here](https://nightly.link/ivaniskandar/shouko/workflows/android-master/master/shouko-canary.zip).
 
 Build it yourself
 ----------
