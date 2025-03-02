@@ -1,7 +1,9 @@
 package xyz.ivaniskandar.shouko.item
 
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.ImageBitmap
 
+@Immutable
 data class LinkHandlerAppItem(
     val packageName: String,
     val label: String,

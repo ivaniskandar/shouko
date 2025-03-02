@@ -26,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
@@ -121,6 +122,7 @@ class LinkTargetChooserActivity : ComponentActivity() {
     }
 }
 
+@Immutable
 private data class Target(
     val component: ComponentName,
     val title: String,

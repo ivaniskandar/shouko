@@ -12,10 +12,10 @@ import androidx.annotation.RequiresApi
 import androidx.core.net.toUri
 
 val Context.canReadSystemLogs
-    get() = checkSelfPermission(Manifest.permission.READ_LOGS) == PackageManager.PERMISSION_GRANTED
+    inline get() = checkSelfPermission(Manifest.permission.READ_LOGS) == PackageManager.PERMISSION_GRANTED
 
 val Context.canWriteSecureSettings: Boolean
-    get() = checkSelfPermission(Manifest.permission.WRITE_SECURE_SETTINGS) == PackageManager.PERMISSION_GRANTED
+    inline get() = checkSelfPermission(Manifest.permission.WRITE_SECURE_SETTINGS) == PackageManager.PERMISSION_GRANTED
 
 fun Context.isPackageInstalled(packageName: String): Boolean = try {
     packageManager.getApplicationInfoCompat(packageName, 0).enabled
