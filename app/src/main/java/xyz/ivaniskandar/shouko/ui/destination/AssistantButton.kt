@@ -273,7 +273,7 @@ fun AssistantActionSelection(
                             },
                         )
                     }
-                    items(StatusBarAction.PanelType.entries.toTypedArray()) { item ->
+                    items(StatusBarAction.PanelType.entries) { item ->
                         CommonActionRow(
                             iconVector = item.iconVector,
                             label = stringResource(id = item.labelResId),

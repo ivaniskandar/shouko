@@ -48,6 +48,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastFilter
+import androidx.compose.ui.util.fastFirst
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import xyz.ivaniskandar.shouko.R
@@ -218,8 +220,18 @@ fun LinkTargetList(
             )
         },
     ) {
-        val filteredItems = items.filter { if (approved) it.linkHandlingAllowed && it.isApproved else it.isUnapproved }
-        val disabledItems = if (approved) items.filter { !it.linkHandlingAllowed && it.isApproved } else null
+        val filteredItems = items.fastFilter {
+            if (approved) {
+                it.linkHandlingAllowed && it.isApproved
+            } else {
+                it.isUnapproved
+            }
+        }
+        val disabledItems = if (approved) {
+            items.fastFilter { !it.linkHandlingAllowed && it.isApproved }
+        } else {
+            null
+        }
 
         LazyColumn(
             contentPadding = contentPadding,
@@ -281,7 +293,7 @@ private fun LinkTargetListItem(
         },
         supportingContent = {
             if (item.isApproved) {
-                val count = remember { item.verifiedDomains.size + item.userSelectedDomains.size }
+                val count = item.verifiedDomains.size + item.userSelectedDomains.size
                 Text(
                     text = pluralStringResource(
                         id = R.plurals.approved_link_list_item_subtitle,
@@ -290,7 +302,7 @@ private fun LinkTargetListItem(
                     ),
                 )
             } else {
-                val count = remember { item.unapprovedDomains.size }
+                val count = item.unapprovedDomains.size
                 Text(
                     text = pluralStringResource(
                         id = R.plurals.unapproved_link_list_item_subtitle,
@@ -312,7 +324,7 @@ fun LinkTargetInfoSheet(
     mainViewModel: MainActivityViewModel = viewModel(),
 ) {
     val list by mainViewModel.linkHandlerList.collectAsState()
-    val item = list.find { it.packageName == packageName }!!
+    val item = list.fastFirst { it.packageName == packageName }
     Column(
         modifier = modifier
             .fillMaxWidth()

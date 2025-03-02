@@ -12,7 +12,6 @@ fun PackageManager.queryIntentActivitiesCompat(
 ): List<ResolveInfo> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
     queryIntentActivities(intent, PackageManager.ResolveInfoFlags.of(flags.toLong()))
 } else {
-    @Suppress("DEPRECATION")
     queryIntentActivities(intent, flags)
 }
 
@@ -22,7 +21,6 @@ fun PackageManager.resolveActivityCompat(
 ): ResolveInfo? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
     resolveActivity(intent, PackageManager.ResolveInfoFlags.of(flags.toLong()))
 } else {
-    @Suppress("DEPRECATION")
     resolveActivity(intent, flags)
 }
 
@@ -32,13 +30,11 @@ fun PackageManager.getApplicationInfoCompat(
 ): ApplicationInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
     getApplicationInfo(packageName, PackageManager.ApplicationInfoFlags.of(flags.toLong()))
 } else {
-    @Suppress("DEPRECATION")
     getApplicationInfo(packageName, flags)
 }
 
 fun PackageManager.getInstalledApplicationsCompat(flags: Int): List<ApplicationInfo> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
     getInstalledApplications(PackageManager.ApplicationInfoFlags.of(flags.toLong()))
 } else {
-    @Suppress("DEPRECATION")
     getInstalledApplications(flags)
 }

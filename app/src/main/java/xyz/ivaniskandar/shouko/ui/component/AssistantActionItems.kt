@@ -15,10 +15,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.intl.Locale
+import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.dp
 import xyz.ivaniskandar.shouko.item.ApplicationItem
 import xyz.ivaniskandar.shouko.item.ShortcutCreatorItem
-import java.util.Locale
 
 private val RowIconModifier = Modifier.size(36.dp)
 
@@ -31,7 +32,7 @@ fun CategoryHeader(
     Column(modifier = modifier) {
         if (divider) SoftDivider()
         Text(
-            text = title.uppercase(Locale.getDefault()),
+            text = title.toUpperCase(Locale.current),
             modifier = Modifier.padding(start = 68.dp, top = 20.dp, end = 16.dp, bottom = 8.dp),
             color = MaterialTheme.colorScheme.primary,
             style = MaterialTheme.typography.labelMedium,

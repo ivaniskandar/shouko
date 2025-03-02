@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEachIndexed
 import kotlinx.coroutines.launch
 
 @Composable
@@ -47,7 +48,7 @@ fun TabPager(
             selectedTabIndex = pagerState.currentPage,
             modifier = Modifier.padding(tabRowPadding),
         ) {
-            pageTitles.forEachIndexed { index, title ->
+            pageTitles.fastForEachIndexed { index, title ->
                 Tab(
                     selected = pagerState.currentPage == index,
                     onClick = {

@@ -20,7 +20,6 @@ class PreferencesSerializer : Serializer<Preferences> {
             .setTeaBoardingDone(false)
             .build()
 
-    @Suppress("BlockingMethodInNonBlockingContext")
     override suspend fun readFrom(input: InputStream): Preferences {
         try {
             return Preferences.parseFrom(input)
@@ -29,7 +28,6 @@ class PreferencesSerializer : Serializer<Preferences> {
         }
     }
 
-    @Suppress("BlockingMethodInNonBlockingContext")
     override suspend fun writeTo(
         t: Preferences,
         output: OutputStream,
