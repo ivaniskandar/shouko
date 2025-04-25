@@ -22,12 +22,15 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -137,7 +140,14 @@ private fun AppLinkChooserSheet(
     onFinish: () -> Unit,
 ) {
     val haptic = LocalHapticFeedback.current
-    ModalBottomSheet(onDismissRequest = onFinish) {
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true,
+    )
+
+    ModalBottomSheet(
+        sheetState = sheetState,
+        onDismissRequest = onFinish,
+    ) {
         Text(
             text = stringResource(R.string.link_chooser_dialog_title),
             modifier = Modifier
@@ -155,6 +165,9 @@ private fun AppLinkChooserSheet(
         ) {
             items(targets) { item ->
                 ListItem(
+                    colors = ListItemDefaults.colors().copy(
+                        containerColor = Color.Transparent,
+                    ),
                     modifier = Modifier
                         .combinedClickable(
                             onLongClick = {
