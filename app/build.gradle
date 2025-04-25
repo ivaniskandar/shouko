@@ -98,7 +98,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-service:$lifecycle_version"
 
-    implementation "androidx.datastore:datastore:1.1.4"
+    implementation "androidx.datastore:datastore:1.1.5"
     implementation "com.google.protobuf:protobuf-javalite:$protobuf_version"
 }
 
