@@ -53,7 +53,6 @@ import xyz.ivaniskandar.shouko.activity.GAKeyOverriderKeyguardActivity
 import xyz.ivaniskandar.shouko.feature.GAKeyOverrider.Companion.ASSIST_BUTTON_LOG_TRIGGER
 import xyz.ivaniskandar.shouko.feature.GAKeyOverrider.Companion.GOOGLE_PACKAGE_NAME
 import xyz.ivaniskandar.shouko.feature.GAKeyOverrider.Companion.isSupported
-import xyz.ivaniskandar.shouko.feature.MediaKeyAction.Key
 import xyz.ivaniskandar.shouko.util.DeviceModel
 import xyz.ivaniskandar.shouko.util.canReadSystemLogs
 import xyz.ivaniskandar.shouko.util.isPackageInstalled

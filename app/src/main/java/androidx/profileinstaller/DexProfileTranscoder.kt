@@ -42,7 +42,7 @@ object DexProfileTranscoder {
                         try {
                             val baselineVersion = ProfileTranscoder.readHeader(profileStr, ProfileTranscoder.MAGIC_PROF)
                             ProfileTranscoder.readProfile(profileStr, baselineVersion, apkFile.name)
-                        } catch (e: Exception) {
+                        } catch (_: Exception) {
                             null
                         }
                     } ?: return@use
@@ -52,7 +52,7 @@ object DexProfileTranscoder {
                         try {
                             val metaVersion = ProfileTranscoder.readHeader(metaStr, ProfileTranscoder.MAGIC_PROFM)
                             ProfileTranscoder.readMeta(metaStr, metaVersion, desiredVersion, profile)
-                        } catch (e: Exception) {
+                        } catch (_: Exception) {
                             null
                         }
                     } ?: return@use
@@ -62,7 +62,7 @@ object DexProfileTranscoder {
                         try {
                             ProfileTranscoder.writeHeader(os, desiredVersion)
                             ProfileTranscoder.transcodeAndWriteBody(os, desiredVersion, profile)
-                        } catch (e: Exception) {
+                        } catch (_: Exception) {
                             false
                         }
                     if (success) {
@@ -71,7 +71,7 @@ object DexProfileTranscoder {
                                 zipOut.putNextEntry(ZipEntry(PROFILE_SOURCE_FILE))
                                 os.writeTo(zipOut)
                                 zipOut.closeEntry()
-                            } catch (e: Exception) {
+                            } catch (_: Exception) {
                                 success = false
                             }
 
@@ -81,7 +81,7 @@ object DexProfileTranscoder {
                                         zipOut.putNextEntry(ZipEntry(PROFILE_META_FILE))
                                         metaStr.copyTo(zipOut)
                                         zipOut.closeEntry()
-                                    } catch (e: Exception) {
+                                    } catch (_: Exception) {
                                         success = false
                                     }
                                 }

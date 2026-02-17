@@ -5,10 +5,11 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.drawable.AdaptiveIconDrawable
-import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.DrawableWrapper
 import android.util.SparseArray
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.graphics.withSave
 
 /**
@@ -20,7 +21,7 @@ class IconDrawableShadowWrapper {
     fun run(drawable: Drawable): Drawable {
         val toDo =
             if (drawable !is AdaptiveIconDrawable) {
-                val bg = ColorDrawable(Color.WHITE)
+                val bg = Color.WHITE.toDrawable()
                 val fg =
                     AdaptiveForegroundDrawable().apply {
                         this.drawable = drawable
@@ -47,7 +48,7 @@ class IconDrawableShadowWrapper {
         val blur = ICON_SIZE_BLUR_FACTOR * shadowSize
         val keyShadowDistance = ICON_SIZE_KEY_SHADOW_DELTA_FACTOR * shadowSize
         val bitmapSize = (shadowSize + 2 * blur + keyShadowDistance).toInt()
-        val shadow = Bitmap.createBitmap(bitmapSize, bitmapSize, Bitmap.Config.ARGB_8888)
+        val shadow = createBitmap(bitmapSize, bitmapSize)
 
         Canvas(shadow).apply {
             translate(blur + keyShadowDistance / 2, blur)

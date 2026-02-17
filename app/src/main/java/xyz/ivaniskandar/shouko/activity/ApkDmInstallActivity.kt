@@ -262,22 +262,22 @@ class ApkDmInstallActivity : ComponentActivity() {
         packageInstaller.mySessions.forEach {
             try {
                 packageInstaller.abandonSession(it.sessionId)
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 // ignore errors
             }
         }
         try {
             unregisterReceiver(packageActionReceiver)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             // already unregistered
         }
     }
 
-    private fun resolveIntent(): Uri? = when {
-        intent.action == Intent.ACTION_SEND -> {
+    private fun resolveIntent(): Uri? = when (intent.action) {
+        Intent.ACTION_SEND -> {
             IntentCompat.getParcelableExtra(intent, Intent.EXTRA_STREAM, Uri::class.java)
         }
-        intent.action == Intent.ACTION_VIEW && intent.data?.scheme == "content" -> {
+        Intent.ACTION_VIEW if intent.data?.scheme == "content" -> {
             intent.data
         }
         else -> null
@@ -293,7 +293,7 @@ class ApkDmInstallActivity : ComponentActivity() {
                         input?.copyTo(output)
                     }
                 }
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 // handle error
             }
         }

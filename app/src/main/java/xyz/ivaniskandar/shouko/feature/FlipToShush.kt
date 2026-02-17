@@ -274,7 +274,7 @@ class FlipToShush(
             } else {
                 logcat { "Shush conditions unmet" }
             }
-        } catch (e: CancellationException) {
+        } catch (_: CancellationException) {
             logcat { "Job cancelled" }
         } finally {
             registerSensors(proximity = true, accelerometer = false)
@@ -299,7 +299,7 @@ class FlipToShush(
             } else {
                 logcat { "Unshush condition unmet, shush state unchanged" }
             }
-        } catch (e: CancellationException) {
+        } catch (_: CancellationException) {
             logcat { "Job cancelled" }
         } finally {
             registerSensors(proximity = true, accelerometer = false)

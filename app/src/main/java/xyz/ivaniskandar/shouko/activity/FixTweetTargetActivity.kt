@@ -1,10 +1,10 @@
 package xyz.ivaniskandar.shouko.activity
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.core.net.toUri
 import logcat.LogPriority
 import logcat.logcat
 import xyz.ivaniskandar.shouko.R
@@ -38,7 +38,7 @@ class FixTweetTargetActivity : ComponentActivity() {
     }
 
     private fun handle(link: String): String? {
-        val uri = Uri.parse(link)
+        val uri = link.toUri()
         val builder = uri.buildUpon()
         val newHost =
             when (uri.authority) {

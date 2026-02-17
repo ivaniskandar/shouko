@@ -126,7 +126,7 @@ class PreferencesRepository(
     }
 
     /**
-     * True when boarding activity for Coffee is showed
+     * True when boarding activity for Coffee is shown
      *
      * @see xyz.ivaniskandar.shouko.activity.TileBoardingActivity
      * @see coffeeBoardingDone
@@ -138,7 +138,7 @@ class PreferencesRepository(
     }
 
     /**
-     * True when boarding activity for Tea is showed
+     * True when boarding activity for Tea is shown
      *
      * @see xyz.ivaniskandar.shouko.activity.TileBoardingActivity
      * @see teaBoardingDone
@@ -155,7 +155,7 @@ class PreferencesRepository(
     private suspend fun DataStore<Preferences>.updateDataSilently(t: (Preferences) -> Preferences) {
         try {
             preferencesStore.updateData(t)
-        } catch (e: IOException) {
+        } catch (_: IOException) {
             logcat(priority = LogPriority.ERROR) { "Error writing preferences." }
         }
     }

@@ -19,14 +19,14 @@ val Context.canWriteSecureSettings: Boolean
 
 fun Context.isPackageInstalled(packageName: String): Boolean = try {
     packageManager.getApplicationInfoCompat(packageName, 0).enabled
-} catch (e: PackageManager.NameNotFoundException) {
+} catch (_: PackageManager.NameNotFoundException) {
     false
 }
 
 fun Context.getPackageLabel(packageName: String): String = try {
     val ai = packageManager.getApplicationInfoCompat(packageName, 0)
     packageManager.getApplicationLabel(ai).toString()
-} catch (e: PackageManager.NameNotFoundException) {
+} catch (_: PackageManager.NameNotFoundException) {
     "null"
 }
 
