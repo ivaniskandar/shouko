@@ -3,21 +3,21 @@ package xyz.ivaniskandar.shouko.ui
 import android.graphics.Canvas
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.DrawableWrapper
+import androidx.core.graphics.withScale
 
 class AdaptiveForegroundDrawable : DrawableWrapper(ColorDrawable()) {
     private var scaleX: Float
     private var scaleY: Float
 
     override fun draw(canvas: Canvas) {
-        val saveCount = canvas.save()
-        canvas.scale(
+        canvas.withScale(
             scaleX,
             scaleY,
             bounds.exactCenterX(),
             bounds.exactCenterY(),
-        )
-        super.draw(canvas)
-        canvas.restoreToCount(saveCount)
+        ) {
+            super.draw(canvas)
+        }
     }
 
     fun setScale(scale: Float) {
