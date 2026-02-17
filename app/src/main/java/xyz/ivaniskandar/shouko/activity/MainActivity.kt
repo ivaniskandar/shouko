@@ -97,6 +97,7 @@ class MainActivity : ComponentActivity() {
             val scrollBehavior = when (navBackStackEntry?.destination?.route) {
                 // Disable scroll effect because tabs
                 Screen.AssistantLaunchSelection.route, Screen.LockscreenShortcutSelection.route -> null
+
                 else -> TopAppBarDefaults.pinnedScrollBehavior(scrollState)
             }
 
@@ -254,9 +255,13 @@ private fun getAppBarTitle(
     navBackStackEntry: NavBackStackEntry?,
 ): String = when (navBackStackEntry?.destination?.route) {
     Screen.AssistantButtonSettings.route -> stringResource(id = R.string.assistant_button_title)
+
     Screen.AssistantLaunchSelection.route -> stringResource(id = R.string.assistant_launch_selection_title)
+
     Screen.ReadLogsSetup.route, Screen.SecureSettingsSetup.route -> ""
+
     Screen.LockscreenShortcutSettings.route -> stringResource(id = R.string.lockscreen_shortcut_title)
+
     Screen.LockscreenShortcutSelection.route -> {
         when (navBackStackEntry.arguments?.getString("key")) {
             LOCKSCREEN_RIGHT_BUTTON -> stringResource(id = R.string.lockscreen_shortcut_right)
@@ -264,10 +269,15 @@ private fun getAppBarTitle(
             else -> stringResource(id = R.string.lockscreen_shortcut_title)
         }
     }
+
     Screen.AndroidAppLinkSettings.route -> stringResource(id = R.string.android_app_link_title)
+
     Screen.ApprovedLinkTargetList.route -> stringResource(id = R.string.approved_link_target_title)
+
     Screen.UnapprovedLinkTargetList.route -> stringResource(id = R.string.unapproved_link_target_title)
+
     Screen.LinkTargetInfoSheet.route -> ""
+
     else -> stringResource(id = R.string.app_name)
 }
 
@@ -315,6 +325,7 @@ private fun RowScope.MainActivityActions(
                 )
             }
         }
+
         Screen.AssistantLaunchSelection.route -> {
             menuItems += {
                 DropdownMenuItem(
@@ -340,6 +351,7 @@ private fun RowScope.MainActivityActions(
                 )
             }
         }
+
         Screen.LockscreenShortcutSelection.route -> {
             menuItems += {
                 DropdownMenuItem(

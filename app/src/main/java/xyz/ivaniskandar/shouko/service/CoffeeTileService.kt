@@ -55,6 +55,7 @@ class CoffeeTileService : TileService() {
                 STATE_ACTIVE -> {
                     switchService(false)
                 }
+
                 STATE_INACTIVE -> {
                     switchService(true)
                 }

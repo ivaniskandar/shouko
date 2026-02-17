@@ -37,6 +37,7 @@ class WaMeActivity : ComponentActivity() {
         }
         when (intent.action) {
             Intent.ACTION_VIEW, Intent.ACTION_DIAL -> handle(PhoneNumberUtils.getNumberFromIntent(intent, this))
+
             WA_ME_CLIPBOARD ->
                 setContent {
                     ShoukoM3Theme {

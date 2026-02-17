@@ -146,6 +146,7 @@ fun LockscreenShortcutSelection(
                 }
                 Spacer(modifier = Modifier.navigationBarsPadding())
             }
+
             1 -> {
                 LazyColumn(
                     contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding()),

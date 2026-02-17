@@ -102,6 +102,7 @@ class PocketNoTouchy(
                             logcat { "Screen on event but in call, do nothing..." }
                         }
                     }
+
                     Intent.ACTION_SCREEN_OFF -> {
                         ignoreCheck()
                     }
@@ -134,6 +135,7 @@ class PocketNoTouchy(
                 AudioManager.MODE_IN_COMMUNICATION,
                 AudioManager.MODE_RINGTONE,
                 -> true
+
                 else -> false
             }
 

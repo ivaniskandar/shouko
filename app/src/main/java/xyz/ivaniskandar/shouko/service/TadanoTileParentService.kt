@@ -163,7 +163,9 @@ class TadanoTileParentService : Service() {
                     Type.TEA -> switchTeaMode(true)
                 }
             }
+
             ACTION_STOP_SERVICE -> stop()
+
             else -> throw Exception("wtf")
         }
 
