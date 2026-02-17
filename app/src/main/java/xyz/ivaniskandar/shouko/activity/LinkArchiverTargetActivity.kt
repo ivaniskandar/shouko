@@ -22,6 +22,7 @@ class LinkArchiverTargetActivity : ComponentActivity() {
                 }
                 finish()
             }
+
             else -> {
                 logcat(LogPriority.ERROR) { "Unknown action: $action" }
                 finish()

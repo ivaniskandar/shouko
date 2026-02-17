@@ -178,6 +178,7 @@ fun AssistantActionSelection(
                 }
                 Spacer(modifier = Modifier.navigationBarsPadding())
             }
+
             1 -> {
                 val items by mainViewModel.shortcutList.collectAsState()
                 val context = LocalContext.current
@@ -229,6 +230,7 @@ fun AssistantActionSelection(
                     }
                 }
             }
+
             2 -> {
                 val context = LocalContext.current
                 LazyColumn(

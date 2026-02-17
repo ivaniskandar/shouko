@@ -30,6 +30,7 @@ class FixTweetTargetActivity : ComponentActivity() {
                 }
                 finish()
             }
+
             else -> {
                 logcat(LogPriority.ERROR) { "Unknown action: $action" }
                 finish()

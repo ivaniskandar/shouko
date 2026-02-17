@@ -262,6 +262,7 @@ class GAKeyOverrider(
                         it.runAction(service)
                     }
                 }
+
                 else -> {
                     it.runAction(service)
                 }
@@ -284,6 +285,7 @@ class GAKeyOverrider(
                             }
                         service.startActivity(i)
                     }
+
                     else -> {
                         if (withOpa) delay(200)
                         it.runAction(service)
@@ -750,30 +752,39 @@ sealed class Action {
             string.startsWith(IntentAction.PLAIN_STRING_PREFIX) -> {
                 IntentAction.fromPlainString(string)
             }
+
             string.startsWith(MediaKeyAction.PLAIN_STRING_PREFIX) -> {
                 MediaKeyAction.fromPlainString(string)
             }
+
             string == FlashlightAction.PLAIN_STRING -> {
                 FlashlightAction()
             }
+
             string == ScreenshotAction.PLAIN_STRING -> {
                 ScreenshotAction()
             }
+
             string.startsWith(StatusBarAction.PLAIN_STRING_PREFIX) -> {
                 StatusBarAction.fromPlainString(string)
             }
+
             string == RingerModeAction.PLAIN_STRING -> {
                 RingerModeAction()
             }
+
             string == MuteMicrophoneAction.PLAIN_STRING -> {
                 MuteMicrophoneAction()
             }
+
             string == DigitalAssistantAction.PLAIN_STRING -> {
                 DigitalAssistantAction()
             }
+
             string == DoNothingAction.PLAIN_STRING -> {
                 DoNothingAction()
             }
+
             else -> {
                 logcat(LogPriority.ERROR) { "Unrecognized string: $string" }
                 null

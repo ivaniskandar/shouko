@@ -33,6 +33,7 @@ class LinkCleanerTargetActivity : ComponentActivity() {
                 }
                 finish()
             }
+
             ACTION_CLEAN_CLIPBOARD -> {
                 setContent {
                     ShoukoM3Theme {
@@ -58,6 +59,7 @@ class LinkCleanerTargetActivity : ComponentActivity() {
                     }
                 }
             }
+
             else -> {
                 logcat(LogPriority.ERROR) { "Unknown action: $action" }
                 finish()

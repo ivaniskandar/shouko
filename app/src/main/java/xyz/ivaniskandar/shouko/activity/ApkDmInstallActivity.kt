@@ -148,6 +148,7 @@ class ApkDmInstallActivity : ComponentActivity() {
                                     CircularProgressIndicator(modifier = Modifier.padding(16.dp))
                                 }
                             }
+
                             is State.Ready -> {
                                 Column(
                                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -277,9 +278,11 @@ class ApkDmInstallActivity : ComponentActivity() {
         Intent.ACTION_SEND -> {
             IntentCompat.getParcelableExtra(intent, Intent.EXTRA_STREAM, Uri::class.java)
         }
+
         Intent.ACTION_VIEW if intent.data?.scheme == "content" -> {
             intent.data
         }
+
         else -> null
     }
 
