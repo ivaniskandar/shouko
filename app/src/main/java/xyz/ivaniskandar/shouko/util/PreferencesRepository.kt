@@ -19,7 +19,7 @@ class PreferencesRepository(
             .catch { exception ->
                 if (exception is IOException) {
                     logcat(priority = LogPriority.ERROR) { "Error reading preferences." }
-                    emit(Preferences.getDefaultInstance())
+                    emit(Preferences())
                 } else {
                     throw exception
                 }
@@ -55,14 +55,11 @@ class PreferencesRepository(
     ) {
         val newValue = value ?: ""
         preferencesStore.updateDataSilently {
-            it
-                .toBuilder()
-                .apply {
-                    when (key) {
-                        LockscreenShortcutHelper.LOCKSCREEN_LEFT_BUTTON -> lockscreenLeftAction = newValue
-                        LockscreenShortcutHelper.LOCKSCREEN_RIGHT_BUTTON -> lockscreenRightAction = newValue
-                    }
-                }.build()
+            when (key) {
+                LockscreenShortcutHelper.LOCKSCREEN_LEFT_BUTTON -> it.copy(lockscreenLeftAction = newValue)
+                LockscreenShortcutHelper.LOCKSCREEN_RIGHT_BUTTON -> it.copy(lockscreenRightAction = newValue)
+                else -> it
+            }
         }
     }
 
@@ -75,7 +72,7 @@ class PreferencesRepository(
      */
     suspend fun setAssistButtonEnabled(enabled: Boolean) {
         preferencesStore.updateDataSilently {
-            it.toBuilder().setAssistButtonEnabled(enabled).build()
+            it.copy(assistButtonEnabled = enabled)
         }
     }
 
@@ -88,7 +85,7 @@ class PreferencesRepository(
      */
     suspend fun setAssistButtonAction(action: Action?) {
         preferencesStore.updateDataSilently {
-            it.toBuilder().setAssistButtonAction(action?.toPlainString() ?: "").build()
+            it.copy(assistButtonAction = action?.toPlainString() ?: "")
         }
     }
 
@@ -101,7 +98,7 @@ class PreferencesRepository(
      */
     suspend fun setHideAssistantCue(enabled: Boolean) {
         preferencesStore.updateDataSilently {
-            it.toBuilder().setHideAssistantCue(enabled).build()
+            it.copy(hideAssistantCue = enabled)
         }
     }
 
@@ -111,7 +108,7 @@ class PreferencesRepository(
      */
     suspend fun setPreventPocketTouchEnabled(enabled: Boolean) {
         preferencesStore.updateDataSilently {
-            it.toBuilder().setPreventPocketTouchEnabled(enabled).build()
+            it.copy(preventPocketTouchEnabled = enabled)
         }
     }
 
@@ -121,7 +118,7 @@ class PreferencesRepository(
      */
     suspend fun setFlipToShushEnabled(enabled: Boolean) {
         preferencesStore.updateDataSilently {
-            it.toBuilder().setFlipToShushEnabled(enabled).build()
+            it.copy(flipToShushEnabled = enabled)
         }
     }
 
@@ -133,7 +130,7 @@ class PreferencesRepository(
      */
     suspend fun setCoffeeBoardingDone() {
         preferencesStore.updateDataSilently {
-            it.toBuilder().setCoffeeBoardingDone(true).build()
+            it.copy(coffeeBoardingDone = true)
         }
     }
 
@@ -145,7 +142,7 @@ class PreferencesRepository(
      */
     suspend fun setTeaBoardingDone() {
         preferencesStore.updateDataSilently {
-            it.toBuilder().setTeaBoardingDone(true).build()
+            it.copy(teaBoardingDone = true)
         }
     }
 

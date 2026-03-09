@@ -3,8 +3,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'org.jetbrains.kotlin.plugin.serialization'
     id 'com.google.android.gms.oss-licenses-plugin'
-    id "com.google.protobuf" version "0.9.6"
     id "org.jetbrains.kotlin.plugin.compose" version "${kotlin_version}"
 }
 
@@ -99,23 +99,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-service:$lifecycle_version"
 
     implementation "androidx.datastore:datastore:1.2.0"
-    implementation "com.google.protobuf:protobuf-javalite:$protobuf_version"
-}
-
-protobuf {
-    protoc {
-        artifact = "com.google.protobuf:protoc:$protobuf_version"
-    }
-
-    generateProtoTasks {
-        all().each { task ->
-            task.builtins {
-                java {
-                    option 'lite'
-                }
-            }
-        }
-    }
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-protobuf:1.10.0"
 }
 
 kotlin {

@@ -31,41 +31,47 @@ private val Context.preferencesStore: DataStore<Preferences> by dataStore(
                     context.getSharedPreferences("${context.packageName}_preferences", Context.MODE_PRIVATE)
                 },
             ) { sharedPrefs: SharedPreferencesView, currentData: Preferences ->
-                val builder = currentData.toBuilder()
-                if (sharedPrefs.contains("assist_button_enabled")) {
-                    builder.assistButtonEnabled = sharedPrefs.getBoolean("assist_button_enabled", true)
-                }
-                if (sharedPrefs.contains("assist_button_action")) {
-                    builder.assistButtonAction = sharedPrefs.getString("assist_button_action", "")
-                }
-                if (sharedPrefs.contains("hide_assistant_cue")) {
-                    builder.hideAssistantCue = sharedPrefs.getBoolean("hide_assistant_cue", false)
-                }
-                if (sharedPrefs.contains("prevent_pocket_touch")) {
-                    builder.preventPocketTouchEnabled = sharedPrefs.getBoolean("prevent_pocket_touch", false)
-                }
-                if (sharedPrefs.contains("flip_to_shush")) {
-                    builder.flipToShushEnabled = sharedPrefs.getBoolean("flip_to_shush", false)
-                }
-                if (sharedPrefs.contains("coffee_boarding_done")) {
-                    builder.coffeeBoardingDone = sharedPrefs.getBoolean("coffee_boarding_done", false)
-                }
-                if (sharedPrefs.contains("tea_boarding_done")) {
-                    builder.teaBoardingDone = sharedPrefs.getBoolean("tea_boarding_done", false)
-                }
-                builder.build()
+                currentData.copy(
+                    assistButtonEnabled = if (sharedPrefs.contains("assist_button_enabled")) {
+                        sharedPrefs.getBoolean("assist_button_enabled", true)
+                    } else {
+                        currentData.assistButtonEnabled
+                    },
+                    assistButtonAction = sharedPrefs.getString("assist_button_action", currentData.assistButtonAction) ?: currentData.assistButtonAction,
+                    hideAssistantCue = if (sharedPrefs.contains("hide_assistant_cue")) {
+                        sharedPrefs.getBoolean("hide_assistant_cue", false)
+                    } else {
+                        currentData.hideAssistantCue
+                    },
+                    preventPocketTouchEnabled = if (sharedPrefs.contains("prevent_pocket_touch")) {
+                        sharedPrefs.getBoolean("prevent_pocket_touch", false)
+                    } else {
+                        currentData.preventPocketTouchEnabled
+                    },
+                    flipToShushEnabled = if (sharedPrefs.contains("flip_to_shush")) {
+                        sharedPrefs.getBoolean("flip_to_shush", false)
+                    } else {
+                        currentData.flipToShushEnabled
+                    },
+                    coffeeBoardingDone = if (sharedPrefs.contains("coffee_boarding_done")) {
+                        sharedPrefs.getBoolean("coffee_boarding_done", false)
+                    } else {
+                        currentData.coffeeBoardingDone
+                    },
+                    teaBoardingDone = if (sharedPrefs.contains("tea_boarding_done")) {
+                        sharedPrefs.getBoolean("tea_boarding_done", false)
+                    } else {
+                        currentData.teaBoardingDone
+                    },
+                )
             },
             SharedPreferencesMigration(
                 produceSharedPreferences = { context.getSharedPreferences("secure_settings", Context.MODE_PRIVATE) },
             ) { sharedPrefs: SharedPreferencesView, currentData: Preferences ->
-                val builder = currentData.toBuilder()
-                if (sharedPrefs.contains("sysui_keyguard_left")) {
-                    builder.lockscreenLeftAction = sharedPrefs.getString("sysui_keyguard_left", "")
-                }
-                if (sharedPrefs.contains("sysui_keyguard_right")) {
-                    builder.lockscreenRightAction = sharedPrefs.getString("sysui_keyguard_right", "")
-                }
-                builder.build()
+                currentData.copy(
+                    lockscreenLeftAction = sharedPrefs.getString("sysui_keyguard_left", currentData.lockscreenLeftAction) ?: currentData.lockscreenLeftAction,
+                    lockscreenRightAction = sharedPrefs.getString("sysui_keyguard_right", currentData.lockscreenRightAction) ?: currentData.lockscreenRightAction,
+                )
             },
         )
     },
