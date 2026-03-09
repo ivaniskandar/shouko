@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -51,11 +50,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastFilter
 import androidx.compose.ui.util.fastFirst
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.activity.MainActivityViewModel
 import xyz.ivaniskandar.shouko.item.LinkHandlerAppItem
 import xyz.ivaniskandar.shouko.ui.ComposeLifecycleCallback
+import xyz.ivaniskandar.shouko.ui.Navigator
 import xyz.ivaniskandar.shouko.ui.Screen
 import xyz.ivaniskandar.shouko.ui.component.Preference
 import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3Theme
@@ -66,7 +65,7 @@ import xyz.ivaniskandar.shouko.util.getPackageLabel
 @Composable
 fun AndroidAppLinkSettings(
     contentPadding: PaddingValues,
-    navController: NavController,
+    navigator: Navigator,
     onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
     context: Context = LocalContext.current,
@@ -95,14 +94,14 @@ fun AndroidAppLinkSettings(
             Preference(
                 title = stringResource(R.string.approved_link_target_title),
                 subtitle = stringResource(R.string.approved_link_target_subtitle),
-                onPreferenceClick = { navController.navigate(Screen.ApprovedLinkTargetList.route) },
+                onPreferenceClick = { navigator.navigate(Screen.ApprovedLinkTargetList) },
             )
         }
         item {
             Preference(
                 title = stringResource(R.string.unapproved_link_target_title),
                 subtitle = stringResource(R.string.unapproved_link_target_subtitle),
-                onPreferenceClick = { navController.navigate(Screen.UnapprovedLinkTargetList.route) },
+                onPreferenceClick = { navigator.navigate(Screen.UnapprovedLinkTargetList) },
             )
         }
 
@@ -199,7 +198,7 @@ private fun CustomChooserTogglePreview() {
 @Composable
 fun LinkTargetList(
     approved: Boolean,
-    navController: NavController,
+    navigator: Navigator,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
     mainViewModel: MainActivityViewModel = viewModel(),
@@ -240,7 +239,7 @@ fun LinkTargetList(
                 LinkTargetListItem(
                     item = item,
                     onClick = {
-                        navController.navigate(Screen.LinkTargetInfoSheet.createRoute(item.packageName))
+                        navigator.navigate(Screen.LinkTargetInfoSheet(item.packageName))
                     },
                 )
             }
@@ -259,7 +258,7 @@ fun LinkTargetList(
                     LinkTargetListItem(
                         item = item,
                         onClick = {
-                            navController.navigate(Screen.LinkTargetInfoSheet.createRoute(item.packageName))
+                            navigator.navigate(Screen.LinkTargetInfoSheet(item.packageName))
                         },
                     )
                 }
@@ -328,8 +327,7 @@ fun LinkTargetInfoSheet(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .navigationBarsPadding()
-            .padding(start = 20.dp, top = 24.dp, end = 20.dp),
+            .padding(horizontal = 20.dp, vertical = 24.dp),
     ) {
         Image(
             bitmap = item.icon,

@@ -1,35 +1,29 @@
 package xyz.ivaniskandar.shouko.ui
 
-import androidx.navigation.NavBackStackEntry
+import androidx.navigation3.runtime.NavKey
+import kotlinx.serialization.Serializable
 
-sealed class Screen(
-    val route: String,
-) {
-    data object Home : Screen("home")
+@Serializable
+sealed interface Screen : NavKey {
+    @Serializable data object Home : Screen
 
-    data object ReadLogsSetup : Screen("read_logs_setup")
+    @Serializable data object ReadLogsSetup : Screen
 
-    data object SecureSettingsSetup : Screen("secure_settings_setup")
+    @Serializable data object SecureSettingsSetup : Screen
 
-    data object AssistantButtonSettings : Screen("assistant_button_settings")
+    @Serializable data object AssistantButtonSettings : Screen
 
-    data object AssistantLaunchSelection : Screen("assistant_launch_selection")
+    @Serializable data object AssistantLaunchSelection : Screen
 
-    data object LockscreenShortcutSettings : Screen("lockscreen_shortcut_settings")
+    @Serializable data object LockscreenShortcutSettings : Screen
 
-    data object LockscreenShortcutSelection : Screen("lockscreen_shortcut_selection/{key}") {
-        fun createRoute(key: String) = "lockscreen_shortcut_selection/$key"
-    }
+    @Serializable data class LockscreenShortcutSelection(val key: String) : Screen
 
-    data object AndroidAppLinkSettings : Screen("android_app_link_settings")
+    @Serializable data object AndroidAppLinkSettings : Screen
 
-    data object ApprovedLinkTargetList : Screen("approved_link_target_list")
+    @Serializable data object ApprovedLinkTargetList : Screen
 
-    data object UnapprovedLinkTargetList : Screen("unapproved_link_target_list")
+    @Serializable data object UnapprovedLinkTargetList : Screen
 
-    data object LinkTargetInfoSheet : Screen("link_target_info_sheet/{packageName}") {
-        fun createRoute(packageName: String) = "link_target_info_sheet/$packageName"
-
-        fun getPackageName(backStackEntry: NavBackStackEntry): String = backStackEntry.arguments!!.getString("packageName")!!
-    }
+    @Serializable data class LinkTargetInfoSheet(val packageName: String) : Screen
 }
