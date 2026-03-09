@@ -2,7 +2,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     id 'com.android.application'
-    id 'kotlin-android'
     id 'org.jetbrains.kotlin.plugin.serialization'
     id 'com.google.android.gms.oss-licenses-plugin'
     id "org.jetbrains.kotlin.plugin.compose" version "${kotlin_version}"
@@ -16,15 +15,15 @@ final def gitCommitHash = { ->
 }
 
 android {
-    compileSdk 36
-    namespace 'xyz.ivaniskandar.shouko'
+    compileSdk = 36
+    namespace = 'xyz.ivaniskandar.shouko'
 
     defaultConfig {
-        applicationId "xyz.ivaniskandar.shouko"
-        minSdkVersion 29
-        targetSdkVersion 36
-        versionCode 9
-        versionName "0.8.0"
+        applicationId = "xyz.ivaniskandar.shouko"
+        minSdk = 29
+        targetSdk = 36
+        versionCode = 9
+        versionName = "0.8.0"
         resourceConfigurations += ['en', 'ja', 'ru', 'de']
     }
 
@@ -33,21 +32,35 @@ android {
         targetCompatibility = JavaVersion.VERSION_21
     }
 
+    kotlin {
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_21
+
+            freeCompilerArgs.addAll(
+                "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+                "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
+                "-opt-in=androidx.compose.animation.ExperimentalAnimationApi",
+                "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi",
+                "-opt-in=androidx.compose.ui.text.ExperimentalTextApi",
+            )
+        }
+    }
+
     buildTypes {
         debug {
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled = true
+            shrinkResources = true
             proguardFiles 'proguard-base.pro', 'proguard-rules.pro'
         }
         release {
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled = true
+            shrinkResources = true
             proguardFiles 'proguard-base.pro', 'proguard-rules.pro'
         }
     }
 
     buildFeatures {
-        compose true
+        compose = true
     }
 
     if (keystorePropertiesFile.exists()) {
@@ -55,20 +68,14 @@ android {
         keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
         signingConfigs {
             debug {
-                storeFile rootProject.file(keystoreProperties['storeFile'])
-                storePassword keystoreProperties['storePassword']
-                keyAlias keystoreProperties['keyAlias']
-                keyPassword keystoreProperties['keyPassword']
+                storeFile = rootProject.file(keystoreProperties['storeFile'])
+                storePassword = keystoreProperties['storePassword']
+                keyAlias = keystoreProperties['keyAlias']
+                keyPassword = keystoreProperties['keyPassword']
             }
         }
-        buildTypes.release.signingConfig signingConfigs.debug
-        buildTypes.debug.signingConfig signingConfigs.debug
-    }
-
-    applicationVariants.configureEach { variant ->
-        variant.outputs.each { output ->
-            output.versionNameOverride "$versionName-$gitCommitHash"
-        }
+        buildTypes.release.signingConfig = signingConfigs.debug
+        buildTypes.debug.signingConfig = signingConfigs.debug
     }
 }
 
@@ -100,18 +107,4 @@ dependencies {
 
     implementation "androidx.datastore:datastore:1.2.0"
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-protobuf:1.10.0"
-}
-
-kotlin {
-    compilerOptions {
-        jvmTarget = JvmTarget.JVM_21
-
-        freeCompilerArgs.addAll(
-                "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
-                "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
-                "-opt-in=androidx.compose.animation.ExperimentalAnimationApi",
-                "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi",
-                "-opt-in=androidx.compose.ui.text.ExperimentalTextApi",
-        )
-    }
 }

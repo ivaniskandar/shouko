@@ -11,8 +11,7 @@ buildscript {
         maven { url 'https://jitpack.io' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.9.2'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.android.tools.build:gradle:9.1.0'
         classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
         classpath 'com.google.android.gms:oss-licenses-plugin:0.10.10'
         classpath 'com.diffplug.spotless:spotless-plugin-gradle:8.3.0'
