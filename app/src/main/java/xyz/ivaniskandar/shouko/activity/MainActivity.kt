@@ -11,8 +11,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
 import androidx.compose.animation.ContentTransform
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
+import androidx.compose.animation.unveilIn
+import androidx.compose.animation.veilOut
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
@@ -41,6 +41,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -254,6 +255,7 @@ class MainActivity : ComponentActivity() {
                 }
 
                 val transitionAnimSpec = MaterialTheme.motionScheme.slowEffectsSpec<IntOffset>()
+                val veilAnimSpec = MaterialTheme.motionScheme.slowEffectsSpec<Color>()
                 NavDisplay(
                     entries = navigationState.toEntries(entryProvider),
                     onBack = navigator::goBack,
@@ -264,7 +266,7 @@ class MainActivity : ComponentActivity() {
                                 towards = SlideDirection.Start,
                                 animationSpec = transitionAnimSpec,
                             ),
-                            initialContentExit = fadeOut() + slideOutOfContainer(
+                            initialContentExit = veilOut(animationSpec = veilAnimSpec) + slideOutOfContainer(
                                 towards = SlideDirection.Start,
                                 animationSpec = transitionAnimSpec,
                                 targetOffset = { it / 4 },
@@ -273,7 +275,7 @@ class MainActivity : ComponentActivity() {
                     },
                     popTransitionSpec = {
                         ContentTransform(
-                            targetContentEnter = fadeIn() + slideIntoContainer(
+                            targetContentEnter = unveilIn(animationSpec = veilAnimSpec) + slideIntoContainer(
                                 towards = SlideDirection.End,
                                 animationSpec = transitionAnimSpec,
                                 initialOffset = { it / 4 },
@@ -291,7 +293,7 @@ class MainActivity : ComponentActivity() {
                             else -> SlideDirection.End
                         }
                         ContentTransform(
-                            targetContentEnter = fadeIn() + slideIntoContainer(
+                            targetContentEnter = unveilIn(animationSpec = veilAnimSpec) + slideIntoContainer(
                                 towards = towards,
                                 animationSpec = transitionAnimSpec,
                                 initialOffset = { it / 4 },
