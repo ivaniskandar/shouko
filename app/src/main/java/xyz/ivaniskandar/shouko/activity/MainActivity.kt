@@ -12,6 +12,7 @@ import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
@@ -45,6 +46,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.core.content.getSystemService
 import androidx.core.view.WindowCompat
@@ -57,8 +59,6 @@ import com.google.android.gms.oss.licenses.v2.OssLicensesMenuActivity
 import kotlinx.coroutines.launch
 import logcat.LogPriority
 import logcat.logcat
-import soup.compose.material.motion.animation.materialSharedAxisX
-import soup.compose.material.motion.animation.rememberSlideDistance
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.ShoukoApplication
 import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper.Companion.LOCKSCREEN_LEFT_BUTTON
@@ -253,13 +253,37 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                val slideDistance = rememberSlideDistance()
+                val transitionAnimSpec = MaterialTheme.motionScheme.slowEffectsSpec<IntOffset>()
                 NavDisplay(
                     entries = navigationState.toEntries(entryProvider),
                     onBack = navigator::goBack,
                     sceneStrategies = listOf(DialogSceneStrategy()),
-                    transitionSpec = { materialSharedAxisX(forward = true, slideDistance = slideDistance) },
-                    popTransitionSpec = { materialSharedAxisX(forward = false, slideDistance = slideDistance) },
+                    transitionSpec = {
+                        ContentTransform(
+                            targetContentEnter = slideIntoContainer(
+                                towards = SlideDirection.Start,
+                                animationSpec = transitionAnimSpec,
+                            ),
+                            initialContentExit = fadeOut() + slideOutOfContainer(
+                                towards = SlideDirection.Start,
+                                animationSpec = transitionAnimSpec,
+                                targetOffset = { it / 4 },
+                            ),
+                        )
+                    },
+                    popTransitionSpec = {
+                        ContentTransform(
+                            targetContentEnter = fadeIn() + slideIntoContainer(
+                                towards = SlideDirection.End,
+                                animationSpec = transitionAnimSpec,
+                                initialOffset = { it / 4 },
+                            ),
+                            initialContentExit = slideOutOfContainer(
+                                towards = SlideDirection.End,
+                                animationSpec = transitionAnimSpec,
+                            ),
+                        )
+                    },
                     predictivePopTransitionSpec = { swipeEdge ->
                         val towards = when (swipeEdge) {
                             NavigationEvent.EDGE_LEFT -> SlideDirection.Right
@@ -267,8 +291,15 @@ class MainActivity : ComponentActivity() {
                             else -> SlideDirection.End
                         }
                         ContentTransform(
-                            targetContentEnter = fadeIn() + slideIntoContainer(towards = towards, initialOffset = { it / 4 }),
-                            initialContentExit = slideOutOfContainer(towards = towards),
+                            targetContentEnter = fadeIn() + slideIntoContainer(
+                                towards = towards,
+                                animationSpec = transitionAnimSpec,
+                                initialOffset = { it / 4 },
+                            ),
+                            initialContentExit = slideOutOfContainer(
+                                towards = towards,
+                                animationSpec = transitionAnimSpec,
+                            ),
                         )
                     },
                 )
