@@ -27,13 +27,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.getSystemService
-import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.ShoukoApplication
 import xyz.ivaniskandar.shouko.feature.FlipToShush
 import xyz.ivaniskandar.shouko.feature.GAKeyOverrider
 import xyz.ivaniskandar.shouko.service.TadanoAccessibilityService
+import xyz.ivaniskandar.shouko.ui.Navigator
 import xyz.ivaniskandar.shouko.ui.Screen
 import xyz.ivaniskandar.shouko.ui.component.AccessibilityServiceCard
 import xyz.ivaniskandar.shouko.ui.component.Preference
@@ -44,7 +44,7 @@ import xyz.ivaniskandar.shouko.util.highlightSettingsTo
 
 @Composable
 fun Home(
-    navController: NavController,
+    navigator: Navigator,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
@@ -78,7 +78,7 @@ fun Home(
                             }
                         },
                         enabled = TadanoAccessibilityService.isActive,
-                        onPreferenceClick = { navController.navigate(Screen.AssistantButtonSettings.route) },
+                        onPreferenceClick = { navigator.navigate(Screen.AssistantButtonSettings) },
                     )
                 }
             }
@@ -144,7 +144,7 @@ fun Home(
                     subtitle = stringResource(R.string.lockscreen_shortcut_desc),
                     enabled = TadanoAccessibilityService.isActive,
                     onPreferenceClick = {
-                        navController.navigate(Screen.LockscreenShortcutSettings.route)
+                        navigator.navigate(Screen.LockscreenShortcutSettings)
                     },
                 )
             }
@@ -156,7 +156,7 @@ fun Home(
                         title = stringResource(R.string.android_app_link_title),
                         subtitle = stringResource(id = R.string.android_app_link_subtitle),
                         onPreferenceClick = {
-                            navController.navigate(Screen.AndroidAppLinkSettings.route)
+                            navigator.navigate(Screen.AndroidAppLinkSettings)
                         },
                     )
                 }

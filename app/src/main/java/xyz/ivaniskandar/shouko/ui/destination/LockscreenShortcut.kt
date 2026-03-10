@@ -22,7 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.ShoukoApplication
@@ -31,6 +30,7 @@ import xyz.ivaniskandar.shouko.activity.MainActivityViewModel
 import xyz.ivaniskandar.shouko.feature.DoNothingAction
 import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper.Companion.LOCKSCREEN_LEFT_BUTTON
 import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper.Companion.LOCKSCREEN_RIGHT_BUTTON
+import xyz.ivaniskandar.shouko.ui.Navigator
 import xyz.ivaniskandar.shouko.ui.Screen
 import xyz.ivaniskandar.shouko.ui.component.ApplicationRow
 import xyz.ivaniskandar.shouko.ui.component.CommonActionRow
@@ -43,7 +43,7 @@ import xyz.ivaniskandar.shouko.util.toComponentName
 
 @Composable
 fun LockscreenShortcutSettings(
-    navController: NavController,
+    navigator: Navigator,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
@@ -56,7 +56,7 @@ fun LockscreenShortcutSettings(
             item {
                 WriteSettingsCard(
                     onButtonClick = {
-                        navController.navigate(Screen.SecureSettingsSetup.route)
+                        navigator.navigate(Screen.SecureSettingsSetup)
                     },
                 )
             }
@@ -69,7 +69,7 @@ fun LockscreenShortcutSettings(
                     ?: stringResource(id = R.string.assistant_action_select_default_value),
                 enabled = context.canWriteSecureSettings,
                 onPreferenceClick = {
-                    navController.navigate(Screen.LockscreenShortcutSelection.createRoute(LOCKSCREEN_LEFT_BUTTON))
+                    navigator.navigate(Screen.LockscreenShortcutSelection(LOCKSCREEN_LEFT_BUTTON))
                 },
             )
         }
@@ -81,7 +81,7 @@ fun LockscreenShortcutSettings(
                     ?: stringResource(id = R.string.assistant_action_select_default_value),
                 enabled = context.canWriteSecureSettings,
                 onPreferenceClick = {
-                    navController.navigate(Screen.LockscreenShortcutSelection.createRoute(LOCKSCREEN_RIGHT_BUTTON))
+                    navigator.navigate(Screen.LockscreenShortcutSelection(LOCKSCREEN_RIGHT_BUTTON))
                 },
             )
         }
@@ -90,7 +90,7 @@ fun LockscreenShortcutSettings(
 
 @Composable
 fun LockscreenShortcutSelection(
-    navController: NavController,
+    navigator: Navigator,
     settingsKey: String,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
@@ -137,7 +137,7 @@ fun LockscreenShortcutSelection(
                                             key = settingsKey,
                                             value = it.flattenToString(),
                                         )
-                                        navController.popBackStack()
+                                        navigator.goBack()
                                     }
                                 },
                             )
@@ -159,7 +159,7 @@ fun LockscreenShortcutSelection(
                                 scope.launch {
                                     val emptyCn = ComponentName(context, EmptyShortcutActivity::class.java)
                                     ShoukoApplication.prefs.setLockscreenAction(settingsKey, emptyCn.flattenToString())
-                                    navController.popBackStack()
+                                    navigator.goBack()
                                 }
                             },
                         )

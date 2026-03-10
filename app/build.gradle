@@ -82,12 +82,11 @@ android {
 dependencies {
     implementation 'androidx.core:core-ktx:1.17.0'
     implementation 'androidx.activity:activity-compose:1.12.4'
-    implementation "androidx.navigation:navigation-compose:2.9.7"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-navigation3:2.10.0"
     implementation "androidx.profileinstaller:profileinstaller:1.4.1"
     implementation "com.github.topjohnwu.libsu:core:5.2.2"
     implementation 'com.squareup.logcat:logcat:0.4'
     implementation 'com.google.android.gms:play-services-oss-licenses:17.4.0'
-    implementation "io.github.fornewid:material-motion-compose-core:2.0.1"
 
     implementation platform("androidx.compose:compose-bom-alpha:$compose_bom_version")
     implementation "androidx.compose.ui:ui"
@@ -96,6 +95,10 @@ dependencies {
     implementation "androidx.compose.ui:ui-text-google-fonts"
     implementation "androidx.compose.ui:ui-tooling-preview"
     debugImplementation "androidx.compose.ui:ui-tooling"
+
+    def navigation3_version = "1.0.1"
+    implementation "androidx.navigation3:navigation3-ui:$navigation3_version"
+    implementation "androidx.navigation3:navigation3-runtime:$navigation3_version"
 
     def coroutines_version = "1.10.2"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"

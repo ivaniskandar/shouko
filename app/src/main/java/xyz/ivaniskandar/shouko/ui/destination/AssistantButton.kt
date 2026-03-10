@@ -32,7 +32,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.ShoukoApplication
@@ -46,6 +45,7 @@ import xyz.ivaniskandar.shouko.feature.MuteMicrophoneAction
 import xyz.ivaniskandar.shouko.feature.RingerModeAction
 import xyz.ivaniskandar.shouko.feature.ScreenshotAction
 import xyz.ivaniskandar.shouko.feature.StatusBarAction
+import xyz.ivaniskandar.shouko.ui.Navigator
 import xyz.ivaniskandar.shouko.ui.Screen
 import xyz.ivaniskandar.shouko.ui.component.ApplicationRow
 import xyz.ivaniskandar.shouko.ui.component.CategoryHeader
@@ -63,7 +63,7 @@ import xyz.ivaniskandar.shouko.util.setAsAssistantAction
 
 @Composable
 fun AssistantButtonSettings(
-    navController: NavController,
+    navigator: Navigator,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
@@ -79,14 +79,14 @@ fun AssistantButtonSettings(
         if (!context.canReadSystemLogs) {
             item {
                 ReadLogsCard(
-                    onButtonClick = { navController.navigate(Screen.ReadLogsSetup.route) },
+                    onButtonClick = { navigator.navigate(Screen.ReadLogsSetup) },
                 )
             }
         }
         if (!context.canWriteSecureSettings) {
             item {
                 WriteSettingsCard(
-                    onButtonClick = { navController.navigate(Screen.SecureSettingsSetup.route) },
+                    onButtonClick = { navigator.navigate(Screen.SecureSettingsSetup) },
                 )
             }
         }
@@ -104,7 +104,7 @@ fun AssistantButtonSettings(
                 subtitle = buttonPrefs.action?.getLabel(context)
                     ?: stringResource(id = R.string.assistant_action_select_default_value),
                 enabled = buttonPrefs.enabled && context.canReadSystemLogs,
-                onPreferenceClick = { navController.navigate(Screen.AssistantLaunchSelection.route) },
+                onPreferenceClick = { navigator.navigate(Screen.AssistantLaunchSelection) },
             )
         }
         item {
@@ -121,7 +121,7 @@ fun AssistantButtonSettings(
 
 @Composable
 fun AssistantActionSelection(
-    navController: NavController,
+    navigator: Navigator,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
     mainViewModel: MainActivityViewModel = viewModel(),
@@ -169,7 +169,7 @@ fun AssistantActionSelection(
                                             component = it
                                         }
                                         prefs.setAssistButtonAction(IntentAction(intent))
-                                        navController.popBackStack()
+                                        navigator.goBack()
                                     }
                                 },
                             )
@@ -195,7 +195,7 @@ fun AssistantActionSelection(
                                     Toast.LENGTH_SHORT,
                                 ).show()
                             }
-                            navController.popBackStack()
+                            navigator.goBack()
                         }
                     }
                 val isRefreshing by mainViewModel.isRefreshingShortcutList.collectAsState()
@@ -244,7 +244,7 @@ fun AssistantActionSelection(
                             onClick = {
                                 scope.launch {
                                     prefs.setAssistButtonAction(MediaKeyAction(item))
-                                    navController.popBackStack()
+                                    navigator.goBack()
                                 }
                             },
                         )
@@ -259,7 +259,7 @@ fun AssistantActionSelection(
                                 onClick = {
                                     scope.launch {
                                         prefs.setAssistButtonAction(FlashlightAction())
-                                        navController.popBackStack()
+                                        navigator.goBack()
                                     }
                                 },
                             )
@@ -272,7 +272,7 @@ fun AssistantActionSelection(
                             onClick = {
                                 scope.launch {
                                     prefs.setAssistButtonAction(ScreenshotAction())
-                                    navController.popBackStack()
+                                    navigator.goBack()
                                 }
                             },
                         )
@@ -284,7 +284,7 @@ fun AssistantActionSelection(
                             onClick = {
                                 scope.launch {
                                     prefs.setAssistButtonAction(StatusBarAction(item))
-                                    navController.popBackStack()
+                                    navigator.goBack()
                                 }
                             },
                         )
@@ -296,7 +296,7 @@ fun AssistantActionSelection(
                             onClick = {
                                 scope.launch {
                                     prefs.setAssistButtonAction(RingerModeAction())
-                                    navController.popBackStack()
+                                    navigator.goBack()
                                 }
                             },
                         )
@@ -308,7 +308,7 @@ fun AssistantActionSelection(
                             onClick = {
                                 scope.launch {
                                     prefs.setAssistButtonAction(MuteMicrophoneAction())
-                                    navController.popBackStack()
+                                    navigator.goBack()
                                 }
                             },
                         )
@@ -320,7 +320,7 @@ fun AssistantActionSelection(
                             onClick = {
                                 scope.launch {
                                     prefs.setAssistButtonAction(DigitalAssistantAction())
-                                    navController.popBackStack()
+                                    navigator.goBack()
                                 }
                             },
                         )
@@ -332,7 +332,7 @@ fun AssistantActionSelection(
                             onClick = {
                                 scope.launch {
                                     prefs.setAssistButtonAction(DoNothingAction())
-                                    navController.popBackStack()
+                                    navigator.goBack()
                                 }
                             },
                         )

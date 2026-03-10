@@ -5,17 +5,20 @@ import android.app.role.RoleManager
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
+import androidx.compose.animation.ContentTransform
+import androidx.compose.animation.unveilIn
+import androidx.compose.animation.veilOut
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
@@ -25,6 +28,8 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
@@ -36,31 +41,30 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.core.content.getSystemService
 import androidx.core.view.WindowCompat
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.scene.DialogSceneStrategy
+import androidx.navigation3.ui.NavDisplay
+import androidx.navigationevent.NavigationEvent
 import com.google.android.gms.oss.licenses.v2.OssLicensesMenuActivity
 import kotlinx.coroutines.launch
 import logcat.LogPriority
 import logcat.logcat
-import soup.compose.material.motion.animation.materialSharedAxisXIn
-import soup.compose.material.motion.animation.materialSharedAxisXOut
-import soup.compose.material.motion.animation.rememberSlideDistance
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.ShoukoApplication
 import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper.Companion.LOCKSCREEN_LEFT_BUTTON
 import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper.Companion.LOCKSCREEN_RIGHT_BUTTON
+import xyz.ivaniskandar.shouko.ui.Navigator
 import xyz.ivaniskandar.shouko.ui.Screen
 import xyz.ivaniskandar.shouko.ui.component.Scaffold
 import xyz.ivaniskandar.shouko.ui.destination.AndroidAppLinkSettings
@@ -72,7 +76,9 @@ import xyz.ivaniskandar.shouko.ui.destination.LinkTargetList
 import xyz.ivaniskandar.shouko.ui.destination.LockscreenShortcutSelection
 import xyz.ivaniskandar.shouko.ui.destination.LockscreenShortcutSettings
 import xyz.ivaniskandar.shouko.ui.destination.PermissionSetup
+import xyz.ivaniskandar.shouko.ui.rememberNavigationState
 import xyz.ivaniskandar.shouko.ui.theme.ShoukoM3Theme
+import xyz.ivaniskandar.shouko.ui.toEntries
 import xyz.ivaniskandar.shouko.util.RELEASES_PAGE_INTENT
 import xyz.ivaniskandar.shouko.util.isRootAvailable
 import xyz.ivaniskandar.shouko.util.openDefaultAppsSettings
@@ -91,59 +97,28 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            val navController = rememberNavController()
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val scrollState = rememberTopAppBarState()
-            val scrollBehavior = when (navBackStackEntry?.destination?.route) {
-                // Disable scroll effect because tabs
-                Screen.AssistantLaunchSelection.route, Screen.LockscreenShortcutSelection.route -> null
-
-                else -> TopAppBarDefaults.pinnedScrollBehavior(scrollState)
-            }
+            val navigationState = rememberNavigationState(
+                startRoute = Screen.Home,
+                topLevelRoutes = setOf(Screen.Home),
+            )
+            val navigator = remember { Navigator(navigationState) }
 
             ShoukoM3Theme {
-                val scaffoldModifier = if (scrollBehavior != null) {
-                    Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
-                } else {
-                    Modifier
-                }
-                Scaffold(
-                    modifier = scaffoldModifier,
-                    topBar = {
-                        val currentRoute = navBackStackEntry?.destination?.route
-                        CenterAlignedTopAppBar(
-                            title = {
-                                Text(
-                                    text = getAppBarTitle(
-                                        navBackStackEntry = navBackStackEntry,
-                                    ),
-                                )
-                            },
-                            navigationIcon = if (currentRoute != null && currentRoute != Screen.Home.route) {
-                                {
-                                    IconButton(onClick = { navController.popBackStack() }) {
-                                        Icon(imageVector = Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = null)
-                                    }
-                                }
-                            } else {
-                                {}
-                            },
-                            actions = { MainActivityActions(navController = navController) },
-                            scrollBehavior = scrollBehavior,
-                        )
-                    },
-                    contentPadding = WindowInsets.navigationBars.asPaddingValues(),
-                ) { innerPadding ->
-                    val rootAvailable = remember { isRootAvailable }
-                    val slideDistance = rememberSlideDistance()
-                    NavHost(
-                        navController = navController,
-                        startDestination = Screen.Home.route,
-                        enterTransition = { materialSharedAxisXIn(forward = true, slideDistance) },
-                        exitTransition = { materialSharedAxisXOut(forward = true, slideDistance) },
-                    ) {
-                        composable(route = Screen.Home.route) { Home(navController, innerPadding) }
-                        composable(Screen.ReadLogsSetup.route) {
+                val rootAvailable = remember { isRootAvailable }
+                val entryProvider = entryProvider<NavKey> {
+                    entry<Screen.Home> {
+                        EntryDecorator(
+                            navigator = navigator,
+                            currentRoute = it,
+                        ) { innerPadding ->
+                            Home(navigator, innerPadding)
+                        }
+                    }
+                    entry<Screen.ReadLogsSetup> {
+                        EntryDecorator(
+                            navigator = navigator,
+                            currentRoute = it,
+                        ) { innerPadding ->
                             PermissionSetup(
                                 contentPadding = innerPadding,
                                 title = stringResource(id = R.string.read_logs_permission_setup_title),
@@ -156,7 +131,12 @@ class MainActivity : ComponentActivity() {
                                 },
                             )
                         }
-                        composable(Screen.SecureSettingsSetup.route) {
+                    }
+                    entry<Screen.SecureSettingsSetup> {
+                        EntryDecorator(
+                            navigator = navigator,
+                            currentRoute = it,
+                        ) { innerPadding ->
                             PermissionSetup(
                                 contentPadding = innerPadding,
                                 title = stringResource(id = R.string.write_secure_settings_permission_setup_title),
@@ -169,38 +149,57 @@ class MainActivity : ComponentActivity() {
                                 },
                             )
                         }
-                        composable(Screen.AssistantButtonSettings.route) {
-                            AssistantButtonSettings(navController, innerPadding)
+                    }
+                    entry<Screen.AssistantButtonSettings> {
+                        EntryDecorator(
+                            navigator = navigator,
+                            currentRoute = it,
+                        ) { innerPadding ->
+                            AssistantButtonSettings(navigator, innerPadding)
                         }
-                        composable(Screen.AssistantLaunchSelection.route) {
+                    }
+                    entry<Screen.AssistantLaunchSelection> {
+                        EntryDecorator(
+                            navigator = navigator,
+                            currentRoute = it,
+                        ) { innerPadding ->
                             AssistantActionSelection(
-                                navController = navController,
+                                navigator = navigator,
                                 contentPadding = innerPadding,
                                 mainViewModel = viewModel,
                             )
                         }
-                        composable(Screen.LockscreenShortcutSettings.route) {
-                            LockscreenShortcutSettings(navController, innerPadding)
+                    }
+                    entry<Screen.LockscreenShortcutSettings> {
+                        EntryDecorator(
+                            navigator = navigator,
+                            currentRoute = it,
+                        ) { innerPadding ->
+                            LockscreenShortcutSettings(navigator, innerPadding)
                         }
-                        composable(Screen.LockscreenShortcutSelection.route) {
-                            val key = it.arguments?.getString("key")
-                            if (key != null) {
-                                LockscreenShortcutSelection(
-                                    mainViewModel = viewModel,
-                                    navController = navController,
-                                    settingsKey = key,
-                                    contentPadding = innerPadding,
-                                )
-                            } else {
-                                logcat(LogPriority.ERROR) { "Lockscreen shortcut settings key is not specified." }
-                                navController.popBackStack()
-                            }
+                    }
+                    entry<Screen.LockscreenShortcutSelection> { key ->
+                        EntryDecorator(
+                            navigator = navigator,
+                            currentRoute = key,
+                        ) { innerPadding ->
+                            LockscreenShortcutSelection(
+                                mainViewModel = viewModel,
+                                navigator = navigator,
+                                settingsKey = key.key,
+                                contentPadding = innerPadding,
+                            )
                         }
+                    }
 
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                            composable(Screen.AndroidAppLinkSettings.route) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        entry<Screen.AndroidAppLinkSettings> {
+                            EntryDecorator(
+                                navigator = navigator,
+                                currentRoute = it,
+                            ) { innerPadding ->
                                 AndroidAppLinkSettings(
-                                    navController = navController,
+                                    navigator = navigator,
                                     contentPadding = innerPadding,
                                     onOpenSettings = {
                                         val roleManager = getSystemService<RoleManager>()
@@ -214,69 +213,170 @@ class MainActivity : ComponentActivity() {
                                     },
                                 )
                             }
-                            composable(Screen.ApprovedLinkTargetList.route) {
+                        }
+                        entry<Screen.ApprovedLinkTargetList> {
+                            EntryDecorator(
+                                navigator = navigator,
+                                currentRoute = it,
+                            ) { innerPadding ->
                                 LinkTargetList(
                                     approved = true,
                                     mainViewModel = viewModel,
-                                    navController = navController,
+                                    navigator = navigator,
                                     contentPadding = innerPadding,
                                 )
                             }
-                            composable(Screen.UnapprovedLinkTargetList.route) {
+                        }
+                        entry<Screen.UnapprovedLinkTargetList> {
+                            EntryDecorator(
+                                navigator = navigator,
+                                currentRoute = it,
+                            ) { innerPadding ->
                                 LinkTargetList(
                                     approved = false,
                                     mainViewModel = viewModel,
-                                    navController = navController,
+                                    navigator = navigator,
                                     contentPadding = innerPadding,
                                 )
                             }
-                            composable(Screen.LinkTargetInfoSheet.route) {
-                                val packageName = Screen.LinkTargetInfoSheet.getPackageName(it)
+                        }
+                        entry<Screen.LinkTargetInfoSheet>(metadata = DialogSceneStrategy.dialog()) { key ->
+                            Surface(shape = MaterialTheme.shapes.extraLarge) {
                                 LinkTargetInfoSheet(
-                                    modifier = Modifier.padding(innerPadding),
-                                    packageName = packageName,
+                                    packageName = key.packageName,
                                     mainViewModel = viewModel,
                                     onOpenSettings = {
-                                        openOpenByDefaultSettings(this@MainActivity, packageName)
+                                        openOpenByDefaultSettings(this@MainActivity, key.packageName)
                                     },
                                 )
                             }
                         }
                     }
                 }
+
+                val transitionAnimSpec = MaterialTheme.motionScheme.slowEffectsSpec<IntOffset>()
+                val veilAnimSpec = MaterialTheme.motionScheme.slowEffectsSpec<Color>()
+                NavDisplay(
+                    entries = navigationState.toEntries(entryProvider),
+                    onBack = navigator::goBack,
+                    sceneStrategy = DialogSceneStrategy(),
+                    transitionSpec = {
+                        ContentTransform(
+                            targetContentEnter = slideIntoContainer(
+                                towards = SlideDirection.Start,
+                                animationSpec = transitionAnimSpec,
+                            ),
+                            initialContentExit = veilOut(animationSpec = veilAnimSpec) + slideOutOfContainer(
+                                towards = SlideDirection.Start,
+                                animationSpec = transitionAnimSpec,
+                                targetOffset = { it / 4 },
+                            ),
+                        )
+                    },
+                    popTransitionSpec = {
+                        ContentTransform(
+                            targetContentEnter = unveilIn(animationSpec = veilAnimSpec) + slideIntoContainer(
+                                towards = SlideDirection.End,
+                                animationSpec = transitionAnimSpec,
+                                initialOffset = { it / 4 },
+                            ),
+                            initialContentExit = slideOutOfContainer(
+                                towards = SlideDirection.End,
+                                animationSpec = transitionAnimSpec,
+                            ),
+                        )
+                    },
+                    predictivePopTransitionSpec = { swipeEdge ->
+                        val towards = when (swipeEdge) {
+                            NavigationEvent.EDGE_LEFT -> SlideDirection.Right
+                            NavigationEvent.EDGE_RIGHT -> SlideDirection.Left
+                            else -> SlideDirection.End
+                        }
+                        ContentTransform(
+                            targetContentEnter = unveilIn(animationSpec = veilAnimSpec) + slideIntoContainer(
+                                towards = towards,
+                                animationSpec = transitionAnimSpec,
+                                initialOffset = { it / 4 },
+                            ),
+                            initialContentExit = slideOutOfContainer(
+                                towards = towards,
+                                animationSpec = transitionAnimSpec,
+                            ),
+                        )
+                    },
+                )
             }
         }
     }
 }
 
 @Composable
+private fun EntryDecorator(
+    navigator: Navigator,
+    currentRoute: Screen,
+    modifier: Modifier = Modifier,
+    content: @Composable (PaddingValues) -> Unit,
+) {
+    val scrollState = rememberTopAppBarState()
+    val scrollBehavior = when (currentRoute) {
+        // Disable scroll effect because tabs
+        is Screen.AssistantLaunchSelection, is Screen.LockscreenShortcutSelection -> null
+
+        else -> TopAppBarDefaults.pinnedScrollBehavior(scrollState)
+    }
+    Scaffold(
+        modifier = if (scrollBehavior != null) {
+            modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+        } else {
+            modifier
+        },
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = { Text(text = getAppBarTitle(currentRoute = currentRoute)) },
+                navigationIcon = {
+                    if (currentRoute != Screen.Home) {
+                        IconButton(onClick = { navigator.goBack() }) {
+                            Icon(imageVector = Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = null)
+                        }
+                    }
+                },
+                actions = { MainActivityActions(navigator = navigator, currentRoute = currentRoute) },
+                scrollBehavior = scrollBehavior,
+            )
+        },
+        contentPadding = WindowInsets.navigationBars.asPaddingValues(),
+        content = content,
+    )
+}
+
+@Composable
 @ReadOnlyComposable
 private fun getAppBarTitle(
-    navBackStackEntry: NavBackStackEntry?,
-): String = when (navBackStackEntry?.destination?.route) {
-    Screen.AssistantButtonSettings.route -> stringResource(id = R.string.assistant_button_title)
+    currentRoute: Screen?,
+): String = when (currentRoute) {
+    is Screen.AssistantButtonSettings -> stringResource(id = R.string.assistant_button_title)
 
-    Screen.AssistantLaunchSelection.route -> stringResource(id = R.string.assistant_launch_selection_title)
+    is Screen.AssistantLaunchSelection -> stringResource(id = R.string.assistant_launch_selection_title)
 
-    Screen.ReadLogsSetup.route, Screen.SecureSettingsSetup.route -> ""
+    is Screen.ReadLogsSetup, is Screen.SecureSettingsSetup -> ""
 
-    Screen.LockscreenShortcutSettings.route -> stringResource(id = R.string.lockscreen_shortcut_title)
+    is Screen.LockscreenShortcutSettings -> stringResource(id = R.string.lockscreen_shortcut_title)
 
-    Screen.LockscreenShortcutSelection.route -> {
-        when (navBackStackEntry.arguments?.getString("key")) {
+    is Screen.LockscreenShortcutSelection -> {
+        when (currentRoute.key) {
             LOCKSCREEN_RIGHT_BUTTON -> stringResource(id = R.string.lockscreen_shortcut_right)
             LOCKSCREEN_LEFT_BUTTON -> stringResource(id = R.string.lockscreen_shortcut_left)
             else -> stringResource(id = R.string.lockscreen_shortcut_title)
         }
     }
 
-    Screen.AndroidAppLinkSettings.route -> stringResource(id = R.string.android_app_link_title)
+    is Screen.AndroidAppLinkSettings -> stringResource(id = R.string.android_app_link_title)
 
-    Screen.ApprovedLinkTargetList.route -> stringResource(id = R.string.approved_link_target_title)
+    is Screen.ApprovedLinkTargetList -> stringResource(id = R.string.approved_link_target_title)
 
-    Screen.UnapprovedLinkTargetList.route -> stringResource(id = R.string.unapproved_link_target_title)
+    is Screen.UnapprovedLinkTargetList -> stringResource(id = R.string.unapproved_link_target_title)
 
-    Screen.LinkTargetInfoSheet.route -> ""
+    is Screen.LinkTargetInfoSheet -> ""
 
     else -> stringResource(id = R.string.app_name)
 }
@@ -284,16 +384,16 @@ private fun getAppBarTitle(
 @Suppress("UnusedReceiverParameter")
 @Composable
 private fun RowScope.MainActivityActions(
-    navController: NavController,
+    navigator: Navigator,
+    currentRoute: Screen?,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var showPopup by remember { mutableStateOf(false) }
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
 
     val menuItems = mutableListOf<@Composable ColumnScope.() -> Unit>()
-    when (navBackStackEntry?.destination?.route) {
-        Screen.Home.route -> {
+    when (currentRoute) {
+        is Screen.Home -> {
             menuItems += {
                 DropdownMenuItem(
                     text = {
@@ -326,7 +426,7 @@ private fun RowScope.MainActivityActions(
             }
         }
 
-        Screen.AssistantLaunchSelection.route -> {
+        is Screen.AssistantLaunchSelection -> {
             menuItems += {
                 DropdownMenuItem(
                     text = {
@@ -345,14 +445,14 @@ private fun RowScope.MainActivityActions(
                                 Toast.LENGTH_SHORT,
                             ).show()
                             showPopup = false
-                            navController.popBackStack()
+                            navigator.goBack()
                         }
                     },
                 )
             }
         }
 
-        Screen.LockscreenShortcutSelection.route -> {
+        is Screen.LockscreenShortcutSelection -> {
             menuItems += {
                 DropdownMenuItem(
                     text = {
@@ -363,19 +463,25 @@ private fun RowScope.MainActivityActions(
                         )
                     },
                     onClick = {
-                        val key = navBackStackEntry?.arguments?.getString("key")
-                        if (key != null) {
-                            scope.launch {
-                                ShoukoApplication.prefs.setLockscreenAction(key, null)
-                                Settings.Secure.putString(context.contentResolver, key, null)
+                        val key = currentRoute.key
+                        scope.launch {
+                            ShoukoApplication.prefs.setLockscreenAction(key, null)
+                            // Note: Secure Settings requires permission, which we check elsewhere
+                            // This might fail if permission is revoked but it's consistent with original code
+                            try {
+                                android.provider.Settings.Secure.putString(context.contentResolver, key, null)
+                            } catch (e: Exception) {
+                                logcat(LogPriority.ERROR) { "Failed to reset secure setting: $e" }
                             }
                         }
                         showPopup = false
-                        navController.popBackStack()
+                        navigator.goBack()
                     },
                 )
             }
         }
+
+        else -> {}
     }
 
     if (menuItems.isNotEmpty()) {
