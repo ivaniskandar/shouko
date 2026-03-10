@@ -257,7 +257,7 @@ class MainActivity : ComponentActivity() {
                 NavDisplay(
                     entries = navigationState.toEntries(entryProvider),
                     onBack = navigator::goBack,
-                    sceneStrategies = listOf(DialogSceneStrategy()),
+                    sceneStrategy = DialogSceneStrategy(),
                     transitionSpec = {
                         ContentTransform(
                             targetContentEnter = slideIntoContainer(

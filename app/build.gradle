@@ -96,7 +96,7 @@ dependencies {
     implementation "androidx.compose.ui:ui-tooling-preview"
     debugImplementation "androidx.compose.ui:ui-tooling"
 
-    def navigation3_version = "1.1.0-alpha05"
+    def navigation3_version = "1.0.1"
     implementation "androidx.navigation3:navigation3-ui:$navigation3_version"
     implementation "androidx.navigation3:navigation3-runtime:$navigation3_version"
 
