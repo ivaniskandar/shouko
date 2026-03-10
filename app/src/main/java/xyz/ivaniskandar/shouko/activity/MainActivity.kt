@@ -9,13 +9,11 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
 import androidx.compose.animation.ContentTransform
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -103,52 +101,23 @@ class MainActivity : ComponentActivity() {
                 topLevelRoutes = setOf(Screen.Home),
             )
             val navigator = remember { Navigator(navigationState) }
-            val currentRoute = navigationState.backStacks[navigationState.topLevelRoute]?.last()
-
-            val scrollState = rememberTopAppBarState()
-            val scrollBehavior = when (currentRoute) {
-                // Disable scroll effect because tabs
-                is Screen.AssistantLaunchSelection, is Screen.LockscreenShortcutSelection -> null
-
-                else -> TopAppBarDefaults.pinnedScrollBehavior(scrollState)
-            }
 
             ShoukoM3Theme {
-                val scaffoldModifier = if (scrollBehavior != null) {
-                    Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
-                } else {
-                    Modifier
-                }
-                Scaffold(
-                    modifier = scaffoldModifier,
-                    topBar = {
-                        CenterAlignedTopAppBar(
-                            title = {
-                                Text(
-                                    text = getAppBarTitle(
-                                        currentRoute = currentRoute,
-                                    ),
-                                )
-                            },
-                            navigationIcon = if (currentRoute != null && currentRoute != Screen.Home) {
-                                {
-                                    IconButton(onClick = { navigator.goBack() }) {
-                                        Icon(imageVector = Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = null)
-                                    }
-                                }
-                            } else {
-                                {}
-                            },
-                            actions = { MainActivityActions(navigator = navigator, currentRoute = currentRoute) },
-                            scrollBehavior = scrollBehavior,
-                        )
-                    },
-                    contentPadding = WindowInsets.navigationBars.asPaddingValues(),
-                ) { innerPadding ->
-                    val rootAvailable = remember { isRootAvailable }
-                    val entryProvider = entryProvider<NavKey> {
-                        entry<Screen.Home> { Home(navigator, innerPadding) }
-                        entry<Screen.ReadLogsSetup> {
+                val rootAvailable = remember { isRootAvailable }
+                val entryProvider = entryProvider<NavKey> {
+                    entry<Screen.Home> {
+                        EntryDecorator(
+                            navigator = navigator,
+                            currentRoute = it,
+                        ) { innerPadding ->
+                            Home(navigator, innerPadding)
+                        }
+                    }
+                    entry<Screen.ReadLogsSetup> {
+                        EntryDecorator(
+                            navigator = navigator,
+                            currentRoute = it,
+                        ) { innerPadding ->
                             PermissionSetup(
                                 contentPadding = innerPadding,
                                 title = stringResource(id = R.string.read_logs_permission_setup_title),
@@ -161,7 +130,12 @@ class MainActivity : ComponentActivity() {
                                 },
                             )
                         }
-                        entry<Screen.SecureSettingsSetup> {
+                    }
+                    entry<Screen.SecureSettingsSetup> {
+                        EntryDecorator(
+                            navigator = navigator,
+                            currentRoute = it,
+                        ) { innerPadding ->
                             PermissionSetup(
                                 contentPadding = innerPadding,
                                 title = stringResource(id = R.string.write_secure_settings_permission_setup_title),
@@ -174,20 +148,40 @@ class MainActivity : ComponentActivity() {
                                 },
                             )
                         }
-                        entry<Screen.AssistantButtonSettings> {
+                    }
+                    entry<Screen.AssistantButtonSettings> {
+                        EntryDecorator(
+                            navigator = navigator,
+                            currentRoute = it,
+                        ) { innerPadding ->
                             AssistantButtonSettings(navigator, innerPadding)
                         }
-                        entry<Screen.AssistantLaunchSelection> {
+                    }
+                    entry<Screen.AssistantLaunchSelection> {
+                        EntryDecorator(
+                            navigator = navigator,
+                            currentRoute = it,
+                        ) { innerPadding ->
                             AssistantActionSelection(
                                 navigator = navigator,
                                 contentPadding = innerPadding,
                                 mainViewModel = viewModel,
                             )
                         }
-                        entry<Screen.LockscreenShortcutSettings> {
+                    }
+                    entry<Screen.LockscreenShortcutSettings> {
+                        EntryDecorator(
+                            navigator = navigator,
+                            currentRoute = it,
+                        ) { innerPadding ->
                             LockscreenShortcutSettings(navigator, innerPadding)
                         }
-                        entry<Screen.LockscreenShortcutSelection> { key ->
+                    }
+                    entry<Screen.LockscreenShortcutSelection> { key ->
+                        EntryDecorator(
+                            navigator = navigator,
+                            currentRoute = key,
+                        ) { innerPadding ->
                             LockscreenShortcutSelection(
                                 mainViewModel = viewModel,
                                 navigator = navigator,
@@ -195,9 +189,14 @@ class MainActivity : ComponentActivity() {
                                 contentPadding = innerPadding,
                             )
                         }
+                    }
 
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                            entry<Screen.AndroidAppLinkSettings> {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        entry<Screen.AndroidAppLinkSettings> {
+                            EntryDecorator(
+                                navigator = navigator,
+                                currentRoute = it,
+                            ) { innerPadding ->
                                 AndroidAppLinkSettings(
                                     navigator = navigator,
                                     contentPadding = innerPadding,
@@ -213,7 +212,12 @@ class MainActivity : ComponentActivity() {
                                     },
                                 )
                             }
-                            entry<Screen.ApprovedLinkTargetList> {
+                        }
+                        entry<Screen.ApprovedLinkTargetList> {
+                            EntryDecorator(
+                                navigator = navigator,
+                                currentRoute = it,
+                            ) { innerPadding ->
                                 LinkTargetList(
                                     approved = true,
                                     mainViewModel = viewModel,
@@ -221,7 +225,12 @@ class MainActivity : ComponentActivity() {
                                     contentPadding = innerPadding,
                                 )
                             }
-                            entry<Screen.UnapprovedLinkTargetList> {
+                        }
+                        entry<Screen.UnapprovedLinkTargetList> {
+                            EntryDecorator(
+                                navigator = navigator,
+                                currentRoute = it,
+                            ) { innerPadding ->
                                 LinkTargetList(
                                     approved = false,
                                     mainViewModel = viewModel,
@@ -229,49 +238,88 @@ class MainActivity : ComponentActivity() {
                                     contentPadding = innerPadding,
                                 )
                             }
-                            entry<Screen.LinkTargetInfoSheet>(metadata = DialogSceneStrategy.dialog()) { key ->
-                                Surface(shape = MaterialTheme.shapes.extraLarge) {
-                                    LinkTargetInfoSheet(
-                                        packageName = key.packageName,
-                                        mainViewModel = viewModel,
-                                        onOpenSettings = {
-                                            openOpenByDefaultSettings(this@MainActivity, key.packageName)
-                                        },
-                                    )
-                                }
+                        }
+                        entry<Screen.LinkTargetInfoSheet>(metadata = DialogSceneStrategy.dialog()) { key ->
+                            Surface(shape = MaterialTheme.shapes.extraLarge) {
+                                LinkTargetInfoSheet(
+                                    packageName = key.packageName,
+                                    mainViewModel = viewModel,
+                                    onOpenSettings = {
+                                        openOpenByDefaultSettings(this@MainActivity, key.packageName)
+                                    },
+                                )
                             }
                         }
                     }
-
-                    val slideDistance = rememberSlideDistance()
-                    NavDisplay(
-                        entries = navigationState.toEntries(entryProvider),
-                        onBack = navigator::goBack,
-                        sceneStrategies = listOf(DialogSceneStrategy()),
-                        transitionSpec = { materialSharedAxisX(forward = true, slideDistance = slideDistance) },
-                        popTransitionSpec = { materialSharedAxisX(forward = false, slideDistance = slideDistance) },
-                        predictivePopTransitionSpec = { swipeEdge ->
-                            val towards = when (swipeEdge) {
-                                NavigationEvent.EDGE_LEFT -> SlideDirection.Right
-                                NavigationEvent.EDGE_RIGHT -> SlideDirection.Left
-                                else -> SlideDirection.End
-                            }
-                            ContentTransform(
-                                targetContentEnter = fadeIn() + slideIntoContainer(towards = towards, initialOffset = { it / 4 }),
-                                initialContentExit = slideOutOfContainer(towards = towards),
-                            )
-                        },
-                    )
                 }
+
+                val slideDistance = rememberSlideDistance()
+                NavDisplay(
+                    entries = navigationState.toEntries(entryProvider),
+                    onBack = navigator::goBack,
+                    sceneStrategies = listOf(DialogSceneStrategy()),
+                    transitionSpec = { materialSharedAxisX(forward = true, slideDistance = slideDistance) },
+                    popTransitionSpec = { materialSharedAxisX(forward = false, slideDistance = slideDistance) },
+                    predictivePopTransitionSpec = { swipeEdge ->
+                        val towards = when (swipeEdge) {
+                            NavigationEvent.EDGE_LEFT -> SlideDirection.Right
+                            NavigationEvent.EDGE_RIGHT -> SlideDirection.Left
+                            else -> SlideDirection.End
+                        }
+                        ContentTransform(
+                            targetContentEnter = fadeIn() + slideIntoContainer(towards = towards, initialOffset = { it / 4 }),
+                            initialContentExit = slideOutOfContainer(towards = towards),
+                        )
+                    },
+                )
             }
         }
     }
 }
 
 @Composable
+private fun EntryDecorator(
+    navigator: Navigator,
+    currentRoute: Screen,
+    modifier: Modifier = Modifier,
+    content: @Composable (PaddingValues) -> Unit,
+) {
+    val scrollState = rememberTopAppBarState()
+    val scrollBehavior = when (currentRoute) {
+        // Disable scroll effect because tabs
+        is Screen.AssistantLaunchSelection, is Screen.LockscreenShortcutSelection -> null
+
+        else -> TopAppBarDefaults.pinnedScrollBehavior(scrollState)
+    }
+    Scaffold(
+        modifier = if (scrollBehavior != null) {
+            modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+        } else {
+            modifier
+        },
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = { Text(text = getAppBarTitle(currentRoute = currentRoute)) },
+                navigationIcon = {
+                    if (currentRoute != Screen.Home) {
+                        IconButton(onClick = { navigator.goBack() }) {
+                            Icon(imageVector = Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = null)
+                        }
+                    }
+                },
+                actions = { MainActivityActions(navigator = navigator, currentRoute = currentRoute) },
+                scrollBehavior = scrollBehavior,
+            )
+        },
+        contentPadding = WindowInsets.navigationBars.asPaddingValues(),
+        content = content,
+    )
+}
+
+@Composable
 @ReadOnlyComposable
 private fun getAppBarTitle(
-    currentRoute: NavKey?,
+    currentRoute: Screen?,
 ): String = when (currentRoute) {
     is Screen.AssistantButtonSettings -> stringResource(id = R.string.assistant_button_title)
 
@@ -304,7 +352,7 @@ private fun getAppBarTitle(
 @Composable
 private fun RowScope.MainActivityActions(
     navigator: Navigator,
-    currentRoute: Any?,
+    currentRoute: Screen?,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -399,6 +447,8 @@ private fun RowScope.MainActivityActions(
                 )
             }
         }
+
+        else -> {}
     }
 
     if (menuItems.isNotEmpty()) {
