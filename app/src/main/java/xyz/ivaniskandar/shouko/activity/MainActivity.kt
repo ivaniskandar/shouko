@@ -9,6 +9,12 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
+import androidx.compose.animation.ContentTransform
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
@@ -48,10 +54,13 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.ui.NavDisplay
+import androidx.navigationevent.NavigationEvent
 import com.google.android.gms.oss.licenses.v2.OssLicensesMenuActivity
 import kotlinx.coroutines.launch
 import logcat.LogPriority
 import logcat.logcat
+import soup.compose.material.motion.animation.materialSharedAxisX
+import soup.compose.material.motion.animation.rememberSlideDistance
 import xyz.ivaniskandar.shouko.R
 import xyz.ivaniskandar.shouko.ShoukoApplication
 import xyz.ivaniskandar.shouko.feature.LockscreenShortcutHelper.Companion.LOCKSCREEN_LEFT_BUTTON
@@ -234,10 +243,24 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
+                    val slideDistance = rememberSlideDistance()
                     NavDisplay(
                         entries = navigationState.toEntries(entryProvider),
                         onBack = navigator::goBack,
                         sceneStrategies = listOf(DialogSceneStrategy()),
+                        transitionSpec = { materialSharedAxisX(forward = true, slideDistance = slideDistance) },
+                        popTransitionSpec = { materialSharedAxisX(forward = false, slideDistance = slideDistance) },
+                        predictivePopTransitionSpec = { swipeEdge ->
+                            val towards = when (swipeEdge) {
+                                NavigationEvent.EDGE_LEFT -> SlideDirection.Right
+                                NavigationEvent.EDGE_RIGHT -> SlideDirection.Left
+                                else -> SlideDirection.End
+                            }
+                            ContentTransform(
+                                targetContentEnter = fadeIn() + slideIntoContainer(towards = towards, initialOffset = { it / 4 }),
+                                initialContentExit = slideOutOfContainer(towards = towards),
+                            )
+                        },
                     )
                 }
             }
